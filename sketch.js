@@ -229,7 +229,7 @@ function windowResized() {
   loadPeep();
 }
 
-function mousePressed() {
+function mouseReleased() {
 
   //randomizePeep();
 
