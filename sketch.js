@@ -15,19 +15,23 @@ console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
 
 
 ///scp init///
+let genderID=0;
+const totalLayers=20;
+const maxTopLayers=10;
 let scp=[];
-let itemID=[];
-let wardrobe=[[],[]];
-let transImg;
+let itemSKUs= new Array(totalLayers);
+
 let imgLoaded=0;
 let isLoadingImg=false;
 
-
-
 const oW=80, oH=142;
 
-let genderID=1;
-let totalLayers;
+const skinColor=[[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
+let sc;
+
+let currTopTotal=0;
+let topTotal=0;
+//let totalLayers;
 
 
 
@@ -39,13 +43,6 @@ function preload(){
 
   ///preloading all wardrobe
   transImg = loadImage("lib/scp_new/textureNumen/trans.png");
-
-
-
-
-  
-
-
 }
 
 function setup() {   
@@ -60,7 +57,9 @@ function setup() {
   noSmooth(); 
   fill(0);
   
+  console.log(itemSKUs.length);
 
+  randomizePeep();
   loadPeep();
 
 }
@@ -75,9 +74,102 @@ function loadingImg(){
      showPeep();
     imgLoaded=0;
     isLoadingImg=false;
+  }
+}
 
+function randomizePeep(){
+  genderID = Math.floor(random(2));
+  //genderID=0; //debug
+  //totalLayers = wdb[genderID].data.length;
+  /// 4 + 10 + 2+ 4 , total: 20 layers (0-19)
+  /// body (0) + head (1) + face (2) + beard (3) + 10 clothes (4-13) + 2 hairs (14,15) + 4 goodies (16+19) 
+  currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 11
+
+  //topTotal=0;  //debugging
+  console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
+
+  for (let i=0; i<totalLayers; i++) {
+
+    let objTotal = wdb[genderID].data[i].clothes.length;
+    let objSKU=-1;
+    let objID;
+
+    let r=random(1);
+   
+    if (i==1){ //// head
+      if (itemSKUs[0]==3||itemSKUs[0]==4) objSKU=itemSKUs[0]; //follow if zombie of skull
+      else {
+        objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
+        objSKU=wdb[genderID].data[i].clothes[objID].sku;
+      }
+    }
+    else if ( ( i==2 || i==3) && ( itemSKUs[0]==3||itemSKUs[0]==4) ){ 
+      ///// no face and no beard if
+      //// zombie or skull
+     
+    }
+    else if ((i>=4 && i<=13) && (i-4>=topTotal)){ //tops
+       /// no item
+    }
+    else if ((i>=16 && i<=19) && (r<0.9) ) { //goodie
+       //// no item
+    }
+ 
+    else if (i==15) { // hairSSSSS
+      objSKU=itemSKUs[14]; ///follow hair SKU
+    }
+    else 
+    { 
+      objID=Math.floor(random(objTotal));
+      objSKU=wdb[genderID].data[i].clothes[objID].sku;
+    }
+    
+    itemSKUs[i]=objSKU;
   }
 
+  ///color
+  sc=Math.floor(random(skinColor.length));
+
+  //debug
+  //itemSKUs[0]=0; //body
+ 
+ 
+  //end debug
+
+  console.log(itemSKUs);
+}
+
+function showPeep(){
+  background(80);
+   let pScale=1.0; //2.6;
+  let manWidth=pScale*width;
+  let manScale=manWidth/oW;
+
+  
+  console.log("showing layer: ------------------------");
+
+  for (let i=0; i<totalLayers; i++) {
+
+    
+    if ((i>=4 && i<=13) && (i-4 >= currTopTotal)){ //tops
+
+      // skip item
+    } else if (itemSKUs[i]>=0) {
+
+      if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) tint(skinColor[sc][0], skinColor[sc][1], skinColor[sc][2],255); //body & head &no zombie & no skull 
+      else if (i==14) tint(50, 50, 50,255); //hair
+      else if (i==15) tint(255,60); //hair highlight
+      else noTint();
+
+      scp[i].pixelate(int(manWidth),int(manWidth*oH/oW));
+      image(scp[i],int(width/2-1*manScale),int(height+(5+3*(genderID))*manScale));
+
+      console.log("showing layer: "+i+" item sku:"+itemSKUs[i]);
+    }
+
+
+  }
+   
 }
 
 function loadPeep(){
@@ -93,53 +185,25 @@ function loadPeep(){
   let temp=scp.length;
   for (let i=0; i<temp; i++) scp.pop();
 
-  genderID = Math.floor(random(2));
-  //genderID=0;
-  totalLayers = wdb[genderID].data.length;
-  /// 4 + 11 + 2+ 4 , total: 21 layers (0-20)
-  /// body (0) + head (1) + face (2) + beard (3) + 11 clothes (4-14) + 2 hairs (15,16) + 4 goodies (17+20) 
-  let topTotal=Math.floor(random(12));
-
-
-  console.log("in loadPeep totalLayers:"+totalLayers+ " gender:"+genderID + "total Top:"+topTotal);
- 
-  
-
+  //// load items from itemSKUs[]
   for (let i=0; i<totalLayers; i++) {
 
     let genderName = wdb[genderID].gender;
     let layerName = wdb[genderID].data[i].layer;
-    let objTotal = wdb[genderID].data[i].clothes.length;
-    let objSKU=-1;
+    let objSKU=itemSKUs[i];
     let imgName="lib/scp_new/textureNumen/";
-    let objID;
 
-   
-
-    let r=random(1);
-  
-
-   
-    if ((i>=4 && i<=14) && (i-4>=topTotal)){ //tops
-       imgName+="trans.png";
-    }
-    else if ((i>=17 && i<=20) && (r<0.9) ) { //goodie
+    if (objSKU==undefined || objSKU<0) { 
       imgName+="trans.png";
     }
     else 
-    if (objTotal>0) { 
-      objID=Math.floor(random(objTotal));
-      objSKU=wdb[genderID].data[i].clothes[objID].sku;
-      let color= wdb[genderID].data[i].clothes[objID].color
+    { 
       if (layerName=="hairs") imgName+="hair"+genderName+objSKU+"s.png"; //hairSSSS
-      else if (layerName=="G") imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
-      else if (color!=undefined) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
+      else if (i>=16 && i<=19) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
+      else if (i>=4 && i<=13) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
       else imgName+=layerName+genderName+objSKU+".png"; //body
-    } else 
-      imgName+="trans.png";
+    }
     
-
-
     console.log(i+" : "+imgName);
     scp.push(loadImage(imgName,loadingImg));
   }
@@ -148,18 +212,7 @@ function loadPeep(){
 
 
 
-function showPeep(){
-  background(200);
-   let pScale=1.0; //2.6;
-  let manWidth=pScale*width;
-  let manScale=manWidth/oW;
-for (let i=0; i<totalLayers; i++) {
 
-   scp[i].pixelate(int(manWidth),int(manWidth*oH/oW));
-    image(scp[i],int(width/2-1*manScale),int(height+(8+3*(genderID))*manScale));
-  }
-   
-}
 
 
 
@@ -172,14 +225,18 @@ function draw(){
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  
-  //displaySCP();
+   randomizePeep();
+  loadPeep();
 }
 
 function mousePressed() {
 
+  //randomizePeep();
 
-  loadPeep();
+  currTopTotal--;
+  if (currTopTotal<0) currTopTotal=topTotal;
+
+  showPeep();
 }
 
 
@@ -212,6 +269,7 @@ let wdb=[
           {"sku":"6","s":0,"name":"XS"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
+          
           ]
   },
   
@@ -238,6 +296,7 @@ let wdb=[
   {
   "layer":"beard",
   "clothes":[
+        {"sku":"0","s":0,"name":""},
         ]
   
   },
@@ -480,21 +539,7 @@ let wdb=[
       
      
       
-      {
-      "layer":"F 9 gadgets",
-      "clothes":[
-                 {"sku":"118","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-                 {"sku":"119","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-                 {"sku":"120","g":1,"color":1,"name":"cam","rank":"prm_photographerpack"},
-                 {"sku":"121","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-                 {"sku":"122","g":1,"color":0,"name":"cam","rank":"coolpack"},
-                 {"sku":"123","g":1,"color":0,"name":"guitar","rank":"coolpack"},
-                 {"sku":"124","g":1,"color":0,"name":"guitar","rank":"prm_musicianpack"},
-                 {"sku":"125","g":1,"color":1,"name":"guitar","rank":"prm_musicianpack"},
-                 {"sku":"126","g":1,"color":1,"name":"guitar","rank":"prm_musicianpack"},
-                 {"sku":"127","g":1,"color":0,"name":"gibson guitar","rank":"prm_musicianpack"},
-                 ]
-      },
+      
       
       {
       "layer":"F 10 big scarf",
@@ -675,7 +720,7 @@ let wdb=[
              {"sku":"78","name":"necklace short","g":1,"color":0,"rank":"coolpack"},
              {"sku":"79","name":"necklace long","g":1,"color":0,"rank":"coolpack"},
              
-             {"sku":"100","g":1,"color":0,"name":"","rank":"coolpack"},
+           
              
              ]
   
@@ -967,23 +1012,6 @@ let wdb=[
   
   },
   
- 
-  
-  {
-  "layer":"9 gadgets",
-  "clothes":[
-             {"sku":"106","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-             {"sku":"107","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-             {"sku":"108","g":1,"color":1,"name":"cam","rank":"prm_photographerpack"},
-             {"sku":"109","g":1,"color":0,"name":"cam","rank":"prm_photographerpack"},
-             {"sku":"110","g":1,"color":0,"name":"cam","rank":"coolpack"},
-             {"sku":"111","g":1,"color":0,"name":"guitar","rank":"coolpack"},
-             {"sku":"112","g":1,"color":0,"name":"guitar","rank":"prm_musicianpack"},
-             {"sku":"113","g":1,"color":1,"name":"guitar","rank":"prm_musicianpack"},
-             {"sku":"114","g":1,"color":1,"name":"guitar","rank":"prm_musicianpack"},
-             {"sku":"115","g":1,"color":0,"name":"gibson guitar","rank":"prm_musicianpack"},
-             ]
-  },
   
   {
   "layer":"10 big scarf",
@@ -1162,7 +1190,7 @@ let wdb=[
              {"sku":"73","name":"necklace short","g":1,"color":0,"rank":"coolpack"},
              {"sku":"74","name":"necklace long","g":1,"color":0,"rank":"coolpack"},
              
-             {"sku":"100","g":1,"color":0,"name":"","rank":"coolpack"},
+            
 
              ]
   
