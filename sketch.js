@@ -38,7 +38,7 @@ function preload(){
   fsBut = loadImage("lib/fs.png");
 
   ///preloading all wardrobe
-  transImg = loadImage("lib/scp/trans.png");
+  transImg = loadImage("lib/scp_new/textureNumen/trans.png");
 
 
 
@@ -117,7 +117,7 @@ function loadPeep(){
    
 
     let r=random(1);
-    console.log(r);
+  
 
    
     if ((i>=4 && i<=14) && (i-4>=topTotal)){ //tops
