@@ -157,7 +157,7 @@ function showPeep(){
     } else if (itemSKUs[i]>=0) {
 
       if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) tint(skinColor[sc][0], skinColor[sc][1], skinColor[sc][2],255); //body & head &no zombie & no skull 
-      else if (i==14) tint(50, 50, 50,255); //hair
+      else if (i==14 || i==3) tint(50, 50, 50,255); //hair + beard
       else if (i==15) tint(255,60); //hair highlight
       else noTint();
 
