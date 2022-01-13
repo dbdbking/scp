@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3.5----");
+console.log("-----  Super Cool Peeps 2021 v0.3.6----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -27,7 +27,7 @@ let isLoadingImg=false;
 
 const oW=80, oH=142;
 
-const skinColor=[[254,217,15],[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
+const skinColor=[[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
 const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
@@ -84,11 +84,14 @@ function loadingImg(){
   }
 }
 
+
+let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=12, LBeard=13,  LHair=14, LHairS=15, LGoodieStart=16, LGoodieEnd=19;
+let IZombie=3, ISkull=4;
+
 function randomizePeep(){
 
   genderID = Math.floor(random(2));
-  /// 4 + 10 + 2+ 4 , total: 20 layers (0-19)
-  /// body (0) + head (1) + face (2) + beard (3) + 10 clothes (4-13) + 2 hairs (14,15) + 4 goodies (16+19) 
+
   currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 10, 
 
   //topTotal=0;  //debugging
@@ -102,27 +105,27 @@ function randomizePeep(){
 
         let r=random(1);
        
-        if (i==1){ //// head
-          if (itemSKUs[0]==3||itemSKUs[0]==4) objSKU=itemSKUs[0]; //follow if zombie of skull
+        if (i==LHead){ //// head
+          if (itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull) objSKU=itemSKUs[LBody]; //follow if zombie of skull
           else {
             objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
             objSKU=wdb[genderID].data[i].clothes[objID].sku;
           }
         }
-        else if ( ( i==2 || i==3) && ( itemSKUs[0]==3||itemSKUs[0]==4) ){ 
+        else if ( ( i==LFace || i==LBeard) && ( itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull) ){ 
           ///// no face and no beard if
           //// zombie or skull
          
         }
-        else if ((i>=4 && i<=13) && (i-4>=topTotal)){ //tops
+        else if ((i>=LTopStart && i<=LTopEnd) && (i-LTopStart>=topTotal)){ //tops
            /// no item
         }
-        else if ((i>=16 && i<=19) && (r<0.9) ) { //goodie
+        else if ((i>=LGoodieStart && i<=LGoodieEnd) && (r<0.9) ) { //goodie
            //// no item
         }
      
-        else if (i==15) { // hairSSSSS
-          objSKU=itemSKUs[14]; ///follow hair SKU
+        else if (i==LHairS) { // hairSSSSS
+          objSKU=itemSKUs[LHair]; ///follow hair SKU
         }
         else 
         { 
@@ -133,14 +136,12 @@ function randomizePeep(){
 
         /////////// color /////
         let canColor=-1;
-        
 
-
-        if (i==0) itemColors[i]=Math.floor(random(skinColor.length)); //body 
-        else if (i==1) itemColors[i]=itemColors[0]; //head follows body
-        else if (i==3) itemColors[i]=Math.floor(random(hairColor.length)); // beard
-        else if (i==14) itemColors[i]=itemColors[3];// hair follows beard
-        else if (i>=4 && i<=13) { //tops
+        if (i==LBody) itemColors[i]=Math.floor(random(skinColor.length)); //body 
+        else if (i==LHead) itemColors[i]=itemColors[LBody]; //head follows body
+        else if (i==LBeard) itemColors[i]=Math.floor(random(hairColor.length)); // beard
+        else if (i==LHair) itemColors[i]=itemColors[LBeard];// hair follows beard
+        else if (i>=LTopStart && i<=LTopEnd) { //tops
 
           itemColors[i]=-1; //no tint
 
@@ -150,9 +151,8 @@ function randomizePeep(){
           }
       
         }
-        else if (i>=16 && i<=19) {//goodies
+        else if (i>=LGoodieStart && i<=LGoodieEnd) {//goodies
           itemColors[i]=-1; //no tint
-
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
             if (canColor=="1") itemColors[i]=Math.floor(random(topColor.length)); 
@@ -163,9 +163,8 @@ function randomizePeep(){
 
 
   //debug
-  //itemSKUs[0]=itemSKUs[1]=0; //body & head
-  //itemSKUs[14]=itemSKUs[15]=34; //hair
-  //if (genderID==1) itemSKUs[3]=27; //beard
+  itemSKUs[LGoodieEnd-1]=1000; //glasses 
+ // if (genderID==1) itemSKUs[LBeard]=11; //beard
   //end debug
 
   console.log(itemSKUs);
@@ -183,22 +182,21 @@ function showPeep(){
   for (let i=0; i<totalLayers; i++) {
 
     
-    if ((i>=4 && i<=13) && (i-4 >= currTopTotal)){ 
+    if ((i>=LTopStart && i<=LTopEnd) && (i-LTopStart >= currTopTotal)){ 
       // skip item tops if not showing
     } else if (itemSKUs[i]>=0) {
 
-
       let cid=itemColors[i];
 
-      if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) //body & head &no zombie & no skull 
+      if ((i==LBody || i==LHead) && itemSKUs[LBody]!=IZombie && itemSKUs[LBody]!=ISkull) //body & head &no zombie & no skull 
         tint(skinColor[cid][0], skinColor[cid][1], skinColor[cid][2],255); 
-      else if (i==14 || i==3) //hair + beard
+      else if (i==LHair || i==LBeard) //hair + beard
         tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
-      else if (i==15) //hair highlight
+      else if (i==LHairS) //hair highlight
         tint(255,60);
-      else if (i>=4 && i<=13 && cid>=0) //tops
+      else if (i>=LTopStart && i<=LTopEnd && cid>=0) //tops
         tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
-      else if (i>=16 && i<=19 && cid>=0) //goodies 
+      else if (i>=LGoodieStart && i<=LGoodieEnd && cid>=0) //goodies 
         tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
       else 
         noTint();
@@ -244,9 +242,9 @@ function loadPeep(){
     }
     else 
     { 
-      if (layerName=="hairs") imgName+="hair"+genderName+objSKU+"s.png"; //hairSSSS
-      else if (i>=16 && i<=19) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
-      else if (i>=4 && i<=13) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
+      if (i==LHairS) imgName+="hair"+genderName+objSKU+"s.png"; //hairSSSS
+      else if (i>=LGoodieStart && i<=LGoodieEnd) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
+      else if (i>=LTopStart && i<=LTopEnd) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
       else imgName+=layerName+genderName+objSKU+".png"; //body
 
 
@@ -370,14 +368,6 @@ let wdb=[
 
 
   {
-  "layer":"beard",
-  "clothes":[
-        {"sku":"0" },
-        ]
-  
-  },
-
-  {
       "layer":"0 bra F",
       "clothes":[
                  {"sku":"0","g":1,"color":1,"name":"Bra","rank":"FREE"},
@@ -388,7 +378,7 @@ let wdb=[
                  {"sku":"5","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"6","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"7","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"8","g":1,"color":1,"name":"Bra","rank":"coolpack"},
+                 {"sku":"8","g":1,"color":0,"name":"Bra","rank":"coolpack"},
                  {"sku":"9","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"10","g":1,"color":1,"name":"Bra","rank":"coolpack","party":"basic"},
                  {"sku":"63","g":1,"color":0,"name":"Bra","rank":"coolpack"},
@@ -442,7 +432,7 @@ let wdb=[
                  {"sku":"179","g":1,"color":0,"name":"Kate Spade New York Metallic Top","rank":"brn_fw","scan":"brn_fw"},
                  
                  
-                 {"sku":"174","g":1,"color":0,"name":"Hysteric Glamour","rank":"brn_fw","scan":"brn_fw"},
+                 
                  
                  
                  {"sku":"165","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
@@ -479,7 +469,7 @@ let wdb=[
                  {"sku":"146","name":"Jourden Navy Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"147","name":"Jourden White Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  
-                 {"sku":"156","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
+                
                  {"sku":"162","g":3,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
                  
                  {"sku":"177","g":1,"color":0,"name":"Kate Spade New York Multi KiteBow Dress","rank":"brn_fw","scan":"brn_fw"},
@@ -517,17 +507,13 @@ let wdb=[
                  {"sku":"141","name":"Jourden Black Tee With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"148","name":"Jourden Black Hunter Jacket With Bubble Gum Eyelets","g":2,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  
-                 {"sku":"180","g":3,"color":0,"name":"LIGER","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"181","g":3,"color":0,"name":"LIGER","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"182","g":3,"color":0,"name":"LIGER","rank":"brn_fw","scan":"brn_fw"},
                  
                  {"sku":"178","g":1,"color":0,"name":"Kate Spade New York Virginia Lace Dress","rank":"brn_fw","scan":"brn_fw"},
                  
                  {"sku":"175","g":1,"color":0,"name":"Hysteric Glamour","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"176","g":1,"color":0,"name":"Hysteric Glamour","rank":"brn_fw","scan":"brn_fw"},
+         
                  
                  
-                 {"sku":"171","g":1,"color":0,"name":"H&M Ladies Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"172","g":1,"color":0,"name":"H&M Ladies Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"173","g":1,"color":0,"name":"H&M Ladies Dress","rank":"brn_fw","scan":"brn_fw"},
                  
@@ -575,7 +561,6 @@ let wdb=[
       "layer":"F 6",
       "clothes":[
                  {"sku":"93","g":2,"color":1,"name":"tee","rank":"coolpack"},
-           
                  {"sku":"95","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  
                  ]
@@ -614,7 +599,13 @@ let wdb=[
                  ]
       },
 
-
+  {
+  "layer":"beard",
+  "clothes":[
+        {"sku":"0" },
+        ]
+  
+  },
   
   {
   "layer":"hair",
@@ -733,7 +724,6 @@ let wdb=[
              {"name":"Beanie","g":1,"color":1,"sku":"29","rank":"coolpack"},
              {"name":"Beanie","g":1,"color":1,"sku":"30","rank":"coolpack"},
              {"name":"panda","g":1,"color":0,"sku":"34","rank":"coolpack"},
-             {"name":"xmas","g":1,"color":0,"sku":"35","rank":"FREE"},
              {"name":"headphones","g":1,"color":1,"sku":"36","rank":"coolpack"},
              {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
              {"name":"headband thin","g":1,"color":1,"sku":"47","rank":"coolpack"},
@@ -741,7 +731,7 @@ let wdb=[
              {"name":"rabbit","g":1,"color":1,"sku":"49","rank":"coolpack"},
              {"name":"cat","g":1,"color":1,"sku":"50","rank":"coolpack"},
              {"name":"rat","g":1,"color":1,"sku":"51","rank":"coolpack"},
-             {"name":"antler","g":1,"color":1,"sku":"75","rank":"FREE"},
+    
              
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
 
@@ -768,12 +758,14 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
-             {"name":"eye patch","g":1,"color":1,"sku":"62","rank":"coolpack"},
+             {"name":"eye patch","g":1,"color":0,"sku":"62","rank":"coolpack"},
              {"name":"horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"67","rank":"coolpack"},
+
+             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
             
              ]
   
@@ -856,40 +848,6 @@ let wdb=[
   
   },
 
-  {
-  "layer":"beard",
-  "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"17" },
-          {"sku":"18" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
-          ]
-  
-  },
 
 
   {
@@ -931,10 +889,6 @@ let wdb=[
              {"name":"db-db Tee","g":1,"color":1,"sku":"25","rank":"FREE"},
              {"name":"MIT Tee","g":1,"color":1,"sku":"26","rank":"coolpack"},
              {"name":"flash tee","g":1,"color":1,"sku":"118","rank":"FREE", "scan":"QR_supercoolstyle"},
-
-             {"sku":"123","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             
-             
              
              ]
   
@@ -958,7 +912,7 @@ let wdb=[
              {"name":"Two tone shirt","g":2,"color":1,"sku":"39","rank":"coolpack"},
              {"name":"Open shirt","g":2,"color":1,"sku":"40","rank":"coolpack"},
              {"name":"Short sleeved shirt","g":2,"color":1,"sku":"41","rank":"coolpack"},
-             {"name":"Stripes long sleeved tee","g":1,"color":1,"sku":"42","rank":"coolpack"},
+             {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42","rank":"coolpack"},
              {"name":"Cardigan ","g":2,"color":1,"sku":"43","rank":"coolpack"},
              
              {"sku":"131","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
@@ -970,11 +924,10 @@ let wdb=[
   "layer":"3 ties",
   "clothes":[
              {"name":"Tie","g":5,"color":1,"sku":"60","rank":"coolpack"},
-             {"name":"Patterned Tie","g":5,"color":1,"sku":"61","rank":"coolpack"},
              {"name":"Bowtie big","g":5,"color":1,"sku":"104","rank":"coolpack"},
              {"name":"Bowtie small","g":5,"color":1,"sku":"105","rank":"coolpack"},
              ]
-  
+   
   },
   
   
@@ -1083,6 +1036,39 @@ let wdb=[
   
   },
 
+
+  {
+  "layer":"beard",
+  "clothes":[
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
+          ]
+  
+  },
 
   
   {
@@ -1201,13 +1187,12 @@ let wdb=[
              {"name":"Beanie","g":1,"color":1,"sku":"28","rank":"coolpack"},
              {"name":"Beanie","g":1,"color":1,"sku":"29","rank":"coolpack"},
              {"name":"Beanie","g":1,"color":1,"sku":"30","rank":"coolpack"},
-             {"name":"xmas","g":1,"color":0,"sku":"34","rank":"FREE"},
              {"name":"headphones","g":1,"color":1,"sku":"36","rank":"coolpack"},
              {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
              {"name":"headband","g":1,"color":1,"sku":"46","rank":"FREE"},
              {"name":"headband","g":1,"color":1,"sku":"47","rank":"coolpack"},
              {"name":"rat","g":1,"color":1,"sku":"48","rank":"coolpack"},
-             {"name":"antler","g":1,"color":1,"sku":"70","rank":"FREE"},
+      
              
              ]
   
@@ -1231,12 +1216,14 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
-             {"name":"eye patch","g":1,"color":1,"sku":"57","rank":"coolpack"},
+             {"name":"eye patch","g":1,"color":0,"sku":"57","rank":"coolpack"},
              {"name":"horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"62","rank":"coolpack"},
+             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+
              ]
   
   },
