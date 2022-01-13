@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3.6----");
+console.log("-----  Super Cool Peeps 2021 v0.4.0----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -22,6 +22,7 @@ let scp=[];
 let itemSKUs= new Array(totalLayers);
 let itemColors= new Array(totalLayers);
 
+
 let imgLoaded=0;
 let isLoadingImg=false;
 
@@ -33,7 +34,16 @@ const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
                 [153,197,85],[255,243,95],[230,152,72],[223,110,64],[219,83,60],
-                [134,101,64],[112,99,88],[128,128,128],[54,54,54],[255,255,255]];
+                [134,101,64],[70,70,70],[255,255,255]];
+
+const bgColorPal=[[153,61,97],[95,41,98],[66,33,98],[33,34,99],[23,58,113],
+                  [38,79,128] /*,[77,126,62],[108,139,59],[161,106,48],[156,76,42]*/];
+
+const zombieColor=[0,255,0];
+const skullColor=[18,18,18];
+
+
+let bgC=0;
 
 
 let currTopTotal=0;
@@ -57,6 +67,7 @@ function setup() {
 
   //randomSeed(int(seed)); //deterministic
   createCanvas(windowWidth, windowHeight);
+
   pixelDensity(displayDensity());
   imageMode(CENTER);
   frameRate(24);
@@ -161,9 +172,15 @@ function randomizePeep(){
         }
   }
 
+  bgC=Math.floor(random(bgColorPal.length)); 
 
-  //debug
-  itemSKUs[LGoodieEnd-1]=1000; //glasses 
+  //debug debug
+ // itemSKUs[LGoodieEnd-1]=12; //glasses 
+ // itemColors[LGoodieEnd-1]=-1;
+    //itemSKUs[LGoodieStart]=1001; //glasses 
+    //itemColors[LGoodieStart]=-1;
+
+
  // if (genderID==1) itemSKUs[LBeard]=11; //beard
   //end debug
 
@@ -171,9 +188,18 @@ function randomizePeep(){
 }
 
 function showPeep(){
-  background(80);
-   let pScale=1.5; //2.6;
-  let manWidth=pScale*width;
+
+ 
+  if (itemSKUs[LBody]==IZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
+  else if (itemSKUs[LBody]==ISkull) background(skullColor[0],skullColor[1],skullColor[2]);
+  else background(bgColorPal[bgC][0], bgColorPal[bgC][1], bgColorPal[bgC][2]);
+
+  let pScale=2.0; 
+  let shortSide = width<height?width:height;
+  let manWidth=pScale*shortSide;
+
+  if (manWidth>1000) manWidth=1000;
+
   let manScale=manWidth/oW;
 
   
@@ -189,15 +215,15 @@ function showPeep(){
       let cid=itemColors[i];
 
       if ((i==LBody || i==LHead) && itemSKUs[LBody]!=IZombie && itemSKUs[LBody]!=ISkull) //body & head &no zombie & no skull 
-        tint(skinColor[cid][0], skinColor[cid][1], skinColor[cid][2],255); 
+        tint(skinColor[cid][0], skinColor[cid][1], skinColor[cid][2]); 
       else if (i==LHair || i==LBeard) //hair + beard
-        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2]); 
       else if (i==LHairS) //hair highlight
         tint(255,60);
       else if (i>=LTopStart && i<=LTopEnd && cid>=0) //tops
-        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
+        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2]); 
       else if (i>=LGoodieStart && i<=LGoodieEnd && cid>=0) //goodies 
-        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
+        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2]); 
       else 
         noTint();
 
@@ -517,8 +543,7 @@ let wdb=[
                  {"sku":"172","g":1,"color":0,"name":"H&M Ladies Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"173","g":1,"color":0,"name":"H&M Ladies Dress","rank":"brn_fw","scan":"brn_fw"},
                  
-                 {"sku":"168","g":1,"color":0,"name":"FRAPBOIS","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"169","g":1,"color":0,"name":"FRAPBOIS","rank":"brn_fw","scan":"brn_fw"},
+
                  {"sku":"170","g":1,"color":0,"name":"FRAPBOIS","rank":"brn_fw","scan":"brn_fw"},
                  
                  
@@ -696,8 +721,8 @@ let wdb=[
   "layer":"G",
   "clothes":[
              
-             {"sku":"69","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
              {"sku":"80","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
+             {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
              ]
   
   },
@@ -728,14 +753,10 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
              {"name":"headband thin","g":1,"color":1,"sku":"47","rank":"coolpack"},
              {"name":"headband","g":1,"color":1,"sku":"48","rank":"coolpack"},
-             {"name":"rabbit","g":1,"color":1,"sku":"49","rank":"coolpack"},
+             {"name":"rabbit","g":1,"color":0,"sku":"49","rank":"coolpack"},
              {"name":"cat","g":1,"color":1,"sku":"50","rank":"coolpack"},
              {"name":"rat","g":1,"color":1,"sku":"51","rank":"coolpack"},
-    
-             
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-
-             
              ]
   
   },
@@ -743,7 +764,7 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-             {"name":"Black Frames","g":1,"color":1,"sku":"12","rank":"FREE"},
+             {"name":"3D","g":1,"color":0,"sku":"12","rank":"FREE"},
              {"name":"Glasses","g":1,"color":1,"sku":"13","rank":"coolpack"},
              {"name":"Sun-Glasses","g":1,"color":1,"sku":"14","rank":"coolpack"},
              {"name":"Rounded Frames","g":1,"color":1,"sku":"15","rank":"coolpack"},
@@ -755,7 +776,7 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"19","rank":"FREE"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"20","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"21","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"}, 
              {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
              {"name":"eye patch","g":1,"color":0,"sku":"62","rank":"coolpack"},
@@ -764,9 +785,7 @@ let wdb=[
              {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"67","rank":"coolpack"},
-
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
-            
              ]
   
   },
@@ -776,10 +795,7 @@ let wdb=[
   "clothes":[
              {"sku":"78","name":"necklace short","g":1,"color":0,"rank":"coolpack"},
              {"sku":"79","name":"necklace long","g":1,"color":0,"rank":"coolpack"},
-             
-           
-             
-             ]
+            ]
   
   },
   
@@ -914,7 +930,6 @@ let wdb=[
              {"name":"Short sleeved shirt","g":2,"color":1,"sku":"41","rank":"coolpack"},
              {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42","rank":"coolpack"},
              {"name":"Cardigan ","g":2,"color":1,"sku":"43","rank":"coolpack"},
-             
              {"sku":"131","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
              ]
   
@@ -989,7 +1004,6 @@ let wdb=[
              {"name":"Military Jacket","g":2,"color":1,"sku":"81","rank":"coolpack"},
              {"name":"Pattern sweater","g":1,"color":1,"sku":"82","rank":"coolpack"},
              {"name":"Dots sweater","g":1,"color":1,"sku":"83","rank":"coolpack"},
-              {"sku":"133","g":2,"color":0,"name":"A|X LOGO PATCH NYLON BOMBER ABSOLUTE RED","rank":"brn_fw","scan":"brn_fw"},
              ]
   
   },
@@ -1080,7 +1094,6 @@ let wdb=[
           {"sku":"3" },
           {"sku":"4" },
           {"sku":"5" },
-          {"sku":"6" },
           {"sku":"7" },
           {"sku":"8" },
           {"sku":"9" },
@@ -1122,7 +1135,6 @@ let wdb=[
           {"sku":"3" },
           {"sku":"4" },
           {"sku":"5" },
-          {"sku":"6" },
           {"sku":"7" },
           {"sku":"8" },
           {"sku":"9" },
@@ -1162,6 +1174,7 @@ let wdb=[
             
              {"sku":"64","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
              {"sku":"75","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
+             {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
              ]
   
   },
@@ -1191,9 +1204,6 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
              {"name":"headband","g":1,"color":1,"sku":"46","rank":"FREE"},
              {"name":"headband","g":1,"color":1,"sku":"47","rank":"coolpack"},
-             {"name":"rat","g":1,"color":1,"sku":"48","rank":"coolpack"},
-      
-             
              ]
   
   },
@@ -1201,7 +1211,7 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-             {"name":"Black Frames","g":1,"color":1,"sku":"12","rank":"FREE"},
+             {"name":"3D","g":1,"color":0,"sku":"12","rank":"FREE"},
              {"name":"Glasses","g":1,"color":1,"sku":"13","rank":"coolpack"},
              {"name":"Sun-Glasses","g":1,"color":1,"sku":"14","rank":"coolpack"},
              {"name":"Rounded Frames","g":1,"color":1,"sku":"15","rank":"coolpack"},
