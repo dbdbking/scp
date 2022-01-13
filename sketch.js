@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3----");
+console.log("-----  Super Cool Peeps 2021 v0.3.1----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -230,18 +230,30 @@ function windowResized() {
 }
 
 
-function mousePressed() {
+let lastPressedTime=0;
 
-  //randomizePeep();
+function mousePressed(){
+
+  /// fix Chrome's double trigger bug for mobile
   
-  console.log("mousePressed---------------"+random(1));
+  let date = new Date();
+  let currPressedTime=date.getTime();
+  let diff=currPressedTime-lastPressedTime;
+  console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
 
-  currTopTotal--;
-  if (currTopTotal<0) currTopTotal=topTotal;
+  if (diff>150) {
+      lastPressedTime=currPressedTime;
+      currTopTotal--;
+      if (currTopTotal<0) currTopTotal=topTotal;
 
-  showPeep();
-  
+      showPeep();
+
+      console.log(event);
+  }
 }
+
+
+
 /*
 
 function touchStarted(){
