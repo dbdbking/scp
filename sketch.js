@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.2----");
+console.log("-----  Super Cool Peeps 2021 v0.3----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -234,7 +234,7 @@ function mousePressed() {
 
   //randomizePeep();
   
-  console.log("mouseReleased---------------"+random(1));
+  console.log("mousePressed---------------"+random(1));
 
   currTopTotal--;
   if (currTopTotal<0) currTopTotal=topTotal;
@@ -242,6 +242,7 @@ function mousePressed() {
   showPeep();
   
 }
+/*
 
 function touchStarted(){
   //empty function needed
@@ -253,7 +254,7 @@ function touchEnded() {
   
 }
 
-
+*/
 
 //// wardrobe db
 
