@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3.3----");
+console.log("-----  Super Cool Peeps 2021 v0.3.4----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -20,6 +20,7 @@ const totalLayers=20;
 const maxTopLayers=10;
 let scp=[];
 let itemSKUs= new Array(totalLayers);
+let itemColors= new Array(totalLayers);
 
 let imgLoaded=0;
 let isLoadingImg=false;
@@ -29,7 +30,7 @@ const oW=80, oH=142;
 const skinColor=[[254,217,15],[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
 const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
-let sc;
+
 
 let currTopTotal=0;
 let topTotal=0;
@@ -80,9 +81,8 @@ function loadingImg(){
 }
 
 function randomizePeep(){
+
   genderID = Math.floor(random(2));
-  //genderID=0; //debug
-  //totalLayers = wdb[genderID].data.length;
   /// 4 + 10 + 2+ 4 , total: 20 layers (0-19)
   /// body (0) + head (1) + face (2) + beard (3) + 10 clothes (4-13) + 2 hairs (14,15) + 4 goodies (16+19) 
   currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 10, 
@@ -92,46 +92,71 @@ function randomizePeep(){
 
   for (let i=0; i<totalLayers; i++) {
 
-    let objTotal = wdb[genderID].data[i].clothes.length;
-    let objSKU=-1;
-    let objID;
+        let objTotal = wdb[genderID].data[i].clothes.length;
+        let objSKU=-1;
+        let objID;
 
-    let r=random(1);
-   
-    if (i==1){ //// head
-      if (itemSKUs[0]==3||itemSKUs[0]==4) objSKU=itemSKUs[0]; //follow if zombie of skull
-      else {
-        objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
-        objSKU=wdb[genderID].data[i].clothes[objID].sku;
-      }
-    }
-    else if ( ( i==2 || i==3) && ( itemSKUs[0]==3||itemSKUs[0]==4) ){ 
-      ///// no face and no beard if
-      //// zombie or skull
+        let r=random(1);
+       
+        if (i==1){ //// head
+          if (itemSKUs[0]==3||itemSKUs[0]==4) objSKU=itemSKUs[0]; //follow if zombie of skull
+          else {
+            objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
+            objSKU=wdb[genderID].data[i].clothes[objID].sku;
+          }
+        }
+        else if ( ( i==2 || i==3) && ( itemSKUs[0]==3||itemSKUs[0]==4) ){ 
+          ///// no face and no beard if
+          //// zombie or skull
+         
+        }
+        else if ((i>=4 && i<=13) && (i-4>=topTotal)){ //tops
+           /// no item
+        }
+        else if ((i>=16 && i<=19) && (r<0.9) ) { //goodie
+           //// no item
+        }
      
-    }
-    else if ((i>=4 && i<=13) && (i-4>=topTotal)){ //tops
-       /// no item
-    }
-    else if ((i>=16 && i<=19) && (r<0.9) ) { //goodie
-       //// no item
-    }
- 
-    else if (i==15) { // hairSSSSS
-      objSKU=itemSKUs[14]; ///follow hair SKU
-    }
-    else 
-    { 
-      objID=Math.floor(random(objTotal));
-      objSKU=wdb[genderID].data[i].clothes[objID].sku;
-    }
-    
-    itemSKUs[i]=objSKU;
+        else if (i==15) { // hairSSSSS
+          objSKU=itemSKUs[14]; ///follow hair SKU
+        }
+        else 
+        { 
+          objID=Math.floor(random(objTotal));
+          objSKU=wdb[genderID].data[i].clothes[objID].sku;
+        }
+        itemSKUs[i]=objSKU;
+
+        /////////// color /////
+        let canColor=-1;
+        
+
+
+        if (i==0) itemColors[i]=Math.floor(random(skinColor.length)); //body 
+        else if (i==1) itemColors[i]=itemColors[0]; //head follows body
+        else if (i==3) itemColors[i]=Math.floor(random(hairColor.length)); // beard
+        else if (i==14) itemColors[i]=itemColors[3];// hair follows beard
+        else if (i>=4 && i<=13) { //tops
+
+          itemColors[i]=-1; //no tint
+
+          if (objID>=0) { 
+            canColor=wdb[genderID].data[i].clothes[objID].color;
+            if (canColor=="1") itemColors[i]=Math.floor(random(hairColor.length)); 
+          }
+      
+        }
+        else if (i>=16 && i<=19) {//goodies
+          itemColors[i]=-1; //no tint
+
+          if (objID>=0) { 
+            canColor=wdb[genderID].data[i].clothes[objID].color;
+            if (canColor=="1") itemColors[i]=Math.floor(random(hairColor.length)); 
+          }
+         
+        }
   }
 
-  ///color
-  sc=Math.floor(random(skinColor.length));
-  hc=Math.floor(random(hairColor.length));
 
   //debug
   //itemSKUs[0]=itemSKUs[1]=0; //body & head
@@ -158,15 +183,26 @@ function showPeep(){
       // skip item tops if not showing
     } else if (itemSKUs[i]>=0) {
 
-      if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) tint(skinColor[sc][0], skinColor[sc][1], skinColor[sc][2],255); //body & head &no zombie & no skull 
-      else if (i==14 || i==3) tint(hairColor[hc][0], hairColor[hc][1], hairColor[hc][2],255); //hair + beard
-      else if (i==15) tint(255,60); //hair highlight
-      else noTint();
+
+      let cid=itemColors[i];
+
+      if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) //body & head &no zombie & no skull 
+        tint(skinColor[cid][0], skinColor[cid][1], skinColor[cid][2],255); 
+      else if (i==14 || i==3) //hair + beard
+        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+      else if (i==15) //hair highlight
+        tint(255,60);
+      else if (i>=4 && i<=13 && cid>=0) //tops
+        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+      else if (i>=16 && i<=19 && cid>=0) //goodies 
+        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+      else 
+        noTint();
 
       scp[i].pixelate(int(manWidth),int(manWidth*oH/oW));
       image(scp[i],int(width/2-1*manScale),int(height+(5+3*(genderID))*manScale));
 
-      console.log("showing layer: "+i+" item sku:"+itemSKUs[i]);
+      console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
     }
 
 
