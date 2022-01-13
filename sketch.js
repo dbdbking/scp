@@ -141,7 +141,7 @@ function randomizePeep(){
 
 function showPeep(){
   background(80);
-   let pScale=1.0; //2.6;
+   let pScale=2.0; //2.6;
   let manWidth=pScale*width;
   let manScale=manWidth/oW;
 
