@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.4.0----");
+console.log("-----  Super Cool Peeps 2021 v0.4.1----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -29,7 +29,7 @@ let isLoadingImg=false;
 const oW=80, oH=142;
 
 const skinColor=[[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
-const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
+const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[37,37,37],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
@@ -103,7 +103,14 @@ function randomizePeep(){
 
   genderID = Math.floor(random(2));
 
-  currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 10, 
+
+  topTotal=1+Math.floor(random(maxTopLayers)); ///0 - 10, 
+  let r=random(1);
+  if (r>0.95) topTotal=0;
+
+  currTopTotal=topTotal;
+
+
 
   //topTotal=0;  //debugging
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
@@ -174,9 +181,9 @@ function randomizePeep(){
 
   bgC=Math.floor(random(bgColorPal.length)); 
 
-  //debug debug
- // itemSKUs[LGoodieEnd-1]=12; //glasses 
- // itemColors[LGoodieEnd-1]=-1;
+  //testing
+  //itemSKUs[LGoodieEnd-1]=1002; //helmut 
+  //itemColors[LGoodieEnd-1]=-1;
     //itemSKUs[LGoodieStart]=1001; //glasses 
     //itemColors[LGoodieStart]=-1;
 
@@ -786,6 +793,7 @@ let wdb=[
              {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"67","rank":"coolpack"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              ]
   
   },
@@ -917,7 +925,7 @@ let wdb=[
              {"name":"Denim Shirt","g":2,"color":0,"sku":"28","rank":"coolpack"},
              {"name":"Cardigan","g":2,"color":1,"sku":"29","rank":"coolpack"},
              {"name":"Long Sleeved Tee","g":1,"color":1,"sku":"30","rank":"FREE"},
-             {"name":"Shirt","g":2,"color":1,"sku":"31","rank":"coolpack"},
+             {"name":"Shirt","g":2,"color":0,"sku":"31","rank":"coolpack"},
              {"name":"Oxford shirt","g":2,"color":1,"sku":"32","rank":"coolpack"},
              {"name":"Denim shirt special","g":2,"color":0,"sku":"33","rank":"coolpack"},
              {"name":"checkered shirt","g":2,"color":1,"sku":"34","rank":"coolpack"},
@@ -941,6 +949,7 @@ let wdb=[
              {"name":"Tie","g":5,"color":1,"sku":"60","rank":"coolpack"},
              {"name":"Bowtie big","g":5,"color":1,"sku":"104","rank":"coolpack"},
              {"name":"Bowtie small","g":5,"color":1,"sku":"105","rank":"coolpack"},
+             {"name":"black Tie","g":5,"color":0,"sku":"1000","rank":"peep"},
              ]
    
   },
@@ -1233,6 +1242,7 @@ let wdb=[
              {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"62","rank":"coolpack"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
 
              ]
   
