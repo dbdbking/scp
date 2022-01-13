@@ -85,7 +85,7 @@ function randomizePeep(){
   //totalLayers = wdb[genderID].data.length;
   /// 4 + 10 + 2+ 4 , total: 20 layers (0-19)
   /// body (0) + head (1) + face (2) + beard (3) + 10 clothes (4-13) + 2 hairs (14,15) + 4 goodies (16+19) 
-  currTopTotal=topTotal=1+Math.floor(random(maxTopLayers)); ///1 - 10, 
+  currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 10, 
 
   //topTotal=0;  //debugging
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
@@ -154,9 +154,8 @@ function showPeep(){
   for (let i=0; i<totalLayers; i++) {
 
     
-    if ((i>=4 && i<=13) && (i-4 >= currTopTotal)){ //tops
-
-      // skip item
+    if ((i>=4 && i<=13) && (i-4 >= currTopTotal)){ 
+      // skip item tops if not showing
     } else if (itemSKUs[i]>=0) {
 
       if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) tint(skinColor[sc][0], skinColor[sc][1], skinColor[sc][2],255); //body & head &no zombie & no skull 
@@ -197,7 +196,11 @@ function loadPeep(){
     let imgName="lib/scp_new/textureNumen/";
 
     if (objSKU==undefined || objSKU<0) { 
-      imgName+="trans.png";
+      imgName="transImg";
+
+
+      scp.push(transImg);
+      imgLoaded++;
     }
     else 
     { 
@@ -205,10 +208,13 @@ function loadPeep(){
       else if (i>=16 && i<=19) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
       else if (i>=4 && i<=13) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
       else imgName+=layerName+genderName+objSKU+".png"; //body
+
+
+      scp.push(loadImage(imgName,loadingImg));
     }
     
     console.log(i+" : "+imgName);
-    scp.push(loadImage(imgName,loadingImg));
+    
   }
 
 }
@@ -246,7 +252,7 @@ function mousePressed(){
   if (diff>200) {
       lastPressedTime=currPressedTime;
       currTopTotal--;
-      if (currTopTotal<0) currTopTotal=topTotal;
+      if (currTopTotal<1) currTopTotal=topTotal;
 
       showPeep();
 
