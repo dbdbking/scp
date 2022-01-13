@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3.4----");
+console.log("-----  Super Cool Peeps 2021 v0.3.5----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -30,6 +30,10 @@ const oW=80, oH=142;
 const skinColor=[[254,217,15],[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
 const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
+const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
+                [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
+                [153,197,85],[255,243,95],[230,152,72],[223,110,64],[219,83,60],
+                [134,101,64],[112,99,88],[128,128,128],[54,54,54],[255,255,255]];
 
 
 let currTopTotal=0;
@@ -142,7 +146,7 @@ function randomizePeep(){
 
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
-            if (canColor=="1") itemColors[i]=Math.floor(random(hairColor.length)); 
+            if (canColor=="1") itemColors[i]=Math.floor(random(topColor.length)); 
           }
       
         }
@@ -151,7 +155,7 @@ function randomizePeep(){
 
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
-            if (canColor=="1") itemColors[i]=Math.floor(random(hairColor.length)); 
+            if (canColor=="1") itemColors[i]=Math.floor(random(topColor.length)); 
           }
          
         }
@@ -193,9 +197,9 @@ function showPeep(){
       else if (i==15) //hair highlight
         tint(255,60);
       else if (i>=4 && i<=13 && cid>=0) //tops
-        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
       else if (i>=16 && i<=19 && cid>=0) //goodies 
-        tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2],255); 
+        tint(topColor[cid][0], topColor[cid][1], topColor[cid][2],255); 
       else 
         noTint();
 
@@ -431,7 +435,7 @@ let wdb=[
                  {"sku":"135","name":"Jourden Navy Paws Bralette","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"136","name":"Jourden Black Bralette With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"137","name":"Jourden Red Bralette With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"149","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
+                 
                  {"sku":"150","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
                  
                  
@@ -475,17 +479,7 @@ let wdb=[
                  {"sku":"146","name":"Jourden Navy Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"147","name":"Jourden White Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  
-                 {"sku":"151","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"152","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 {"sku":"153","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"154","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 {"sku":"155","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
                  {"sku":"156","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"157","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"158","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 {"sku":"159","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"160","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-                 {"sku":"161","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
                  {"sku":"162","g":3,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
                  
                  {"sku":"177","g":1,"color":0,"name":"Kate Spade New York Multi KiteBow Dress","rank":"brn_fw","scan":"brn_fw"},
@@ -519,8 +513,6 @@ let wdb=[
                  {"sku":"114","g":1,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"115","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"132","g":1,"color":0,"name":"leopard tee","rank":"coolpack"},
-                 {"sku":"138","name":"Jourden Navy Varsity Box Tee","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"139","name":"Jourden White Varsity Box Tee","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"140","name":"Jourden Yellow Tee With Black Ring","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"141","name":"Jourden Black Tee With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"148","name":"Jourden Black Hunter Jacket With Bubble Gum Eyelets","g":2,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
@@ -583,7 +575,7 @@ let wdb=[
       "layer":"F 6",
       "clothes":[
                  {"sku":"93","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"94","g":2,"color":1,"name":"tee","rank":"coolpack"},
+           
                  {"sku":"95","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  
                  ]
@@ -592,7 +584,7 @@ let wdb=[
       {
       "layer":"F 7",
       "clothes":[
-                 {"sku":"97","g":2,"color":1,"name":"tee","rank":"coolpack"},
+                 
                  {"sku":"98","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"99","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"100","g":2,"color":1,"name":"tee","rank":"coolpack"},
@@ -712,7 +704,7 @@ let wdb=[
     {
   "layer":"G",
   "clothes":[
-             {"sku":"43","name":"mask","g":1,"color":1,"rank":"FREE"},
+             
              {"sku":"69","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
              {"sku":"80","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
              ]
@@ -752,8 +744,7 @@ let wdb=[
              {"name":"antler","g":1,"color":1,"sku":"75","rank":"FREE"},
              
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-             {"sku":"85","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"87","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
+
              
              ]
   
@@ -916,7 +907,7 @@ let wdb=[
              {"sku":"9","g":1,"color":1,"name":"Dots Tee","rank":"coolpack"},
              {"sku":"10","g":1,"color":1,"name":"Turtle neck","rank":"coolpack"},
              {"sku":"11","g":1,"color":1,"name":"Sports Tank","rank":"coolpack"},
-             {"sku":"120","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
+            
              ]
   
   },
@@ -940,16 +931,9 @@ let wdb=[
              {"name":"db-db Tee","g":1,"color":1,"sku":"25","rank":"FREE"},
              {"name":"MIT Tee","g":1,"color":1,"sku":"26","rank":"coolpack"},
              {"name":"flash tee","g":1,"color":1,"sku":"118","rank":"FREE", "scan":"QR_supercoolstyle"},
-             {"sku":"121","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"122","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
+
              {"sku":"123","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"124","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"125","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-             {"sku":"126","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"127","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-             {"sku":"128","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
-             {"sku":"129","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"130","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas","scan":"brn_adidas"},
+             
              
              
              ]
@@ -1189,7 +1173,7 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-             {"sku":"43","name":"mask","g":1,"color":1,"rank":"FREE"},
+            
              {"sku":"64","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
              {"sku":"75","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
              ]
@@ -1225,9 +1209,6 @@ let wdb=[
              {"name":"rat","g":1,"color":1,"sku":"48","rank":"coolpack"},
              {"name":"antler","g":1,"color":1,"sku":"70","rank":"FREE"},
              
-             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-             {"sku":"80","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-             {"sku":"82","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
              ]
   
   },
