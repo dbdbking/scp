@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.3.1----");
+console.log("-----  Super Cool Peeps 2021 v0.3.2----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -26,7 +26,9 @@ let isLoadingImg=false;
 
 const oW=80, oH=142;
 
-const skinColor=[[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
+const skinColor=[[254,217,15],[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
+const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[17,17,17],
+                  [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
 let sc;
 
 let currTopTotal=0;
@@ -83,7 +85,7 @@ function randomizePeep(){
   //totalLayers = wdb[genderID].data.length;
   /// 4 + 10 + 2+ 4 , total: 20 layers (0-19)
   /// body (0) + head (1) + face (2) + beard (3) + 10 clothes (4-13) + 2 hairs (14,15) + 4 goodies (16+19) 
-  currTopTotal=topTotal=Math.floor(random(maxTopLayers+1)); ///0 - 11
+  currTopTotal=topTotal=1+Math.floor(random(maxTopLayers)); ///1 - 10, 
 
   //topTotal=0;  //debugging
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
@@ -129,11 +131,12 @@ function randomizePeep(){
 
   ///color
   sc=Math.floor(random(skinColor.length));
+  hc=Math.floor(random(hairColor.length));
 
   //debug
-  //itemSKUs[0]=0; //body
- 
- 
+  //itemSKUs[0]=itemSKUs[1]=0; //body & head
+  //itemSKUs[14]=itemSKUs[15]=34; //hair
+  //if (genderID==1) itemSKUs[3]=27; //beard
   //end debug
 
   console.log(itemSKUs);
@@ -157,7 +160,7 @@ function showPeep(){
     } else if (itemSKUs[i]>=0) {
 
       if ((i==0 || i==1) && itemSKUs[0]!=3 && itemSKUs[0]!=4) tint(skinColor[sc][0], skinColor[sc][1], skinColor[sc][2],255); //body & head &no zombie & no skull 
-      else if (i==14 || i==3) tint(50, 50, 50,255); //hair + beard
+      else if (i==14 || i==3) tint(hairColor[hc][0], hairColor[hc][1], hairColor[hc][2],255); //hair + beard
       else if (i==15) tint(255,60); //hair highlight
       else noTint();
 
@@ -225,8 +228,7 @@ function draw(){
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-   randomizePeep();
-  loadPeep();
+   showPeep();
 }
 
 
@@ -235,6 +237,8 @@ let lastPressedTime=0;
 function mousePressed(){
 
   /// fix Chrome's double trigger bug for mobile
+
+
   
   let date = new Date();
   let currPressedTime=date.getTime();
@@ -304,18 +308,18 @@ let wdb=[
   {
   "layer":"face",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
           ]
   
   },
@@ -324,7 +328,7 @@ let wdb=[
   {
   "layer":"beard",
   "clothes":[
-        {"sku":"0","s":0,"name":""},
+        {"sku":"0" },
         ]
   
   },
@@ -583,40 +587,41 @@ let wdb=[
   {
   "layer":"hair",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
-          {"sku":"12","s":0,"name":""},
-          {"sku":"13","s":0,"name":""},
-          {"sku":"14","s":0,"name":""},
-          {"sku":"15","s":0,"name":""},
-          {"sku":"16","s":0,"name":""},
-          {"sku":"17","s":0,"name":""},
-          {"sku":"18","s":0,"name":""},
-          {"sku":"19","s":0,"name":""},
-          {"sku":"20","s":0,"name":""},
-          {"sku":"21","s":0,"name":""},
-          {"sku":"22","s":0,"name":""},
-          {"sku":"23","s":0,"name":""},
-          {"sku":"24","s":0,"name":""},
-          {"sku":"25","s":0,"name":""},
-          {"sku":"26","s":0,"name":""},
-          {"sku":"27","s":0,"name":""},
-          {"sku":"28","s":0,"name":""},
-          {"sku":"29","s":0,"name":""},
-          {"sku":"30","s":0,"name":""},
-          {"sku":"31","s":0,"name":""},
-          {"sku":"32","s":0,"name":""},
-          {"sku":"33","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"17" },
+          {"sku":"18" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
+          {"sku":"28" },
+          {"sku":"29" },
+          {"sku":"30" },
+          {"sku":"31" },
+          {"sku":"32" },
+          {"sku":"33" },
+          {"sku":"34" },
         ]
   
   },
@@ -625,40 +630,41 @@ let wdb=[
   {
   "layer":"hairs",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
-          {"sku":"12","s":0,"name":""},
-          {"sku":"13","s":0,"name":""},
-          {"sku":"14","s":0,"name":""},
-          {"sku":"15","s":0,"name":""},
-          {"sku":"16","s":0,"name":""},
-          {"sku":"17","s":0,"name":""},
-          {"sku":"18","s":0,"name":""},
-          {"sku":"19","s":0,"name":""},
-          {"sku":"20","s":0,"name":""},
-          {"sku":"21","s":0,"name":""},
-          {"sku":"22","s":0,"name":""},
-          {"sku":"23","s":0,"name":""},
-          {"sku":"24","s":0,"name":""},
-          {"sku":"25","s":0,"name":""},
-          {"sku":"26","s":0,"name":""},
-          {"sku":"27","s":0,"name":""},
-          {"sku":"28","s":0,"name":""},
-          {"sku":"29","s":0,"name":""},
-          {"sku":"30","s":0,"name":""},
-          {"sku":"31","s":0,"name":""},
-          {"sku":"32","s":0,"name":""},
-          {"sku":"33","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"17" },
+          {"sku":"18" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
+          {"sku":"28" },
+          {"sku":"29" },
+          {"sku":"30" },
+          {"sku":"31" },
+          {"sku":"32" },
+          {"sku":"33" },
+          {"sku":"34" },
         ]
   
   },
@@ -803,18 +809,18 @@ let wdb=[
   {
   "layer":"face",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
           ]
   
   },
@@ -822,33 +828,34 @@ let wdb=[
   {
   "layer":"beard",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
-          {"sku":"12","s":0,"name":""},
-          {"sku":"13","s":0,"name":""},
-          {"sku":"14","s":0,"name":""},
-          {"sku":"15","s":0,"name":""},
-          {"sku":"16","s":0,"name":""},
-          {"sku":"17","s":0,"name":""},
-          {"sku":"18","s":0,"name":""},
-          {"sku":"19","s":0,"name":""},
-          {"sku":"20","s":0,"name":""},
-          {"sku":"21","s":0,"name":""},
-          {"sku":"22","s":0,"name":""},
-          {"sku":"23","s":0,"name":""},
-          {"sku":"24","s":0,"name":""},
-          {"sku":"25","s":0,"name":""},
-          {"sku":"26","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"17" },
+          {"sku":"18" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
           ]
   
   },
@@ -1057,40 +1064,41 @@ let wdb=[
   {
   "layer":"hair",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
-          {"sku":"12","s":0,"name":""},
-          {"sku":"13","s":0,"name":""},
-          {"sku":"14","s":0,"name":""},
-          {"sku":"15","s":0,"name":""},
-          {"sku":"16","s":0,"name":""},
-          {"sku":"17","s":0,"name":""},
-          {"sku":"18","s":0,"name":""},
-          {"sku":"19","s":0,"name":""},
-          {"sku":"20","s":0,"name":""},
-          {"sku":"21","s":0,"name":""},
-          {"sku":"22","s":0,"name":""},
-          {"sku":"23","s":0,"name":""},
-          {"sku":"24","s":0,"name":""},
-          {"sku":"25","s":0,"name":""},
-          {"sku":"26","s":0,"name":""},
-          {"sku":"27","s":0,"name":""},
-          {"sku":"28","s":0,"name":""},
-          {"sku":"29","s":0,"name":""},
-          {"sku":"30","s":0,"name":""},
-          {"sku":"31","s":0,"name":""},
-          {"sku":"32","s":0,"name":""},
-          {"sku":"33","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"17" },
+          {"sku":"18" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
+          {"sku":"28" },
+          {"sku":"29" },
+          {"sku":"30" },
+          {"sku":"31" },
+          {"sku":"32" },
+          {"sku":"33" },
+          {"sku":"34" },
           ]
   
   },
@@ -1098,40 +1106,41 @@ let wdb=[
   {
   "layer":"hairs",
   "clothes":[
-          {"sku":"0","s":0,"name":""},
-          {"sku":"1","s":0,"name":""},
-          {"sku":"2","s":0,"name":""},
-          {"sku":"3","s":0,"name":""},
-          {"sku":"4","s":0,"name":""},
-          {"sku":"5","s":0,"name":""},
-          {"sku":"6","s":0,"name":""},
-          {"sku":"7","s":0,"name":""},
-          {"sku":"8","s":0,"name":""},
-          {"sku":"9","s":0,"name":""},
-          {"sku":"10","s":0,"name":""},
-          {"sku":"11","s":0,"name":""},
-          {"sku":"12","s":0,"name":""},
-          {"sku":"13","s":0,"name":""},
-          {"sku":"14","s":0,"name":""},
-          {"sku":"15","s":0,"name":""},
-          {"sku":"16","s":0,"name":""},
-          {"sku":"17","s":0,"name":""},
-          {"sku":"18","s":0,"name":""},
-          {"sku":"19","s":0,"name":""},
-          {"sku":"20","s":0,"name":""},
-          {"sku":"21","s":0,"name":""},
-          {"sku":"22","s":0,"name":""},
-          {"sku":"23","s":0,"name":""},
-          {"sku":"24","s":0,"name":""},
-          {"sku":"25","s":0,"name":""},
-          {"sku":"26","s":0,"name":""},
-          {"sku":"27","s":0,"name":""},
-          {"sku":"28","s":0,"name":""},
-          {"sku":"29","s":0,"name":""},
-          {"sku":"30","s":0,"name":""},
-          {"sku":"31","s":0,"name":""},
-          {"sku":"32","s":0,"name":""},
-          {"sku":"33","s":0,"name":""},
+          {"sku":"0" },
+          {"sku":"1" },
+          {"sku":"2" },
+          {"sku":"3" },
+          {"sku":"4" },
+          {"sku":"5" },
+          {"sku":"6" },
+          {"sku":"7" },
+          {"sku":"8" },
+          {"sku":"9" },
+          {"sku":"10" },
+          {"sku":"11" },
+          {"sku":"12" },
+          {"sku":"13" },
+          {"sku":"14" },
+          {"sku":"15" },
+          {"sku":"16" },
+          {"sku":"17" },
+          {"sku":"18" },
+          {"sku":"19" },
+          {"sku":"20" },
+          {"sku":"21" },
+          {"sku":"22" },
+          {"sku":"23" },
+          {"sku":"24" },
+          {"sku":"25" },
+          {"sku":"26" },
+          {"sku":"27" },
+          {"sku":"28" },
+          {"sku":"29" },
+          {"sku":"30" },
+          {"sku":"31" },
+          {"sku":"32" },
+          {"sku":"33" },
+          {"sku":"34" },
           ]
   
   },
