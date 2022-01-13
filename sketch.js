@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.1----");
+console.log("-----  Super Cool Peeps 2021 v0.2----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -230,7 +230,7 @@ function windowResized() {
 }
 
 
-function mouseReleased() {
+function mousePressed() {
 
   //randomizePeep();
   
@@ -241,6 +241,10 @@ function mouseReleased() {
 
   showPeep();
   
+}
+
+function touchStarted(){
+  //empty function needed
 }
 
 function touchEnded() {
