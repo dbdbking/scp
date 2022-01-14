@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.4.1----");
+console.log("-----  Super Cool Peeps 2021 v0.4.2----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -205,7 +205,7 @@ function showPeep(){
   let shortSide = width<height?width:height;
   let manWidth=pScale*shortSide;
 
-  if (manWidth>1000) manWidth=1000;
+  if (manWidth>500) manWidth=500;
 
   let manScale=manWidth/oW;
 
@@ -293,14 +293,14 @@ function loadPeep(){
 
 
 
-
+/*
 
 
 function draw(){
   //loadPeep();
 }
 
-
+*/
 
 
 function windowResized() {
@@ -320,7 +320,7 @@ function mousePressed(){
   let diff=currPressedTime-lastPressedTime;
   console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
 
-  if (diff>200) {
+  if (diff>300) {
       lastPressedTime=currPressedTime;
       currTopTotal--;
       if (currTopTotal<1) currTopTotal=topTotal;
