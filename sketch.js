@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.4.2----");
+console.log("-----  Super Cool Peeps 2021 v0.5.0----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -16,8 +16,32 @@ console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
 
 ///scp init///
 let genderID=0;
-const totalLayers=20;
-const maxTopLayers=10;
+
+let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=18;
+const showChance=[1,1,1, //body,head,face
+                  0.99,0.5,0.33,0.25,0.2,0.15,0.12,0.1,0.1, //tops
+                  1,1,1, //beard, hair
+                  0.2,0.4,0.4,0.1 //mouth, hat, eye, face
+                  ];
+let totalLayers=showChance.length;
+let chanceCrazyHair=0.1;
+let chanceSkull=0.01;
+let chanceZombie=0.05;
+let chanceTatoo=0.1;
+let chanceSexy=0.3;
+
+
+
+let LGoodieMouth=LGoodieStart;
+let LGoodieHead=LGoodieStart+1;
+let LGoodieEye=LGoodieStart+2;
+let LGoodieFace=LGoodieStart+3;
+
+
+let IZombie=3, ISkull=4, IApe=5;
+const maxTopLayers=LTopEnd-LTopStart+1;
+const maxGoodieLayers=LGoodieEnd-LGoodieStart+1;
+
 let scp=[];
 let itemSKUs= new Array(totalLayers);
 let itemColors= new Array(totalLayers);
@@ -28,29 +52,34 @@ let isLoadingImg=false;
 
 const oW=80, oH=142;
 
-const skinColor=[[250,245,239],[255,224,189],[234,192,134],[184,152,112],[131,108,79],[85,70,52]];
-const hairColor=[[226,226,226],[145,102,40],[88,51,34],[247,206,96],[37,37,37],
-                  [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139]];
+const skinColor=[[250,245,239],[255,224,189],[234,192,134],/*[184,152,112],*/[131,108,79],[85,70,52]];
+const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
+                  [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139],[255,255,255]];
+const crazyHairStart=6;
+
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
                 [153,197,85],[255,243,95],[230,152,72],[223,110,64],[219,83,60],
-                [134,101,64],[70,70,70],[255,255,255]];
+                [134,101,64],[51,51,51],[255,255,255]];
 
-const bgColorPal=[[153,61,97],[95,41,98],[66,33,98],[33,34,99],[23,58,113],
-                  [38,79,128] /*,[77,126,62],[108,139,59],[161,106,48],[156,76,42]*/];
+//const bgColorPal=[[153,61,97],[95,41,98],[66,33,98],[33,34,99],[23,58,113],
+//                  [38,79,128] /*,[77,126,62],[108,139,59],[161,106,48],[156,76,42]*/];
+
+const bgColorPal=[[74,47,75],[58,42,74],[40,40,74],[37,54,83],
+                  [50,71,96],[76,104,127],[69,93,66],/*[73,99,65],*/[90,107,65],
+                  [136,132,77],/*[121,92,63],[116,75,58],[114,64,56],*/ [118,70,89]
+                  ];
 
 const zombieColor=[0,255,0];
-const skullColor=[18,18,18];
+const skullColor=[255,0,255];
+const apeColor=[0,255,0];
 
 
 let bgC=0;
 
-
 let currTopTotal=0;
 let topTotal=0;
-//let totalLayers;
-
-
+let currTopID,myMaxTopID;
 
 
 function preload(){
@@ -82,6 +111,9 @@ function setup() {
 
 }
 
+let isShowcase=true;
+let showcaseID=0;
+let stopShowcaseID=499;
 
 function loadingImg(){
   
@@ -92,28 +124,50 @@ function loadingImg(){
      showPeep();
     imgLoaded=0;
     isLoadingImg=false;
+
+
+    //////// keep loading...
+    
+    if (isShowcase && showcaseID<=stopShowcaseID) { 
+      randomizePeep(); 
+      loadPeep(); 
+      saveCanvas(showcaseID.toString(),'png'); 
+      showcaseID++;
+    }
+    
   }
 }
 
 
-let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=12, LBeard=13,  LHair=14, LHairS=15, LGoodieStart=16, LGoodieEnd=19;
-let IZombie=3, ISkull=4;
+function isTop(i){
+
+   if (i>=LTopStart && i<=LTopEnd) return(true);
+
+   return(false);
+}
+
+function isGoodie(i){
+
+   if (i>=LGoodieStart && i<=LGoodieEnd) return(true);
+
+   return(false);
+}
 
 function randomizePeep(){
 
   genderID = Math.floor(random(2));
 
-
-  topTotal=1+Math.floor(random(maxTopLayers)); ///0 - 10, 
-  let r=random(1);
-  if (r>0.95) topTotal=0;
-
+  topTotal=maxTopLayers;
   currTopTotal=topTotal;
-
 
 
   //topTotal=0;  //debugging
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
+
+
+  let validTop=maxTopLayers;
+  let validGoodie=maxGoodieLayers;
+  currTopID=LTopStart-1;
 
   for (let i=0; i<totalLayers; i++) {
 
@@ -122,44 +176,77 @@ function randomizePeep(){
         let objID;
 
         let r=random(1);
-       
-        if (i==LHead){ //// head
-          if (itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull) objSKU=itemSKUs[LBody]; //follow if zombie of skull
-          else {
-            objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
-            objSKU=wdb[genderID].data[i].clothes[objID].sku;
-          }
+        let ch=showChance[i];
+
+        if (isGoodie(i) || isTop(i))
+          console.log("Layer "+ i+" - "+wdb[genderID].data[i].layer+" random: "+r + " chance:"+ch+ (r>ch?" XXXXXX ":""));
+
+
+        ///////////////////
+
+        if (i==LHead && (itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull)) { //// head follow skill/zombie
+          objSKU=itemSKUs[LBody]; //follow if zombie of skull
         }
         else if ( ( i==LFace || i==LBeard) && ( itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull) ){ 
           ///// no face and no beard if
           //// zombie or skull
-         
         }
-        else if ((i>=LTopStart && i<=LTopEnd) && (i-LTopStart>=topTotal)){ //tops
-           /// no item
-        }
-        else if ((i>=LGoodieStart && i<=LGoodieEnd) && (r<0.9) ) { //goodie
-           //// no item
-        }
-     
         else if (i==LHairS) { // hairSSSSS
           objSKU=itemSKUs[LHair]; ///follow hair SKU
         }
+        else if ( isTop(i) && (r>ch)){ //tops
+           /// no item
+           //console.log("no tops!");
+           validTop--;
+        }
+        else if ( isGoodie(i) && (r>ch) ) { //goodie
+           //// no item
+           //console.log("   no goodie!");
+           validGoodie--;
+        }
         else 
         { 
-          objID=Math.floor(random(objTotal));
+          ///// assign SKU ///////
+
+          if (i==LBody){
+            objID=0; //normal
+            if (r<chanceSkull) objID=ISkull; //skull
+            else if (r<chanceZombie) objID=IZombie; //zombie
+            else if (r<chanceTatoo) objID=2; //tatoo
+            else if (r<chanceSexy) objID=1; //sexy
+          }
+          else if (i==LHead) {
+            objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
+          } else {
+            objID=Math.floor(random(objTotal));
+          }
+
+          if (isTop(i)) currTopID=i;
+
           objSKU=wdb[genderID].data[i].clothes[objID].sku;
         }
+
         itemSKUs[i]=objSKU;
 
-        /////////// color /////
+        myMaxTopID=currTopID;
+
+
+        /////////// color /////////////////////////////////////////////////////////////////////
         let canColor=-1;
+
+        r=random(); ///for hair color
 
         if (i==LBody) itemColors[i]=Math.floor(random(skinColor.length)); //body 
         else if (i==LHead) itemColors[i]=itemColors[LBody]; //head follows body
-        else if (i==LBeard) itemColors[i]=Math.floor(random(hairColor.length)); // beard
+        else if (i==LBeard) {
+
+            if (r<chanceCrazyHair)
+               itemColors[i]=crazyHairStart+Math.floor(random(hairColor.length-crazyHairStart)); // beard
+            else 
+               itemColors[i]=Math.floor(random(crazyHairStart)); // beard
+        }
         else if (i==LHair) itemColors[i]=itemColors[LBeard];// hair follows beard
-        else if (i>=LTopStart && i<=LTopEnd) { //tops
+        else if (isTop(i)) { //tops
 
           itemColors[i]=-1; //no tint
 
@@ -169,7 +256,7 @@ function randomizePeep(){
           }
       
         }
-        else if (i>=LGoodieStart && i<=LGoodieEnd) {//goodies
+        else if (isGoodie(i)) {//goodies
           itemColors[i]=-1; //no tint
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
@@ -182,16 +269,18 @@ function randomizePeep(){
   bgC=Math.floor(random(bgColorPal.length)); 
 
   //testing
-  //itemSKUs[LGoodieEnd-1]=1002; //helmut 
-  //itemColors[LGoodieEnd-1]=-1;
-    //itemSKUs[LGoodieStart]=1001; //glasses 
-    //itemColors[LGoodieStart]=-1;
-
-
- // if (genderID==1) itemSKUs[LBeard]=11; //beard
+  //itemSKUs[LGoodieMouth]=1003; 
+  /*
+  if (genderID==0){
+    itemSKUs[9]=130; //necklace 
+    if (currTopID<9) currTopID=myMaxTopID=9;
+  }
+  */
   //end debug
 
-  console.log(itemSKUs);
+  //console.log(itemSKUs);
+
+  console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
 }
 
 function showPeep(){
@@ -203,9 +292,9 @@ function showPeep(){
 
   let pScale=2.0; 
   let shortSide = width<height?width:height;
-  let manWidth=pScale*shortSide;
+  let manWidth=int(pScale*shortSide);
 
-  if (manWidth>500) manWidth=500;
+  if (manWidth>560) manWidth=560;  /// ow=80 
 
   let manScale=manWidth/oW;
 
@@ -215,9 +304,11 @@ function showPeep(){
   for (let i=0; i<totalLayers; i++) {
 
     
-    if ((i>=LTopStart && i<=LTopEnd) && (i-LTopStart >= currTopTotal)){ 
+    if (isTop(i) && i>currTopID){ 
       // skip item tops if not showing
-    } else if (itemSKUs[i]>=0) {
+    } else 
+
+    if (itemSKUs[i]>=0) {
 
       let cid=itemColors[i];
 
@@ -227,9 +318,9 @@ function showPeep(){
         tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2]); 
       else if (i==LHairS) //hair highlight
         tint(255,60);
-      else if (i>=LTopStart && i<=LTopEnd && cid>=0) //tops
+      else if (isTop(i) && cid>=0) //tops
         tint(topColor[cid][0], topColor[cid][1], topColor[cid][2]); 
-      else if (i>=LGoodieStart && i<=LGoodieEnd && cid>=0) //goodies 
+      else if (isGoodie(i) && cid>=0) //goodies 
         tint(topColor[cid][0], topColor[cid][1], topColor[cid][2]); 
       else 
         noTint();
@@ -276,8 +367,8 @@ function loadPeep(){
     else 
     { 
       if (i==LHairS) imgName+="hair"+genderName+objSKU+"s.png"; //hairSSSS
-      else if (i>=LGoodieStart && i<=LGoodieEnd) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
-      else if (i>=LTopStart && i<=LTopEnd) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
+      else if (isGoodie(i)) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
+      else if (isTop(i)) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
       else imgName+=layerName+genderName+objSKU+".png"; //body
 
 
@@ -313,21 +404,35 @@ let lastPressedTime=0;
 
 function mousePressed(){
 
+  isShowcase=false;
   /// fix Chrome's double trigger bug for mobile
   
   let date = new Date();
   let currPressedTime=date.getTime();
   let diff=currPressedTime-lastPressedTime;
-  console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
+  //console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
 
   if (diff>300) {
       lastPressedTime=currPressedTime;
-      currTopTotal--;
-      if (currTopTotal<1) currTopTotal=topTotal;
+      
+
+      if (currTopID==LTopStart) { //underwear
+        if (itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //has underwear then reset  
+      } 
+      else if (currTopID<LTopStart) { //naked
+        currTopID=myMaxTopID; // reset  
+      } 
+
+      else {
+          do {
+            currTopID--;
+          } while (itemSKUs[currTopID]<0 && currTopID>=LTopStart);
+      }
+
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
 
       showPeep();
 
-      console.log(event);
   }
 }
 
@@ -401,7 +506,7 @@ let wdb=[
 
 
   {
-      "layer":"0 bra F",
+      "layer":"3 bra F",
       "clothes":[
                  {"sku":"0","g":1,"color":1,"name":"Bra","rank":"FREE"},
                  {"sku":"1","g":1,"color":1,"name":"Bra","rank":"coolpack"},
@@ -411,7 +516,7 @@ let wdb=[
                  {"sku":"5","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"6","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"7","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"8","g":1,"color":0,"name":"Bra","rank":"coolpack"},
+                 {"sku":"8","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"9","g":1,"color":1,"name":"Bra","rank":"coolpack"},
                  {"sku":"10","g":1,"color":1,"name":"Bra","rank":"coolpack","party":"basic"},
                  {"sku":"63","g":1,"color":0,"name":"Bra","rank":"coolpack"},
@@ -419,7 +524,7 @@ let wdb=[
   },
 
   {
-      "layer":"1 innerwear F",
+      "layer":"4 innerwear F",
       "clothes":[
 
                  {"sku":"12","g":1,"color":1,"name":"tee","rank":"FREE"},
@@ -458,16 +563,8 @@ let wdb=[
                  {"sku":"135","name":"Jourden Navy Paws Bralette","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"136","name":"Jourden Black Bralette With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"137","name":"Jourden Red Bralette With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 
                  {"sku":"150","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 
-                 
-                 {"sku":"179","g":1,"color":0,"name":"Kate Spade New York Metallic Top","rank":"brn_fw","scan":"brn_fw"},
-                 
-                 
-                 
-                 
-                 
+                 {"sku":"179","g":1,"color":0,"name":"Kate Spade New York Metallic Top","rank":"brn_fw","scan":"brn_fw"},                 
                  {"sku":"165","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
                  
                 
@@ -478,7 +575,7 @@ let wdb=[
       
       
       {
-      "layer":"F 2 shirt",
+      "layer":"F 5 shirt",
       "clothes":[
                  {"sku":"47","g":2,"color":1,"name":"tee","rank":"FREE"},
                  {"sku":"51","g":3,"color":1,"name":"tee","rank":"FREE"},
@@ -511,7 +608,7 @@ let wdb=[
       },
 
       {
-      "layer":"F 3 jacket",
+      "layer":"F 6 jacket",
       "clothes":[
                  {"sku":"65","g":3,"color":1,"name":"tee","rank":"FREE"},
                  {"sku":"66","g":2,"color":1,"name":"tee","rank":"coolpack"},
@@ -567,7 +664,7 @@ let wdb=[
       },
       
       {
-      "layer":"F 4",
+      "layer":"F 7",
       "clothes":[
                  {"sku":"79","g":2,"color":1,"name":"tee","rank":"FREE"},
                  {"sku":"80","g":2,"color":1,"name":"tee","rank":"coolpack"},
@@ -579,7 +676,7 @@ let wdb=[
       },
       
       {
-      "layer":"F 5",
+      "layer":"F 8",
       "clothes":[
                  {"sku":"83","g":2,"color":1,"name":"tee","rank":"FREE"},
                  {"sku":"84","g":2,"color":1,"name":"tee","rank":"coolpack"},
@@ -590,40 +687,33 @@ let wdb=[
                  ]
       },
       {
-      "layer":"F 6",
+      "layer":"F 9",
       "clothes":[
                  {"sku":"93","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"95","g":2,"color":1,"name":"tee","rank":"coolpack"},
+                  {"sku":"130","g":2,"color":0,"name":"necklace","rank":"coolpack"},
+                  {"sku":"129","g":2,"color":0,"name":"necklace","rank":"coolpack"},
+                  {"sku":"128","g":2,"color":1,"name":"necklace","rank":"coolpack"},
                  
                  ]
       },
       
       {
-      "layer":"F 7",
+      "layer":"F 10",
       "clothes":[
                  
                  {"sku":"98","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"99","g":2,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"100","g":2,"color":1,"name":"tee","rank":"coolpack"},
-
+                 {"sku":"1078","name":"necklace short","g":1,"color":0,"rank":"peep"},
+                 {"sku":"1079","name":"necklace long","g":1,"color":0,"rank":"peep"},
                  
                  ]
       },
       
-      {
-      "layer":"F 8",
-      "clothes":[
-                 {"sku":"101","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"116","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 ]
-      },
-      
-     
-      
-      
       
       {
-      "layer":"F 10 big scarf",
+      "layer":"F 11 big scarf",
       "clothes":[
                  {"sku":"102","g":5,"color":1,"name":"tee","rank":"coolpack"},
                  {"sku":"103","g":5,"color":1,"name":"tee","rank":"coolpack"},
@@ -725,18 +815,20 @@ let wdb=[
   },
 
     {
-  "layer":"G",
+  "layer":"G 15",
   "clothes":[
-             
+             {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
+             {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
              {"sku":"80","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
              {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
+             {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
              ]
   
   },
   
   
   {
-  "layer":"G",
+  "layer":"G 16",
   "clothes":[
              {"name":"Trucker Cap","g":1,"color":1,"sku":"0","rank":"coolpack"},
              {"name":"Headdband","g":1,"color":1,"sku":"1","rank":"coolpack"},
@@ -761,15 +853,15 @@ let wdb=[
              {"name":"headband thin","g":1,"color":1,"sku":"47","rank":"coolpack"},
              {"name":"headband","g":1,"color":1,"sku":"48","rank":"coolpack"},
              {"name":"rabbit","g":1,"color":0,"sku":"49","rank":"coolpack"},
-             {"name":"cat","g":1,"color":1,"sku":"50","rank":"coolpack"},
-             {"name":"rat","g":1,"color":1,"sku":"51","rank":"coolpack"},
+             {"name":"cat","g":1,"color":0,"sku":"50","rank":"coolpack"},
+             {"name":"rat","g":1,"color":0,"sku":"51","rank":"coolpack"},
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
              ]
   
   },
   
   {
-  "layer":"G",
+  "layer":"G 17",
   "clothes":[
              {"name":"3D","g":1,"color":0,"sku":"12","rank":"FREE"},
              {"name":"Glasses","g":1,"color":1,"sku":"13","rank":"coolpack"},
@@ -787,25 +879,26 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
              {"name":"eye patch","g":1,"color":0,"sku":"62","rank":"coolpack"},
+             
+             ]
+  
+  },
+  
+    {
+  "layer":"G 18",
+  "clothes":[
              {"name":"horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"67","rank":"coolpack"},
-             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
+             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              ]
   
   },
-  
-  {
-  "layer":"G",
-  "clothes":[
-             {"sku":"78","name":"necklace short","g":1,"color":0,"rank":"coolpack"},
-             {"sku":"79","name":"necklace long","g":1,"color":0,"rank":"coolpack"},
-            ]
-  
-  },
+
+ 
   
  
   ]
@@ -875,7 +968,7 @@ let wdb=[
 
 
   {
-  "layer":"M 0 underwear",
+  "layer":"M 3 underwear",
   "clothes":[
              {"sku":"0","g":1,"color":1,"name":"Tank Top","rank":"coolpack"},
              {"sku":"1","g":1,"color":1,"name":"Inner Tee","rank":"coolpack"},
@@ -888,14 +981,14 @@ let wdb=[
              {"sku":"8","g":1,"color":1,"name":"Stripes long","rank":"coolpack"},
              {"sku":"9","g":1,"color":1,"name":"Dots Tee","rank":"coolpack"},
              {"sku":"10","g":1,"color":1,"name":"Turtle neck","rank":"coolpack"},
-             {"sku":"11","g":1,"color":1,"name":"Sports Tank","rank":"coolpack"},
+             {"sku":"11","g":1,"color":1,"name":"Sports Tank","rank":"coolpack"}, 
             
              ]
   
   },
   
   {
-  "layer":"M 1",
+  "layer":"M 4",
   "clothes":[
              {"name":"Tee","g":1,"color":1,"sku":"12","rank":"FREE"},
              {"name":"V-neck Tee","g":1,"color":1,"sku":"13","rank":"coolpack"},
@@ -911,7 +1004,6 @@ let wdb=[
              {"name":"Circle Tee","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Three color Polo","g":1,"color":0,"sku":"24","rank":"coolpack"},
              {"name":"db-db Tee","g":1,"color":1,"sku":"25","rank":"FREE"},
-             {"name":"MIT Tee","g":1,"color":1,"sku":"26","rank":"coolpack"},
              {"name":"flash tee","g":1,"color":1,"sku":"118","rank":"FREE", "scan":"QR_supercoolstyle"},
              
              ]
@@ -919,7 +1011,7 @@ let wdb=[
   },
   
   {
-  "layer":"M 2 shirts",
+  "layer":"M 5 shirts",
   "clothes":[
              {"name":"Shirt","g":2,"color":1,"sku":"27","rank":"FREE"},
              {"name":"Denim Shirt","g":2,"color":0,"sku":"28","rank":"coolpack"},
@@ -939,25 +1031,14 @@ let wdb=[
              {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42","rank":"coolpack"},
              {"name":"Cardigan ","g":2,"color":1,"sku":"43","rank":"coolpack"},
              {"sku":"131","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
+             {"name":"black tie","g":2,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"black bowtie","g":2,"color":0,"sku":"1001","rank":"peep"},
              ]
   
   },
   
   {
-  "layer":"3 ties",
-  "clothes":[
-             {"name":"Tie","g":5,"color":1,"sku":"60","rank":"coolpack"},
-             {"name":"Bowtie big","g":5,"color":1,"sku":"104","rank":"coolpack"},
-             {"name":"Bowtie small","g":5,"color":1,"sku":"105","rank":"coolpack"},
-             {"name":"black Tie","g":5,"color":0,"sku":"1000","rank":"peep"},
-             ]
-   
-  },
-  
-  
-  
-  {
-  "layer":"4",
+  "layer":"6M",
   "clothes":[
              {"name":"Dark jacket","g":2,"color":1,"sku":"44","rank":"coolpack"},
              {"name":"Big Tee","g":1,"color":1,"sku":"45","rank":"coolpack"},
@@ -981,7 +1062,7 @@ let wdb=[
   },
   
   {
-  "layer":"5",
+  "layer":"7M",
   "clothes":[
              {"name":"School Jacket","g":2,"color":1,"sku":"62","rank":"FREE"},
              {"name":"Long blazer","g":2,"color":1,"sku":"63","rank":"coolpack"},
@@ -1001,7 +1082,7 @@ let wdb=[
   },
   
   {
-  "layer":"6",
+  "layer":"8M",
   "clothes":[
              {"name":"Coat","g":2,"color":1,"sku":"74","rank":"coolpack"},
              {"name":"Coat Camel","g":2,"color":0,"sku":"75","rank":"coolpack"},
@@ -1018,7 +1099,7 @@ let wdb=[
   },
   
   {
-  "layer":"7M",
+  "layer":"9M",
   "clothes":[
              {"name":"Jumper","g":1,"color":1,"sku":"84","rank":"coolpack"},
              {"name":"Stripes knit","g":1,"color":1,"sku":"85","rank":"coolpack"},
@@ -1027,6 +1108,8 @@ let wdb=[
              {"name":"Scarf------------","g":5,"color":1,"sku":"88","rank":"coolpack"},
              {"name":"Scarf------------","g":5,"color":1,"sku":"89","rank":"coolpack"},
              {"name":"Scarf------------","g":5,"color":1,"sku":"90","rank":"coolpack"},
+             {"sku":"117","g":2,"color":0,"name":"necklace","rank":"coolpack"},
+             {"sku":"116","g":2,"color":0,"name":"necklace","rank":"coolpack"},
 
              ]
   
@@ -1043,6 +1126,8 @@ let wdb=[
              {"name":"Down Jacket","g":3,"color":1,"sku":"97","rank":"coolpack"},
              {"name":"Down Jacket Golden","g":3,"color":0,"sku":"98","rank":"coolpack"},
              {"name":"Big coat","g":2,"color":1,"sku":"99","rank":"coolpack"},
+             {"sku":"1073","name":"necklace short","g":1,"color":0,"rank":"peep"},
+             {"sku":"1074","name":"necklace long","g":1,"color":0,"rank":"peep"},
              ]
   
   },
@@ -1180,10 +1265,15 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-            
+
+             {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
+             {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
              {"sku":"64","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
              {"sku":"75","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
              {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
+             {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
+
+
              ]
   
   },
@@ -1213,6 +1303,7 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
              {"name":"headband","g":1,"color":1,"sku":"46","rank":"FREE"},
              {"name":"headband","g":1,"color":1,"sku":"47","rank":"coolpack"},
+             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
              ]
   
   },
@@ -1236,30 +1327,26 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
              {"name":"eye patch","g":1,"color":0,"sku":"57","rank":"coolpack"},
+             
+             ]
+  
+  },
+
+   {
+  "layer":"G",
+  "clothes":[
              {"name":"horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
-             {"name":"horse white head","g":1,"color":0,"sku":"62","rank":"coolpack"},
-             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"horse white head","g":1,"color":0,"sku":"62","rank":"coolpack"},             
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
-
+             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              ]
   
   },
   
-  {
-  "layer":"G",
-  "clothes":[
-             
-             {"sku":"73","name":"necklace short","g":1,"color":0,"rank":"coolpack"},
-             {"sku":"74","name":"necklace long","g":1,"color":0,"rank":"coolpack"},
-             
-            
 
-             ]
-  
-  },
   
  
 
