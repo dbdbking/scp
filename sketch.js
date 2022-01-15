@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.0----");
+console.log("-----  Super Cool Peeps 2021 v0.5.1----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -111,7 +111,7 @@ function setup() {
 
 }
 
-let isShowcase=true;
+let isShowcase=false;
 let showcaseID=0;
 let stopShowcaseID=499;
 
