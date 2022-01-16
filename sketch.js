@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.2----");
+console.log("-----  Super Cool Peeps 2021 v0.5.3----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -17,29 +17,25 @@ console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
 ///scp init///
 let genderID=0;
 
-let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=18;
+let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=17;
 const showChance=[1,1,1, //body,head,face
                   0.99,0.5,0.33,0.25,0.2,0.15,0.12,0.1,0.1, //tops
                   1,1,1, //beard, hair
-                  0.2,0.4,0.4,0.1 //mouth, hat, eye, face
+                  0.2,0.4,0.4, //mouth, hat/face, eye
                   ];
 let totalLayers=showChance.length;
 let chanceCrazyHair=0.1;
 let chanceCrazySkin=0.1;
-let chanceSkull=0.01;
-let chanceZombie=0.05;
-let chanceTatoo=0.1;
-let chanceSexy=0.3;
+
+let chanceSkull=0.02;
+let chanceZombie=0.08; // = 0.06 chance
+let chanceApe=0.18; // = 0.10 chance
+let chanceTatoo=0.38; //= 0.20 chance
+let chanceSexy=0.68; //= 0.30 chance  
+                    //normal: 0.32 chacne
 
 
-
-let LGoodieMouth=LGoodieStart;
-let LGoodieHead=LGoodieStart+1;
-let LGoodieEye=LGoodieStart+2;
-let LGoodieFace=LGoodieStart+3;
-
-
-let IZombie=3, ISkull=4, IApe=5;
+let SKUZombie=3, SKUSkull=4, SKUApe=7; //sku
 const maxTopLayers=LTopEnd-LTopStart+1;
 const maxGoodieLayers=LGoodieEnd-LGoodieStart+1;
 
@@ -75,8 +71,8 @@ const bgColorPal=[[74,47,75],[58,42,74],[40,40,74],[37,54,83],
                   [136,132,77],/*[121,92,63],[116,75,58],[114,64,56],*/ [118,70,89]
                   ];
 
-const zombieColor=[0,255,0];
-const skullColor=[255,0,255];
+const zombieColor=[255,0,255];
+const skullColor=[0,255,255];
 const apeColor=[0,255,0];
 
 
@@ -183,12 +179,12 @@ function randomizePeep(){
 
         ///////////////////
 
-        if (i==LHead && (itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull)) { //// head follow skill/zombie
-          objSKU=itemSKUs[LBody]; //follow if zombie of skull
+        if (i==LHead && (itemSKUs[LBody]==SKUZombie||itemSKUs[LBody]==SKUSkull||itemSKUs[LBody]==SKUApe)) { //// head follow skill/zombie/ape
+          objSKU=itemSKUs[LBody]; //follow if zombie/skull/ape
         }
-        else if ( ( i==LFace || i==LBeard) && ( itemSKUs[LBody]==IZombie||itemSKUs[LBody]==ISkull) ){ 
+        else if ( ( i==LFace || i==LBeard) && ( itemSKUs[LBody]==SKUZombie||itemSKUs[LBody]==SKUSkull||itemSKUs[LBody]==SKUApe) ){ 
           ///// no face and no beard if
-          //// zombie or skull
+          //// zombie/skull/ape
         }
         else if (i==LHairS) { // hairSSSSS
           objSKU=itemSKUs[LHair]; ///follow hair SKU
@@ -208,21 +204,22 @@ function randomizePeep(){
           ///// assign SKU ///////
 
           if (i==LBody){
-            objID=0; //normal
-            if (r<chanceSkull) objID=ISkull; //skull
-            else if (r<chanceZombie) objID=IZombie; //zombie
-            else if (r<chanceTatoo) objID=2; //tatoo
-            else if (r<chanceSexy) objID=1; //sexy
+            
+            if (r<chanceSkull) objSKU=SKUSkull; //skull
+            else if (r<chanceZombie) objSKU=SKUZombie; //zombie
+            else if (r<chanceApe) objSKU=SKUApe; //Ape
+            else if (r<chanceTatoo) objSKU=2; //tatoo
+            else if (r<chanceSexy) objSKU=1; //sexy
+            else objSKU=0; //normal
           }
           else if (i==LHead) {
-            objID=Math.floor(random(objTotal-2)); //exclude zombie and skull
+            objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
           } else {
             objID=Math.floor(random(objTotal));
           }
 
           if (isTop(i)) currTopID=i;
-
-          objSKU=wdb[genderID].data[i].clothes[objID].sku;
+          if (objSKU<0) objSKU=wdb[genderID].data[i].clothes[objID].sku;
         }
 
         itemSKUs[i]=objSKU;
@@ -278,15 +275,14 @@ function randomizePeep(){
   bgC=Math.floor(random(bgColorPal.length)); 
 
   //testing
-  //itemSKUs[LGoodieMouth]=1003; 
+
   /*
-  let tempID=4; 
-  itemSKUs[tempID]=10;
-  currTopID=myMaxTopID=tempID;
+  itemSKUs[15]=1001;
+  itemSKUs[17]=7;
+  currTopID=myMaxTopID=LGoodieEnd;
   */
   
-  
-  //end debug
+  //end testing debug
 
   //console.log(itemSKUs);
 
@@ -296,8 +292,9 @@ function randomizePeep(){
 function showPeep(){
 
  
-  if (itemSKUs[LBody]==IZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
-  else if (itemSKUs[LBody]==ISkull) background(skullColor[0],skullColor[1],skullColor[2]);
+  if (itemSKUs[LBody]==SKUZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
+  else if (itemSKUs[LBody]==SKUSkull) background(skullColor[0],skullColor[1],skullColor[2]);
+  else if (itemSKUs[LBody]==SKUApe) background(apeColor[0],apeColor[1],apeColor[2]);
   else background(bgColorPal[bgC][0], bgColorPal[bgC][1], bgColorPal[bgC][2]);
 
   let pScale=2.0; 
@@ -322,7 +319,7 @@ function showPeep(){
 
       let cid=itemColors[i];
 
-      if ((i==LBody || i==LHead) && itemSKUs[LBody]!=IZombie && itemSKUs[LBody]!=ISkull) //body & head &no zombie & no skull 
+      if ((i==LBody || i==LHead) && itemSKUs[LBody]!=SKUZombie && itemSKUs[LBody]!=SKUSkull && itemSKUs[LBody]!=SKUApe) //body & head & not zombie/skull/ape 
         tint(skinColor[cid][0], skinColor[cid][1], skinColor[cid][2]); 
       else if (i==LHair || i==LBeard) //hair + beard
         tint(hairColor[cid][0], hairColor[cid][1], hairColor[cid][2]); 
@@ -477,6 +474,7 @@ let wdb=[
           {"sku":"2","s":0,"name":"tattoo"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"7","s":0,"name":"ape"},
          ]
   
   },
@@ -491,6 +489,7 @@ let wdb=[
           {"sku":"6","s":0,"name":"XS"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"7","s":0,"name":"ape"},
           
           ]
   },
@@ -836,6 +835,29 @@ let wdb=[
   
   },
   
+   {
+  "layer":"G 17",
+  "clothes":[
+             {"name":"3D","g":1,"color":0,"sku":"12"},
+             {"name":"Glasses","g":1,"color":1,"sku":"13"},
+             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
+             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
+             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
+             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
+             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
+             {"name":"eye patch","g":1,"color":0,"sku":"62"},
+             
+             ]
+  
+  },
   
   {
   "layer":"G 16",
@@ -866,37 +888,7 @@ let wdb=[
              {"name":"cat","g":1,"color":0,"sku":"50"},
              {"name":"rat","g":1,"color":0,"sku":"51"},
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-             ]
-  
-  },
-  
-  {
-  "layer":"G 17",
-  "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
-             {"name":"eye patch","g":1,"color":0,"sku":"62"},
-             
-             ]
-  
-  },
-  
-    {
-  "layer":"G 18",
-  "clothes":[
+
              {"name":"horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
@@ -904,12 +896,13 @@ let wdb=[
              {"name":"horse white head","g":1,"color":0,"sku":"67"},
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+
+
              ]
   
   },
-
- 
   
+
  
   ]
  },
@@ -936,6 +929,7 @@ let wdb=[
           {"sku":"2","s":0,"name":"tattoo"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"7","s":0,"name":"ape"},
           
           ]
   
@@ -952,6 +946,7 @@ let wdb=[
           {"sku":"6","s":0,"name":"XS"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"7","s":0,"name":"ape"},
           
           ]
   },
@@ -1288,34 +1283,7 @@ let wdb=[
   },
   
   
-  {
-  "layer":"G",
-  "clothes":[
-             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
-             {"name":"FL Cap","g":1,"color":1,"sku":"1"},
-             {"name":"Fedora","g":1,"color":1,"sku":"2"},
-             {"name":"Beanie","g":1,"color":1,"sku":"3"},
-             {"name":"Beanie","g":1,"color":1,"sku":"4"},
-             {"name":"Beanie","g":1,"color":1,"sku":"5"},
-             {"name":"Beanie","g":1,"color":1,"sku":"6"},
-             {"name":"Beanie","g":1,"color":1,"sku":"7"},
-             {"name":"Beanie","g":1,"color":1,"sku":"8"},
-             {"name":"Beanie","g":1,"color":1,"sku":"9"},
-             {"name":"Beanie","g":1,"color":1,"sku":"10"},
-             {"name":"Beanie","g":1,"color":1,"sku":"11"},
-             {"name":"Beanie","g":1,"color":1,"sku":"26"},
-             {"name":"Beanie","g":1,"color":1,"sku":"27"},
-             {"name":"Beanie","g":1,"color":1,"sku":"28"},
-             {"name":"Beanie","g":1,"color":1,"sku":"29"},
-             {"name":"Beanie","g":1,"color":1,"sku":"30"},
-             {"name":"headphones","g":1,"color":1,"sku":"36"},
-             {"name":"bike cap","g":1,"color":1,"sku":"42"},
-             {"name":"headband","g":1,"color":1,"sku":"46"},
-             {"name":"headband","g":1,"color":1,"sku":"47"},
-             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-             ]
   
-  },
   
   {
   "layer":"G",
@@ -1341,20 +1309,46 @@ let wdb=[
   
   },
 
-   {
+
+  {
   "layer":"G",
   "clothes":[
-             {"name":"horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
+             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
+             {"name":"FL Cap","g":1,"color":1,"sku":"1"},
+             {"name":"Fedora","g":1,"color":1,"sku":"2"},
+             {"name":"Beanie","g":1,"color":1,"sku":"3"},
+             {"name":"Beanie","g":1,"color":1,"sku":"4"},
+             {"name":"Beanie","g":1,"color":1,"sku":"5"},
+             {"name":"Beanie","g":1,"color":1,"sku":"6"},
+             {"name":"Beanie","g":1,"color":1,"sku":"7"},
+             {"name":"Beanie","g":1,"color":1,"sku":"8"},
+             {"name":"Beanie","g":1,"color":1,"sku":"9"},
+             {"name":"Beanie","g":1,"color":1,"sku":"10"},
+             {"name":"Beanie","g":1,"color":1,"sku":"11"},
+             {"name":"Beanie","g":1,"color":1,"sku":"26"},
+             {"name":"Beanie","g":1,"color":1,"sku":"27"},
+             {"name":"Beanie","g":1,"color":1,"sku":"28"},
+             {"name":"Beanie","g":1,"color":1,"sku":"29"},
+             {"name":"Beanie","g":1,"color":1,"sku":"30"},
+             {"name":"headphones","g":1,"color":1,"sku":"36"},
+             {"name":"bike cap","g":1,"color":1,"sku":"42"},
+             {"name":"headband","g":1,"color":1,"sku":"46"},
+             {"name":"headband","g":1,"color":1,"sku":"47"},
+             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
+
+
+               {"name":"horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
              {"name":"horse white head","g":1,"color":0,"sku":"62"},             
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+
+
              ]
   
   },
-  
 
   
  
