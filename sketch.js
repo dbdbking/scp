@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.1----");
+console.log("-----  Super Cool Peeps 2021 v0.5.2----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -25,6 +25,7 @@ const showChance=[1,1,1, //body,head,face
                   ];
 let totalLayers=showChance.length;
 let chanceCrazyHair=0.1;
+let chanceCrazySkin=0.1;
 let chanceSkull=0.01;
 let chanceZombie=0.05;
 let chanceTatoo=0.1;
@@ -52,10 +53,14 @@ let isLoadingImg=false;
 
 const oW=80, oH=142;
 
-const skinColor=[[250,245,239],[255,224,189],[234,192,134],/*[184,152,112],*/[131,108,79],[85,70,52]];
+const skinColor=[[255,224,189],[234,192,134],/*[184,152,112],*/[131,108,79],[85,70,52],   
+                 [134,166,212],[99,132,54],[250,245,239]];
 const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139],[255,255,255]];
+
 const crazyHairStart=6;
+const crazySkinStart=4;
+
 
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
@@ -77,8 +82,6 @@ const apeColor=[0,255,0];
 
 let bgC=0;
 
-let currTopTotal=0;
-let topTotal=0;
 let currTopID,myMaxTopID;
 
 
@@ -157,12 +160,8 @@ function randomizePeep(){
 
   genderID = Math.floor(random(2));
 
-  topTotal=maxTopLayers;
-  currTopTotal=topTotal;
-
-
-  //topTotal=0;  //debugging
-  console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+topTotal);
+ 
+  console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+maxTopLayers);
 
 
   let validTop=maxTopLayers;
@@ -175,7 +174,7 @@ function randomizePeep(){
         let objSKU=-1;
         let objID;
 
-        let r=random(1);
+        let r=random();
         let ch=showChance[i];
 
         if (isGoodie(i) || isTop(i))
@@ -227,23 +226,30 @@ function randomizePeep(){
         }
 
         itemSKUs[i]=objSKU;
-
         myMaxTopID=currTopID;
 
 
         /////////// color /////////////////////////////////////////////////////////////////////
         let canColor=-1;
 
-        r=random(); ///for hair color
+        r=random(); ///for hair & skin color 
 
-        if (i==LBody) itemColors[i]=Math.floor(random(skinColor.length)); //body 
+        if (i==LBody) {
+
+          if (r<chanceCrazySkin)
+               itemColors[i]=crazySkinStart+Math.floor(random(skinColor.length-crazySkinStart)); //crazy 
+            else 
+               itemColors[i]=Math.floor(random(crazySkinStart)); //normal
+          
+            
+        }
         else if (i==LHead) itemColors[i]=itemColors[LBody]; //head follows body
         else if (i==LBeard) {
 
             if (r<chanceCrazyHair)
-               itemColors[i]=crazyHairStart+Math.floor(random(hairColor.length-crazyHairStart)); // beard
+               itemColors[i]=crazyHairStart+Math.floor(random(hairColor.length-crazyHairStart)); // crazy
             else 
-               itemColors[i]=Math.floor(random(crazyHairStart)); // beard
+               itemColors[i]=Math.floor(random(crazyHairStart)); // normal
         }
         else if (i==LHair) itemColors[i]=itemColors[LBeard];// hair follows beard
         else if (isTop(i)) { //tops
@@ -264,6 +270,9 @@ function randomizePeep(){
           }
          
         }
+
+
+
   }
 
   bgC=Math.floor(random(bgColorPal.length)); 
@@ -271,11 +280,12 @@ function randomizePeep(){
   //testing
   //itemSKUs[LGoodieMouth]=1003; 
   /*
-  if (genderID==0){
-    itemSKUs[9]=130; //necklace 
-    if (currTopID<9) currTopID=myMaxTopID=9;
-  }
+  let tempID=4; 
+  itemSKUs[tempID]=10;
+  currTopID=myMaxTopID=tempID;
   */
+  
+  
   //end debug
 
   //console.log(itemSKUs);
@@ -488,18 +498,18 @@ let wdb=[
   {
   "layer":"face",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
           ]
   
   },
@@ -508,18 +518,18 @@ let wdb=[
   {
       "layer":"3 bra F",
       "clothes":[
-                 {"sku":"0","g":1,"color":1,"name":"Bra","rank":"FREE"},
-                 {"sku":"1","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"2","g":1,"color":1,"name":"Bra","rank":"FREE"},
-                 {"sku":"3","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"4","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"5","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"6","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"7","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"8","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"9","g":1,"color":1,"name":"Bra","rank":"coolpack"},
-                 {"sku":"10","g":1,"color":1,"name":"Bra","rank":"coolpack","party":"basic"},
-                 {"sku":"63","g":1,"color":0,"name":"Bra","rank":"coolpack"},
+                 {"sku":"0","g":1,"color":1,"name":"Bra"},
+                 {"sku":"1","g":1,"color":1,"name":"Bra"},
+                 {"sku":"2","g":1,"color":1,"name":"Bra"},
+                 {"sku":"3","g":1,"color":1,"name":"Bra"},
+                 {"sku":"4","g":1,"color":1,"name":"Bra"},
+                 {"sku":"5","g":1,"color":1,"name":"Bra"},
+                 {"sku":"6","g":1,"color":1,"name":"Bra"},
+                 {"sku":"7","g":1,"color":1,"name":"Bra"},
+                 {"sku":"8","g":1,"color":1,"name":"Bra"},
+                 {"sku":"9","g":1,"color":1,"name":"Bra"},
+                 {"sku":"10","g":1,"color":1,"name":"Bra","party":"basic"},
+                 {"sku":"63","g":1,"color":0,"name":"Bra"},
                  ]
   },
 
@@ -527,39 +537,39 @@ let wdb=[
       "layer":"4 innerwear F",
       "clothes":[
 
-                 {"sku":"12","g":1,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"13","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"14","g":1,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"15","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"16","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"17","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"18","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"19","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"20","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"21","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"22","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"23","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"24","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"25","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"26","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"27","g":2,"color":1,"name":"shirt","rank":"coolpack"},
-                 {"sku":"28","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"29","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"30","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"31","g":2,"color":1,"name":"shirt","rank":"coolpack"},
-                 {"sku":"32","g":2,"color":1,"name":"shirt","rank":"coolpack"},
-                 {"sku":"34","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"35","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"36","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"37","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"38","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"40","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"41","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"43","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"45","g":1,"color":0,"name":"tee","rank":"coolpack"},
-                 {"sku":"64","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"49","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"133","g":1,"color":1,"name":"flash tee","rank":"FREE","scan":"QR_supercoolstyle"},
+                 {"sku":"12","g":1,"color":1,"name":"tee"},
+                 {"sku":"13","g":1,"color":1,"name":"tee"},
+                 {"sku":"14","g":1,"color":1,"name":"tee"},
+                 {"sku":"15","g":1,"color":1,"name":"tee"},
+                 {"sku":"16","g":1,"color":1,"name":"tee"},
+                 {"sku":"17","g":1,"color":1,"name":"tee"},
+                 {"sku":"18","g":1,"color":1,"name":"tee"},
+                 {"sku":"19","g":1,"color":1,"name":"tee"},
+                 {"sku":"20","g":1,"color":1,"name":"tee"},
+                 {"sku":"21","g":1,"color":1,"name":"tee"},
+                 {"sku":"22","g":1,"color":1,"name":"tee"},
+                 {"sku":"23","g":1,"color":1,"name":"tee"},
+                 {"sku":"24","g":1,"color":1,"name":"tee"},
+                 {"sku":"25","g":1,"color":1,"name":"tee"},
+                 {"sku":"26","g":1,"color":1,"name":"tee"},
+                 {"sku":"27","g":2,"color":1,"name":"shirt"},
+                 {"sku":"28","g":1,"color":1,"name":"tee"},
+                 {"sku":"29","g":1,"color":1,"name":"tee"},
+                 {"sku":"30","g":1,"color":1,"name":"tee"},
+                 {"sku":"31","g":2,"color":1,"name":"shirt"},
+                 {"sku":"32","g":2,"color":1,"name":"shirt"},
+                 {"sku":"34","g":1,"color":1,"name":"tee"},
+                 {"sku":"35","g":1,"color":1,"name":"tee"},
+                 {"sku":"36","g":1,"color":1,"name":"tee"},
+                 {"sku":"37","g":1,"color":1,"name":"tee"},
+                 {"sku":"38","g":1,"color":1,"name":"tee"},
+                 {"sku":"40","g":1,"color":1,"name":"tee"},
+                 {"sku":"41","g":1,"color":1,"name":"tee"},
+                 {"sku":"43","g":1,"color":1,"name":"tee"},
+                 {"sku":"45","g":1,"color":0,"name":"tee"},
+                 {"sku":"64","g":1,"color":1,"name":"tee"},
+                 {"sku":"49","g":1,"color":1,"name":"tee"},
+                 {"sku":"133","g":1,"color":1,"name":"flash tee" ,"scan":"QR_supercoolstyle"},
                  {"sku":"135","name":"Jourden Navy Paws Bralette","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"136","name":"Jourden Black Bralette With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"137","name":"Jourden Red Bralette With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
@@ -577,20 +587,20 @@ let wdb=[
       {
       "layer":"F 5 shirt",
       "clothes":[
-                 {"sku":"47","g":2,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"51","g":3,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"52","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"53","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"54","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"55","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"56","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"57","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"58","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"59","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"60","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"61","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"62","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"107","g":2,"color":1,"name":"shirt","rank":"coolpack"},
+                 {"sku":"47","g":2,"color":1,"name":"tee"},
+                 {"sku":"51","g":3,"color":1,"name":"tee"},
+                 {"sku":"52","g":2,"color":1,"name":"tee"},
+                 {"sku":"53","g":2,"color":1,"name":"tee"},
+                 {"sku":"54","g":2,"color":1,"name":"tee"},
+                 {"sku":"55","g":2,"color":1,"name":"tee"},
+                 {"sku":"56","g":2,"color":1,"name":"tee"},
+                 {"sku":"57","g":2,"color":1,"name":"tee"},
+                 {"sku":"58","g":1,"color":1,"name":"tee"},
+                 {"sku":"59","g":1,"color":1,"name":"tee"},
+                 {"sku":"60","g":2,"color":1,"name":"tee"},
+                 {"sku":"61","g":2,"color":1,"name":"tee"},
+                 {"sku":"62","g":2,"color":1,"name":"tee"},
+                 {"sku":"107","g":2,"color":1,"name":"shirt"},
                  
                  {"sku":"142","name":"Jourden Emerald Striped Ribbed Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"143","name":"Jourden Yellow Sheer Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
@@ -610,29 +620,29 @@ let wdb=[
       {
       "layer":"F 6 jacket",
       "clothes":[
-                 {"sku":"65","g":3,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"66","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"67","g":3,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"68","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"69","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"70","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"71","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"72","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"73","g":3,"color":0,"name":"tee","rank":"coolpack"},
-                 {"sku":"74","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"75","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"76","g":3,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"77","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"78","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"108","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"109","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"110","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"111","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"112","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"113","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"114","g":1,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"115","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"132","g":1,"color":0,"name":"leopard tee","rank":"coolpack"},
+                 {"sku":"65","g":3,"color":1,"name":"tee"},
+                 {"sku":"66","g":2,"color":1,"name":"tee"},
+                 {"sku":"67","g":3,"color":1,"name":"tee"},
+                 {"sku":"68","g":1,"color":1,"name":"tee"},
+                 {"sku":"69","g":1,"color":1,"name":"tee"},
+                 {"sku":"70","g":2,"color":1,"name":"tee"},
+                 {"sku":"71","g":2,"color":1,"name":"tee"},
+                 {"sku":"72","g":2,"color":1,"name":"tee"},
+                 {"sku":"73","g":3,"color":0,"name":"tee"},
+                 {"sku":"74","g":2,"color":1,"name":"tee"},
+                 {"sku":"75","g":1,"color":1,"name":"tee"},
+                 {"sku":"76","g":3,"color":1,"name":"tee"},
+                 {"sku":"77","g":2,"color":1,"name":"tee"},
+                 {"sku":"78","g":2,"color":1,"name":"tee"},
+                 {"sku":"108","g":1,"color":1,"name":"tee"},
+                 {"sku":"109","g":1,"color":1,"name":"tee"},
+                 {"sku":"110","g":1,"color":1,"name":"tee"},
+                 {"sku":"111","g":1,"color":1,"name":"tee"},
+                 {"sku":"112","g":2,"color":1,"name":"tee"},
+                 {"sku":"113","g":1,"color":1,"name":"tee"},
+                 {"sku":"114","g":1,"color":1,"name":"tee"},
+                 {"sku":"115","g":2,"color":1,"name":"tee"},
+                 {"sku":"132","g":1,"color":0,"name":"leopard tee"},
                  {"sku":"140","name":"Jourden Yellow Tee With Black Ring","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"141","name":"Jourden Black Tee With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"148","name":"Jourden Black Hunter Jacket With Bubble Gum Eyelets","g":2,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
@@ -666,10 +676,10 @@ let wdb=[
       {
       "layer":"F 7",
       "clothes":[
-                 {"sku":"79","g":2,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"80","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"81","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"82","g":3,"color":1,"name":"tee","rank":"coolpack"},
+                 {"sku":"79","g":2,"color":1,"name":"tee"},
+                 {"sku":"80","g":2,"color":1,"name":"tee"},
+                 {"sku":"81","g":2,"color":1,"name":"tee"},
+                 {"sku":"82","g":3,"color":1,"name":"tee"},
                  
                  
                  ]
@@ -678,22 +688,22 @@ let wdb=[
       {
       "layer":"F 8",
       "clothes":[
-                 {"sku":"83","g":2,"color":1,"name":"tee","rank":"FREE"},
-                 {"sku":"84","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"85","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"86","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"87","g":3,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"131","g":3,"color":0,"name":"leopard jacket","rank":"coolpack"},
+                 {"sku":"83","g":2,"color":1,"name":"tee"},
+                 {"sku":"84","g":2,"color":1,"name":"tee"},
+                 {"sku":"85","g":2,"color":1,"name":"tee"},
+                 {"sku":"86","g":2,"color":1,"name":"tee"},
+                 {"sku":"87","g":3,"color":1,"name":"tee"},
+                 {"sku":"131","g":3,"color":0,"name":"leopard jacket"},
                  ]
       },
       {
       "layer":"F 9",
       "clothes":[
-                 {"sku":"93","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"95","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                  {"sku":"130","g":2,"color":0,"name":"necklace","rank":"coolpack"},
-                  {"sku":"129","g":2,"color":0,"name":"necklace","rank":"coolpack"},
-                  {"sku":"128","g":2,"color":1,"name":"necklace","rank":"coolpack"},
+                 {"sku":"93","g":2,"color":1,"name":"tee"},
+                 {"sku":"95","g":2,"color":1,"name":"tee"},
+                  {"sku":"130","g":2,"color":1,"name":"necklace"},
+                  {"sku":"129","g":2,"color":0,"name":"necklace"},
+                  {"sku":"128","g":2,"color":0,"name":"necklace"},
                  
                  ]
       },
@@ -702,9 +712,9 @@ let wdb=[
       "layer":"F 10",
       "clothes":[
                  
-                 {"sku":"98","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"99","g":2,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"100","g":2,"color":1,"name":"tee","rank":"coolpack"},
+                 {"sku":"98","g":2,"color":1,"name":"tee"},
+                 {"sku":"99","g":2,"color":1,"name":"tee"},
+                 {"sku":"100","g":2,"color":1,"name":"tee"},
                  {"sku":"1078","name":"necklace short","g":1,"color":0,"rank":"peep"},
                  {"sku":"1079","name":"necklace long","g":1,"color":0,"rank":"peep"},
                  
@@ -715,16 +725,16 @@ let wdb=[
       {
       "layer":"F 11 big scarf",
       "clothes":[
-                 {"sku":"102","g":5,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"103","g":5,"color":1,"name":"tee","rank":"coolpack"},
-                 {"sku":"117","g":5,"color":1,"name":"tee","rank":"coolpack"},
+                 {"sku":"102","g":5,"color":1,"name":"tee"},
+                 {"sku":"103","g":5,"color":1,"name":"tee"},
+                 {"sku":"117","g":5,"color":1,"name":"tee"},
                  ]
       },
 
   {
   "layer":"beard",
   "clothes":[
-        {"sku":"0" },
+        {"sku":"0"},
         ]
   
   },
@@ -732,41 +742,41 @@ let wdb=[
   {
   "layer":"hair",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"17" },
-          {"sku":"18" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
-          {"sku":"28" },
-          {"sku":"29" },
-          {"sku":"30" },
-          {"sku":"31" },
-          {"sku":"32" },
-          {"sku":"33" },
-          {"sku":"34" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
+          {"sku":"12"},
+          {"sku":"13"},
+          {"sku":"14"},
+          {"sku":"15"},
+          {"sku":"16"},
+          {"sku":"17"},
+          {"sku":"18"},
+          {"sku":"19"},
+          {"sku":"20"},
+          {"sku":"21"},
+          {"sku":"22"},
+          {"sku":"23"},
+          {"sku":"24"},
+          {"sku":"25"},
+          {"sku":"26"},
+          {"sku":"27"},
+          {"sku":"28"},
+          {"sku":"29"},
+          {"sku":"30"},
+          {"sku":"31"},
+          {"sku":"32"},
+          {"sku":"33"},
+          {"sku":"34"},
         ]
   
   },
@@ -775,41 +785,41 @@ let wdb=[
   {
   "layer":"hairs",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"17" },
-          {"sku":"18" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
-          {"sku":"28" },
-          {"sku":"29" },
-          {"sku":"30" },
-          {"sku":"31" },
-          {"sku":"32" },
-          {"sku":"33" },
-          {"sku":"34" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
+          {"sku":"12"},
+          {"sku":"13"},
+          {"sku":"14"},
+          {"sku":"15"},
+          {"sku":"16"},
+          {"sku":"17"},
+          {"sku":"18"},
+          {"sku":"19"},
+          {"sku":"20"},
+          {"sku":"21"},
+          {"sku":"22"},
+          {"sku":"23"},
+          {"sku":"24"},
+          {"sku":"25"},
+          {"sku":"26"},
+          {"sku":"27"},
+          {"sku":"28"},
+          {"sku":"29"},
+          {"sku":"30"},
+          {"sku":"31"},
+          {"sku":"32"},
+          {"sku":"33"},
+          {"sku":"34"},
         ]
   
   },
@@ -819,7 +829,7 @@ let wdb=[
   "clothes":[
              {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
              {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
-             {"sku":"80","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
+             {"sku":"80","name":"hankerchief","g":1,"color":0 , "hide":1},
              {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
              {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
              ]
@@ -830,31 +840,31 @@ let wdb=[
   {
   "layer":"G 16",
   "clothes":[
-             {"name":"Trucker Cap","g":1,"color":1,"sku":"0","rank":"coolpack"},
-             {"name":"Headdband","g":1,"color":1,"sku":"1","rank":"coolpack"},
-             {"name":"Fedora","g":1,"color":1,"sku":"2","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"3","rank":"FREE"},
-             {"name":"Beanie","g":1,"color":1,"sku":"4","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"5","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"6","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"7","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"8","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"9","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"10","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"11","rank":"FREE"},
-             {"name":"Beanie","g":1,"color":1,"sku":"26","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"27","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"28","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"29","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"30","rank":"coolpack"},
-             {"name":"panda","g":1,"color":0,"sku":"34","rank":"coolpack"},
-             {"name":"headphones","g":1,"color":1,"sku":"36","rank":"coolpack"},
-             {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
-             {"name":"headband thin","g":1,"color":1,"sku":"47","rank":"coolpack"},
-             {"name":"headband","g":1,"color":1,"sku":"48","rank":"coolpack"},
-             {"name":"rabbit","g":1,"color":0,"sku":"49","rank":"coolpack"},
-             {"name":"cat","g":1,"color":0,"sku":"50","rank":"coolpack"},
-             {"name":"rat","g":1,"color":0,"sku":"51","rank":"coolpack"},
+             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
+             {"name":"Headdband","g":1,"color":1,"sku":"1"},
+             {"name":"Fedora","g":1,"color":1,"sku":"2"},
+             {"name":"Beanie","g":1,"color":1,"sku":"3"},
+             {"name":"Beanie","g":1,"color":1,"sku":"4"},
+             {"name":"Beanie","g":1,"color":1,"sku":"5"},
+             {"name":"Beanie","g":1,"color":1,"sku":"6"},
+             {"name":"Beanie","g":1,"color":1,"sku":"7"},
+             {"name":"Beanie","g":1,"color":1,"sku":"8"},
+             {"name":"Beanie","g":1,"color":1,"sku":"9"},
+             {"name":"Beanie","g":1,"color":1,"sku":"10"},
+             {"name":"Beanie","g":1,"color":1,"sku":"11"},
+             {"name":"Beanie","g":1,"color":1,"sku":"26"},
+             {"name":"Beanie","g":1,"color":1,"sku":"27"},
+             {"name":"Beanie","g":1,"color":1,"sku":"28"},
+             {"name":"Beanie","g":1,"color":1,"sku":"29"},
+             {"name":"Beanie","g":1,"color":1,"sku":"30"},
+             {"name":"panda","g":1,"color":0,"sku":"34"},
+             {"name":"headphones","g":1,"color":1,"sku":"36"},
+             {"name":"bike cap","g":1,"color":1,"sku":"42"},
+             {"name":"headband thin","g":1,"color":1,"sku":"47"},
+             {"name":"headband","g":1,"color":1,"sku":"48"},
+             {"name":"rabbit","g":1,"color":0,"sku":"49"},
+             {"name":"cat","g":1,"color":0,"sku":"50"},
+             {"name":"rat","g":1,"color":0,"sku":"51"},
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
              ]
   
@@ -863,22 +873,22 @@ let wdb=[
   {
   "layer":"G 17",
   "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12","rank":"FREE"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13","rank":"coolpack"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14","rank":"coolpack"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15","rank":"coolpack"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16","rank":"coolpack"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33","rank":"coolpack"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17","rank":"coolpack"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19","rank":"FREE"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"}, 
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
-             {"name":"eye patch","g":1,"color":0,"sku":"62","rank":"coolpack"},
+             {"name":"3D","g":1,"color":0,"sku":"12"},
+             {"name":"Glasses","g":1,"color":1,"sku":"13"},
+             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
+             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
+             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
+             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
+             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
+             {"name":"eye patch","g":1,"color":0,"sku":"62"},
              
              ]
   
@@ -891,7 +901,7 @@ let wdb=[
              {"name":"pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
-             {"name":"horse white head","g":1,"color":0,"sku":"67","rank":"coolpack"},
+             {"name":"horse white head","g":1,"color":0,"sku":"67"},
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              ]
@@ -949,18 +959,18 @@ let wdb=[
   {
   "layer":"face",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
           ]
   
   },
@@ -970,18 +980,14 @@ let wdb=[
   {
   "layer":"M 3 underwear",
   "clothes":[
-             {"sku":"0","g":1,"color":1,"name":"Tank Top","rank":"coolpack"},
-             {"sku":"1","g":1,"color":1,"name":"Inner Tee","rank":"coolpack"},
-             {"sku":"2","g":1,"color":1,"name":"Long tank top","rank":"coolpack"},
-             {"sku":"3","g":1,"color":1,"name":"long sleeved","rank":"FREE"},
-             {"sku":"4","g":1,"color":1,"name":"short shoulder","rank":"coolpack"},
-             {"sku":"5","g":1,"color":1,"name":"Mid length","rank":"coolpack"},
-             {"sku":"6","g":1,"color":1,"name":"Stripes Tank","rank":"coolpack"},
-             {"sku":"7","g":1,"color":1,"name":"Dots Tank","rank":"coolpack"},
-             {"sku":"8","g":1,"color":1,"name":"Stripes long","rank":"coolpack"},
-             {"sku":"9","g":1,"color":1,"name":"Dots Tee","rank":"coolpack"},
-             {"sku":"10","g":1,"color":1,"name":"Turtle neck","rank":"coolpack"},
-             {"sku":"11","g":1,"color":1,"name":"Sports Tank","rank":"coolpack"}, 
+             {"sku":"0","g":1,"color":1,"name":"Tank Top"},
+             {"sku":"1","g":1,"color":1,"name":"Inner Tee"},
+             {"sku":"2","g":1,"color":1,"name":"Long tank top"},
+             {"sku":"4","g":1,"color":1,"name":"short shoulder"},
+             {"sku":"6","g":1,"color":1,"name":"Stripes Tank"},
+             {"sku":"7","g":1,"color":1,"name":"Dots Tank"},
+             {"sku":"9","g":1,"color":1,"name":"Dots Tee"},
+             {"sku":"11","g":1,"color":1,"name":"Sports Tank"}, 
             
              ]
   
@@ -990,21 +996,24 @@ let wdb=[
   {
   "layer":"M 4",
   "clothes":[
-             {"name":"Tee","g":1,"color":1,"sku":"12","rank":"FREE"},
-             {"name":"V-neck Tee","g":1,"color":1,"sku":"13","rank":"coolpack"},
-             {"name":"Pocket Tee","g":1,"color":1,"sku":"14","rank":"coolpack"},
-             {"name":"Stripes Tee","g":1,"color":1,"sku":"15","rank":"coolpack"},
-             {"name":"Vest","g":2,"color":1,"sku":"16","rank":"coolpack"},
-             {"name":"Long Tee","g":1,"color":1,"sku":"17","rank":"coolpack"},
-             {"name":"Polo","g":1,"color":1,"sku":"18","rank":"FREE"},
-             {"name":"Ash Polo","g":1,"color":1,"sku":"19","rank":"coolpack"},
-             {"name":"Fred Perry","g":1,"color":1,"sku":"20","rank":"coolpack"},
-             {"name":"Two tone tee","g":1,"color":1,"sku":"21","rank":"coolpack"},
-             {"name":"Thick stripes","g":1,"color":1,"sku":"22","rank":"coolpack"},
-             {"name":"Circle Tee","g":1,"color":1,"sku":"23","rank":"coolpack"},
-             {"name":"Three color Polo","g":1,"color":0,"sku":"24","rank":"coolpack"},
-             {"name":"db-db Tee","g":1,"color":1,"sku":"25","rank":"FREE"},
-             {"name":"flash tee","g":1,"color":1,"sku":"118","rank":"FREE", "scan":"QR_supercoolstyle"},
+             {"sku":"5","g":1,"color":1,"name":"Mid length"},
+             {"sku":"8","g":1,"color":1,"name":"Stripes long"},
+             {"sku":"10","g":1,"color":1,"name":"Turtle neck"}, 
+             {"name":"Tee","g":1,"color":1,"sku":"12"},
+             {"name":"V-neck Tee","g":1,"color":1,"sku":"13"},
+             {"name":"Pocket Tee","g":1,"color":1,"sku":"14"},
+             {"name":"Stripes Tee","g":1,"color":1,"sku":"15"},
+             {"name":"Vest","g":2,"color":1,"sku":"16"},
+             {"name":"Long Tee","g":1,"color":1,"sku":"17"},
+             {"name":"Polo","g":1,"color":1,"sku":"18"},
+             {"name":"Ash Polo","g":1,"color":1,"sku":"19"},
+             {"name":"Fred Perry","g":1,"color":1,"sku":"20"},
+             {"name":"Two tone tee","g":1,"color":1,"sku":"21"},
+             {"name":"Thick stripes","g":1,"color":1,"sku":"22"},
+             {"name":"Circle Tee","g":1,"color":1,"sku":"23"},
+             {"name":"Three color Polo","g":1,"color":0,"sku":"24"},
+             {"name":"db-db Tee","g":1,"color":1,"sku":"25"},
+             {"name":"flash tee","g":1,"color":1,"sku":"118" , "scan":"QR_supercoolstyle"},
              
              ]
   
@@ -1013,23 +1022,23 @@ let wdb=[
   {
   "layer":"M 5 shirts",
   "clothes":[
-             {"name":"Shirt","g":2,"color":1,"sku":"27","rank":"FREE"},
-             {"name":"Denim Shirt","g":2,"color":0,"sku":"28","rank":"coolpack"},
-             {"name":"Cardigan","g":2,"color":1,"sku":"29","rank":"coolpack"},
-             {"name":"Long Sleeved Tee","g":1,"color":1,"sku":"30","rank":"FREE"},
-             {"name":"Shirt","g":2,"color":0,"sku":"31","rank":"coolpack"},
-             {"name":"Oxford shirt","g":2,"color":1,"sku":"32","rank":"coolpack"},
-             {"name":"Denim shirt special","g":2,"color":0,"sku":"33","rank":"coolpack"},
-             {"name":"checkered shirt","g":2,"color":1,"sku":"34","rank":"coolpack"},
-             {"name":"checkered shirt two","g":2,"color":1,"sku":"35","rank":"coolpack"},
-             {"name":"Stripes shirt","g":2,"color":1,"sku":"36","rank":"coolpack"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"37","rank":"coolpack"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"38","rank":"coolpack"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"39","rank":"coolpack"},
-             {"name":"Open shirt","g":2,"color":1,"sku":"40","rank":"coolpack"},
-             {"name":"Short sleeved shirt","g":2,"color":1,"sku":"41","rank":"coolpack"},
-             {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42","rank":"coolpack"},
-             {"name":"Cardigan ","g":2,"color":1,"sku":"43","rank":"coolpack"},
+             {"name":"Shirt","g":2,"color":1,"sku":"27"},
+             {"name":"Denim Shirt","g":2,"color":0,"sku":"28"},
+             {"name":"Cardigan","g":2,"color":1,"sku":"29"},
+             {"name":"Long Sleeved Tee","g":1,"color":1,"sku":"30"},
+             {"name":"Shirt","g":2,"color":0,"sku":"31"},
+             {"name":"Oxford shirt","g":2,"color":1,"sku":"32"},
+             {"name":"Denim shirt special","g":2,"color":0,"sku":"33"},
+             {"name":"checkered shirt","g":2,"color":1,"sku":"34"},
+             {"name":"checkered shirt two","g":2,"color":1,"sku":"35"},
+             {"name":"Stripes shirt","g":2,"color":1,"sku":"36"},
+             {"name":"Two tone shirt","g":2,"color":1,"sku":"37"},
+             {"name":"Two tone shirt","g":2,"color":1,"sku":"38"},
+             {"name":"Two tone shirt","g":2,"color":1,"sku":"39"},
+             {"name":"Open shirt","g":2,"color":1,"sku":"40"},
+             {"name":"Short sleeved shirt","g":2,"color":1,"sku":"41"},
+             {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42"},
+             {"name":"Cardigan ","g":2,"color":1,"sku":"43"},
              {"sku":"131","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
              {"name":"black tie","g":2,"color":0,"sku":"1000","rank":"peep"},
              {"name":"black bowtie","g":2,"color":0,"sku":"1001","rank":"peep"},
@@ -1040,22 +1049,22 @@ let wdb=[
   {
   "layer":"6M",
   "clothes":[
-             {"name":"Dark jacket","g":2,"color":1,"sku":"44","rank":"coolpack"},
-             {"name":"Big Tee","g":1,"color":1,"sku":"45","rank":"coolpack"},
-             {"name":"Mid Tee","g":1,"color":1,"sku":"46","rank":"coolpack"},
-             {"name":"Sweatshirt","g":1,"color":0,"sku":"47","rank":"FREE"},
-             {"name":"Hoodie","g":3,"color":1,"sku":"48","rank":"coolpack"},
-             {"name":"Open Hoodie","g":3,"color":1,"sku":"49","rank":"coolpack"},
-             {"name":"Blazer","g":2,"color":1,"sku":"50","rank":"coolpack"},
-             {"name":"Sports sweatshirt","g":1,"color":0,"sku":"51","rank":"coolpack"},
-             {"name":"Knitted vest","g":1,"color":1,"sku":"52","rank":"coolpack"},
-             {"name":"Large vest","g":2,"color":1,"sku":"53","rank":"coolpack"},
-             {"name":"Hood shirt","g":1,"color":1,"sku":"54","rank":"coolpack"},
-             {"name":"Vneck sweater","g":1,"color":0,"sku":"55","rank":"coolpack"},
-             {"name":"cardigan long","g":2,"color":1,"sku":"56","rank":"coolpack"},
-             {"name":"thick cardigan","g":2,"color":1,"sku":"57","rank":"coolpack"},
-             {"name":"wide cardigan","g":2,"color":1,"sku":"58","rank":"coolpack"},
-             {"name":"MIT Sweatshirt","g":1,"color":0,"sku":"59","rank":"coolpack"},
+             {"name":"Dark jacket","g":2,"color":1,"sku":"44"},
+             {"name":"Big Tee","g":1,"color":1,"sku":"45"},
+             {"name":"Mid Tee","g":1,"color":1,"sku":"46"},
+             {"name":"Sweatshirt","g":1,"color":0,"sku":"47"},
+             {"name":"Hoodie","g":3,"color":1,"sku":"48"},
+             {"name":"Open Hoodie","g":3,"color":1,"sku":"49"},
+             {"name":"Blazer","g":2,"color":1,"sku":"50"},
+             {"name":"Sports sweatshirt","g":1,"color":0,"sku":"51"},
+             {"name":"Knitted vest","g":1,"color":1,"sku":"52"},
+             {"name":"Large vest","g":2,"color":1,"sku":"53"},
+             {"name":"Hood shirt","g":1,"color":1,"sku":"54"},
+             {"name":"Vneck sweater","g":1,"color":0,"sku":"55"},
+             {"name":"cardigan long","g":2,"color":1,"sku":"56"},
+             {"name":"thick cardigan","g":2,"color":1,"sku":"57"},
+             {"name":"wide cardigan","g":2,"color":1,"sku":"58"},
+             {"name":"MIT Sweatshirt","g":1,"color":0,"sku":"59"},
               {"sku":"132","g":2,"color":0,"name":"Comme Des Garcons PLAY Cardigan","rank":"brn_fw","scan":"brn_fw"},
              ]
   
@@ -1064,18 +1073,18 @@ let wdb=[
   {
   "layer":"7M",
   "clothes":[
-             {"name":"School Jacket","g":2,"color":1,"sku":"62","rank":"FREE"},
-             {"name":"Long blazer","g":2,"color":1,"sku":"63","rank":"coolpack"},
-             {"name":"Long camo","g":2,"color":0,"sku":"64","rank":"coolpack"},
-             {"name":"Denim Jacket","g":2,"color":0,"sku":"65","rank":"coolpack"},
-             {"name":"Tight Jacket","g":2,"color":1,"sku":"66","rank":"coolpack"},
-             {"name":"Coat","g":2,"color":1,"sku":"67","rank":"coolpack"},
-             {"name":"Leather Jacket","g":3,"color":1,"sku":"68","rank":"coolpack"},
-             {"name":"Two tone","g":2,"color":1,"sku":"69","rank":"coolpack"},
-             {"name":"Double","g":2,"color":1,"sku":"70","rank":"coolpack"},
-             {"name":"Sweater","g":1,"color":1,"sku":"71","rank":"coolpack"},
-             {"name":"Patterned Sweater","g":1,"color":1,"sku":"72","rank":"coolpack"},
-             {"name":"Pocket Sweater","g":1,"color":1,"sku":"73","rank":"coolpack"},
+             {"name":"School Jacket","g":2,"color":1,"sku":"62"},
+             {"name":"Long blazer","g":2,"color":1,"sku":"63"},
+             {"name":"Long camo","g":2,"color":0,"sku":"64"},
+             {"name":"Denim Jacket","g":2,"color":0,"sku":"65"},
+             {"name":"Tight Jacket","g":2,"color":1,"sku":"66"},
+             {"name":"Coat","g":2,"color":1,"sku":"67"},
+             {"name":"Leather Jacket","g":3,"color":1,"sku":"68"},
+             {"name":"Two tone","g":2,"color":1,"sku":"69"},
+             {"name":"Double","g":2,"color":1,"sku":"70"},
+             {"name":"Sweater","g":1,"color":1,"sku":"71"},
+             {"name":"Patterned Sweater","g":1,"color":1,"sku":"72"},
+             {"name":"Pocket Sweater","g":1,"color":1,"sku":"73"},
              
              ]
   
@@ -1084,16 +1093,16 @@ let wdb=[
   {
   "layer":"8M",
   "clothes":[
-             {"name":"Coat","g":2,"color":1,"sku":"74","rank":"coolpack"},
-             {"name":"Coat Camel","g":2,"color":0,"sku":"75","rank":"coolpack"},
-             {"name":"Big Coat","g":2,"color":1,"sku":"76","rank":"coolpack"},
-             {"name":"Trench Coat","g":2,"color":1,"sku":"77","rank":"coolpack"},
-             {"name":"Big F Sweater","g":1,"color":1,"sku":"78","rank":"FREE"},
-             {"name":"Checkered Jacket","g":3,"color":1,"sku":"79","rank":"coolpack"},
-             {"name":"Baseball Jacket","g":2,"color":1,"sku":"80","rank":"coolpack"},
-             {"name":"Military Jacket","g":2,"color":1,"sku":"81","rank":"coolpack"},
-             {"name":"Pattern sweater","g":1,"color":1,"sku":"82","rank":"coolpack"},
-             {"name":"Dots sweater","g":1,"color":1,"sku":"83","rank":"coolpack"},
+             {"name":"Coat","g":2,"color":1,"sku":"74"},
+             {"name":"Coat Camel","g":2,"color":0,"sku":"75"},
+             {"name":"Big Coat","g":2,"color":1,"sku":"76"},
+             {"name":"Trench Coat","g":2,"color":1,"sku":"77"},
+             {"name":"Big F Sweater","g":1,"color":1,"sku":"78"},
+             {"name":"Checkered Jacket","g":3,"color":1,"sku":"79"},
+             {"name":"Baseball Jacket","g":2,"color":1,"sku":"80"},
+             {"name":"Military Jacket","g":2,"color":1,"sku":"81"},
+             {"name":"Pattern sweater","g":1,"color":1,"sku":"82"},
+             {"name":"Dots sweater","g":1,"color":1,"sku":"83"},
              ]
   
   },
@@ -1101,15 +1110,15 @@ let wdb=[
   {
   "layer":"9M",
   "clothes":[
-             {"name":"Jumper","g":1,"color":1,"sku":"84","rank":"coolpack"},
-             {"name":"Stripes knit","g":1,"color":1,"sku":"85","rank":"coolpack"},
-             {"name":"Camo Jumper","g":1,"color":0,"sku":"86","rank":"coolpack"},
-             {"name":"Flash Jumper","g":1,"color":1,"sku":"87","rank":"coolpack"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"88","rank":"coolpack"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"89","rank":"coolpack"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"90","rank":"coolpack"},
-             {"sku":"117","g":2,"color":0,"name":"necklace","rank":"coolpack"},
-             {"sku":"116","g":2,"color":0,"name":"necklace","rank":"coolpack"},
+             {"name":"Jumper","g":1,"color":1,"sku":"84"},
+             {"name":"Stripes knit","g":1,"color":1,"sku":"85"},
+             {"name":"Camo Jumper","g":1,"color":0,"sku":"86"},
+             {"name":"Flash Jumper","g":1,"color":1,"sku":"87"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"88"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"89"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"90"},
+             {"sku":"117","g":2,"color":0,"name":"necklace"},
+             {"sku":"116","g":2,"color":0,"name":"necklace"},
 
              ]
   
@@ -1119,13 +1128,13 @@ let wdb=[
   {
   "layer":"8",
   "clothes":[
-             {"name":"Down vest","g":3,"color":1,"sku":"93","rank":"coolpack"},
-             {"name":"Outdoor Jacket","g":3,"color":1,"sku":"94","rank":"coolpack"},
-             {"name":"Outdoor Jacket","g":3,"color":0,"sku":"95","rank":"FREE"},
-             {"name":"Outdoor Jacket Camo","g":3,"color":0,"sku":"96","rank":"coolpack"},
-             {"name":"Down Jacket","g":3,"color":1,"sku":"97","rank":"coolpack"},
-             {"name":"Down Jacket Golden","g":3,"color":0,"sku":"98","rank":"coolpack"},
-             {"name":"Big coat","g":2,"color":1,"sku":"99","rank":"coolpack"},
+             {"name":"Down vest","g":3,"color":1,"sku":"93"},
+             {"name":"Outdoor Jacket","g":3,"color":1,"sku":"94"},
+             {"name":"Outdoor Jacket","g":3,"color":0,"sku":"95"},
+             {"name":"Outdoor Jacket Camo","g":3,"color":0,"sku":"96"},
+             {"name":"Down Jacket","g":3,"color":1,"sku":"97"},
+             {"name":"Down Jacket Golden","g":3,"color":0,"sku":"98"},
+             {"name":"Big coat","g":2,"color":1,"sku":"99"},
              {"sku":"1073","name":"necklace short","g":1,"color":0,"rank":"peep"},
              {"sku":"1074","name":"necklace long","g":1,"color":0,"rank":"peep"},
              ]
@@ -1136,10 +1145,10 @@ let wdb=[
   {
   "layer":"10 big scarf",
   "clothes":[
-             {"name":"Scarf------------","g":5,"color":1,"sku":"100","rank":"coolpack"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"101","rank":"coolpack"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"102","rank":"coolpack"},
-             {"name":"Scarf camo------------","g":5,"color":0,"sku":"103","rank":"coolpack"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"100"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"101"},
+             {"name":"Scarf------------","g":5,"color":1,"sku":"102"},
+             {"name":"Scarf camo------------","g":5,"color":0,"sku":"103"},
              ]
   
   },
@@ -1148,32 +1157,32 @@ let wdb=[
   {
   "layer":"beard",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"6" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
+          {"sku":"12"},
+          {"sku":"13"},
+          {"sku":"14"},
+          {"sku":"15"},
+          {"sku":"16"},
+          {"sku":"19"},
+          {"sku":"20"},
+          {"sku":"21"},
+          {"sku":"22"},
+          {"sku":"23"},
+          {"sku":"24"},
+          {"sku":"25"},
+          {"sku":"26"},
+          {"sku":"27"},
           ]
   
   },
@@ -1182,40 +1191,40 @@ let wdb=[
   {
   "layer":"hair",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"17" },
-          {"sku":"18" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
-          {"sku":"28" },
-          {"sku":"29" },
-          {"sku":"30" },
-          {"sku":"31" },
-          {"sku":"32" },
-          {"sku":"33" },
-          {"sku":"34" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
+          {"sku":"12"},
+          {"sku":"13"},
+          {"sku":"14"},
+          {"sku":"15"},
+          {"sku":"16"},
+          {"sku":"17"},
+          {"sku":"18"},
+          {"sku":"19"},
+          {"sku":"20"},
+          {"sku":"21"},
+          {"sku":"22"},
+          {"sku":"23"},
+          {"sku":"24"},
+          {"sku":"25"},
+          {"sku":"26"},
+          {"sku":"27"},
+          {"sku":"28"},
+          {"sku":"29"},
+          {"sku":"30"},
+          {"sku":"31"},
+          {"sku":"32"},
+          {"sku":"33"},
+          {"sku":"34"},
           ]
   
   },
@@ -1223,40 +1232,40 @@ let wdb=[
   {
   "layer":"hairs",
   "clothes":[
-          {"sku":"0" },
-          {"sku":"1" },
-          {"sku":"2" },
-          {"sku":"3" },
-          {"sku":"4" },
-          {"sku":"5" },
-          {"sku":"7" },
-          {"sku":"8" },
-          {"sku":"9" },
-          {"sku":"10" },
-          {"sku":"11" },
-          {"sku":"12" },
-          {"sku":"13" },
-          {"sku":"14" },
-          {"sku":"15" },
-          {"sku":"16" },
-          {"sku":"17" },
-          {"sku":"18" },
-          {"sku":"19" },
-          {"sku":"20" },
-          {"sku":"21" },
-          {"sku":"22" },
-          {"sku":"23" },
-          {"sku":"24" },
-          {"sku":"25" },
-          {"sku":"26" },
-          {"sku":"27" },
-          {"sku":"28" },
-          {"sku":"29" },
-          {"sku":"30" },
-          {"sku":"31" },
-          {"sku":"32" },
-          {"sku":"33" },
-          {"sku":"34" },
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"5"},
+          {"sku":"7"},
+          {"sku":"8"},
+          {"sku":"9"},
+          {"sku":"10"},
+          {"sku":"11"},
+          {"sku":"12"},
+          {"sku":"13"},
+          {"sku":"14"},
+          {"sku":"15"},
+          {"sku":"16"},
+          {"sku":"17"},
+          {"sku":"18"},
+          {"sku":"19"},
+          {"sku":"20"},
+          {"sku":"21"},
+          {"sku":"22"},
+          {"sku":"23"},
+          {"sku":"24"},
+          {"sku":"25"},
+          {"sku":"26"},
+          {"sku":"27"},
+          {"sku":"28"},
+          {"sku":"29"},
+          {"sku":"30"},
+          {"sku":"31"},
+          {"sku":"32"},
+          {"sku":"33"},
+          {"sku":"34"},
           ]
   
   },
@@ -1268,8 +1277,8 @@ let wdb=[
 
              {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
              {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
-             {"sku":"64","name":"gas mask","g":1,"color":0,"rank":"coolpack"},
-             {"sku":"75","name":"hankerchief","g":1,"color":0,"rank":"FREE", "hide":1},
+             {"sku":"64","name":"gas mask","g":1,"color":0},
+             {"sku":"75","name":"hankerchief","g":1,"color":0 , "hide":1},
              {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
              {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
 
@@ -1282,27 +1291,27 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-             {"name":"Trucker Cap","g":1,"color":1,"sku":"0","rank":"coolpack"},
-             {"name":"FL Cap","g":1,"color":1,"sku":"1","rank":"FREE"},
-             {"name":"Fedora","g":1,"color":1,"sku":"2","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"3","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"4","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"5","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"6","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"7","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"8","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"9","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"10","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"11","rank":"FREE"},
-             {"name":"Beanie","g":1,"color":1,"sku":"26","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"27","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"28","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"29","rank":"coolpack"},
-             {"name":"Beanie","g":1,"color":1,"sku":"30","rank":"coolpack"},
-             {"name":"headphones","g":1,"color":1,"sku":"36","rank":"coolpack"},
-             {"name":"bike cap","g":1,"color":1,"sku":"42","rank":"coolpack"},
-             {"name":"headband","g":1,"color":1,"sku":"46","rank":"FREE"},
-             {"name":"headband","g":1,"color":1,"sku":"47","rank":"coolpack"},
+             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
+             {"name":"FL Cap","g":1,"color":1,"sku":"1"},
+             {"name":"Fedora","g":1,"color":1,"sku":"2"},
+             {"name":"Beanie","g":1,"color":1,"sku":"3"},
+             {"name":"Beanie","g":1,"color":1,"sku":"4"},
+             {"name":"Beanie","g":1,"color":1,"sku":"5"},
+             {"name":"Beanie","g":1,"color":1,"sku":"6"},
+             {"name":"Beanie","g":1,"color":1,"sku":"7"},
+             {"name":"Beanie","g":1,"color":1,"sku":"8"},
+             {"name":"Beanie","g":1,"color":1,"sku":"9"},
+             {"name":"Beanie","g":1,"color":1,"sku":"10"},
+             {"name":"Beanie","g":1,"color":1,"sku":"11"},
+             {"name":"Beanie","g":1,"color":1,"sku":"26"},
+             {"name":"Beanie","g":1,"color":1,"sku":"27"},
+             {"name":"Beanie","g":1,"color":1,"sku":"28"},
+             {"name":"Beanie","g":1,"color":1,"sku":"29"},
+             {"name":"Beanie","g":1,"color":1,"sku":"30"},
+             {"name":"headphones","g":1,"color":1,"sku":"36"},
+             {"name":"bike cap","g":1,"color":1,"sku":"42"},
+             {"name":"headband","g":1,"color":1,"sku":"46"},
+             {"name":"headband","g":1,"color":1,"sku":"47"},
              {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
              ]
   
@@ -1311,22 +1320,22 @@ let wdb=[
   {
   "layer":"G",
   "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12","rank":"FREE"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13","rank":"coolpack"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14","rank":"coolpack"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15","rank":"coolpack"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16","rank":"coolpack"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33","rank":"coolpack"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17","rank":"coolpack"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19","rank":"FREE"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23","rank":"coolpack"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32","rank":"coolpack"},
-             {"name":"eye patch","g":1,"color":0,"sku":"57","rank":"coolpack"},
+             {"name":"3D","g":1,"color":0,"sku":"12"},
+             {"name":"Glasses","g":1,"color":1,"sku":"13"},
+             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
+             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
+             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
+             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
+             {"name":"eye patch","g":1,"color":0,"sku":"57"},
              
              ]
   
@@ -1339,7 +1348,7 @@ let wdb=[
              {"name":"pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
              {"name":"rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
              {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
-             {"name":"horse white head","g":1,"color":0,"sku":"62","rank":"coolpack"},             
+             {"name":"horse white head","g":1,"color":0,"sku":"62"},             
              {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              ]
