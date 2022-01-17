@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.3----");
+console.log("-----  Super Cool Peeps 2021 v0.5.5----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -11,28 +11,31 @@ if (!seed) {
 
 console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
 
-
-
-
 ///scp init///
 let genderID=0;
 
 let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=17;
 const showChance=[1,1,1, //body,head,face
-                  0.99,0.5,0.33,0.25,0.2,0.15,0.12,0.1,0.1, //tops
+                  0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops
                   1,1,1, //beard, hair
-                  0.2,0.4,0.4, //mouth, hat/face, eye
+                  0.2,0.4,0.4, //mouth, eye, hat/face
                   ];
-let totalLayers=showChance.length;
-let chanceCrazyHair=0.1;
-let chanceCrazySkin=0.1;
 
-let chanceSkull=0.02;
-let chanceZombie=0.08; // = 0.06 chance
-let chanceApe=0.18; // = 0.10 chance
-let chanceTatoo=0.38; //= 0.20 chance
-let chanceSexy=0.68; //= 0.30 chance  
-                    //normal: 0.32 chacne
+const normalTotals=[[],[]];
+const specialTotals=[[],[]];
+const rareChance=[[],[]];
+
+let totalLayers=showChance.length;
+let chanceCrazySkin=0.1;
+let chanceCrazyHair=0.2;
+let chanceSpecial=0.15;
+
+let chanceSkull=0.02;   // =0.02 chance
+let chanceZombie=0.06; // = 0.04 chance
+let chanceApe=0.14;   // = 0.08 chance
+let chanceTatoo=0.34; //= 0.20 chance
+let chanceSexy=0.64; //= 0.30 chance  
+                    //normal: 0.36 chacne
 
 
 let SKUZombie=3, SKUSkull=4, SKUApe=7; //sku
@@ -43,19 +46,19 @@ let scp=[];
 let itemSKUs= new Array(totalLayers);
 let itemColors= new Array(totalLayers);
 
-
 let imgLoaded=0;
 let isLoadingImg=false;
 
 const oW=80, oH=142;
 
-const skinColor=[[255,224,189],[234,192,134],/*[184,152,112],*/[131,108,79],[85,70,52],   
-                 [134,166,212],[99,132,54],[250,245,239]];
+const skinColor=[[250,245,239],[255,224,189],[234,192,134],[131,108,79],[85,70,52],
+                 [134,166,212],[99,132,54]];
 const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139],[255,255,255]];
 
 const crazyHairStart=6;
-const crazySkinStart=4;
+const crazySkinStart=5;
+const specialStart=[25,21] //woman and man's special items in head (layer=LGoodieEnd)
 
 
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
@@ -103,7 +106,6 @@ function setup() {
   noSmooth(); 
   fill(0);
   
-  console.log(itemSKUs.length);
 
   randomizePeep();
   loadPeep();
@@ -214,7 +216,28 @@ function randomizePeep(){
           }
           else if (i==LHead) {
             objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
-          } else {
+          } 
+          else if (i==LGoodieEnd) { //// Goodie Head with special items
+
+            let itemR=random();
+            let specialTot=objTotal- specialStart[genderID]; 
+            console.log("special total:"+specialTot+" special R:"+itemR);
+            if (itemR<chanceSpecial) {
+
+              objID=specialStart[genderID]+Math.floor(random(specialTot)); //only special total
+
+              console.log("Got Special item ID:"+objID);
+            } else {
+
+              objID=Math.floor(random(specialStart[genderID])); //exclude special item
+              console.log("Normal item ID:"+objID);
+            }
+
+
+          }
+
+          else {
+            //equally distributed
             objID=Math.floor(random(objTotal));
           }
 
@@ -276,11 +299,10 @@ function randomizePeep(){
 
   //testing
 
-  /*
-  itemSKUs[15]=1001;
-  itemSKUs[17]=7;
-  currTopID=myMaxTopID=LGoodieEnd;
-  */
+  
+  //itemSKUs[LGoodieStart]=1005;
+  //currTopID=myMaxTopID=LGoodieEnd;
+  
   
   //end testing debug
 
@@ -289,9 +311,9 @@ function randomizePeep(){
   console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
 }
 
-function showPeep(){
 
- 
+
+function showPeep(){
   if (itemSKUs[LBody]==SKUZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
   else if (itemSKUs[LBody]==SKUSkull) background(skullColor[0],skullColor[1],skullColor[2]);
   else if (itemSKUs[LBody]==SKUApe) background(apeColor[0],apeColor[1],apeColor[2]);
@@ -337,10 +359,7 @@ function showPeep(){
 
       console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
     }
-
-
   }
-   
 }
 
 function loadPeep(){
@@ -388,17 +407,6 @@ function loadPeep(){
 
 }
 
-
-
-
-/*
-
-
-function draw(){
-  //loadPeep();
-}
-
-*/
 
 
 function windowResized() {
@@ -599,18 +607,14 @@ let wdb=[
                  {"sku":"60","g":2,"color":1,"name":"tee"},
                  {"sku":"61","g":2,"color":1,"name":"tee"},
                  {"sku":"62","g":2,"color":1,"name":"tee"},
-                 {"sku":"107","g":2,"color":1,"name":"shirt"},
-                 
+                 {"sku":"107","g":2,"color":1,"name":"shirt"},    
                  {"sku":"142","name":"Jourden Emerald Striped Ribbed Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"143","name":"Jourden Yellow Sheer Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"144","name":"Jourden Black Gathered Dress With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"145","name":"Jourden Red Gathered Dress With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"146","name":"Jourden Navy Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"147","name":"Jourden White Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 
-                
-                 {"sku":"162","g":3,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 
+                 {"sku":"162","g":3,"color":0,"name":"adidas Originals","rank":"brn_adidas"},               
                  {"sku":"177","g":1,"color":0,"name":"Kate Spade New York Multi KiteBow Dress","rank":"brn_fw","scan":"brn_fw"},
                  
                  ]
@@ -645,30 +649,14 @@ let wdb=[
                  {"sku":"140","name":"Jourden Yellow Tee With Black Ring","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"141","name":"Jourden Black Tee With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
                  {"sku":"148","name":"Jourden Black Hunter Jacket With Bubble Gum Eyelets","g":2,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 
-                 
                  {"sku":"178","g":1,"color":0,"name":"Kate Spade New York Virginia Lace Dress","rank":"brn_fw","scan":"brn_fw"},
-                 
                  {"sku":"175","g":1,"color":0,"name":"Hysteric Glamour","rank":"brn_fw","scan":"brn_fw"},
-         
-                 
-                 
                  {"sku":"172","g":1,"color":0,"name":"H&M Ladies Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"173","g":1,"color":0,"name":"H&M Ladies Dress","rank":"brn_fw","scan":"brn_fw"},
-                 
-
                  {"sku":"170","g":1,"color":0,"name":"FRAPBOIS","rank":"brn_fw","scan":"brn_fw"},
-                 
-                 
                  {"sku":"166","g":1,"color":0,"name":"DKNY Red Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"167","g":1,"color":0,"name":"DKNY Lace Top","rank":"brn_fw","scan":"brn_fw"},
-                 
                  {"sku":"163","g":2,"color":0,"name":"A|X TEXTURED JACKET WHITE","rank":"brn_fw","scan":"brn_fw"},
-               
-                 
-                 
-                 
-                 
                  ]
       },
       
@@ -679,8 +667,6 @@ let wdb=[
                  {"sku":"80","g":2,"color":1,"name":"tee"},
                  {"sku":"81","g":2,"color":1,"name":"tee"},
                  {"sku":"82","g":3,"color":1,"name":"tee"},
-                 
-                 
                  ]
       },
       
@@ -783,43 +769,7 @@ let wdb=[
 
   {
   "layer":"hairs",
-  "clothes":[
-          {"sku":"0"},
-          {"sku":"1"},
-          {"sku":"2"},
-          {"sku":"3"},
-          {"sku":"4"},
-          {"sku":"5"},
-          {"sku":"6"},
-          {"sku":"7"},
-          {"sku":"8"},
-          {"sku":"9"},
-          {"sku":"10"},
-          {"sku":"11"},
-          {"sku":"12"},
-          {"sku":"13"},
-          {"sku":"14"},
-          {"sku":"15"},
-          {"sku":"16"},
-          {"sku":"17"},
-          {"sku":"18"},
-          {"sku":"19"},
-          {"sku":"20"},
-          {"sku":"21"},
-          {"sku":"22"},
-          {"sku":"23"},
-          {"sku":"24"},
-          {"sku":"25"},
-          {"sku":"26"},
-          {"sku":"27"},
-          {"sku":"28"},
-          {"sku":"29"},
-          {"sku":"30"},
-          {"sku":"31"},
-          {"sku":"32"},
-          {"sku":"33"},
-          {"sku":"34"},
-        ]
+  "clothes":[]
   
   },
 
@@ -887,36 +837,22 @@ let wdb=[
              {"name":"rabbit","g":1,"color":0,"sku":"49"},
              {"name":"cat","g":1,"color":0,"sku":"50"},
              {"name":"rat","g":1,"color":0,"sku":"51"},
-             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
 
-             {"name":"horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
-             {"name":"pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
-             {"name":"rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
-             {"name":"panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
-             {"name":"horse white head","g":1,"color":0,"sku":"67"},
-             {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
-             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
-
+             {"name":"SP horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
+             {"name":"SP pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
+             {"name":"SP rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
+             {"name":"SP panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
+             {"name":"SP horse white head","g":1,"color":0,"sku":"67"},
+             {"name":"SP daft","g":1,"color":0,"sku":"1002","rank":"peep"},
+             {"name":"SP laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"SP crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
 
              ]
   
   },
-  
-
- 
   ]
  },
 
-
-
-
-
-
-
-
-
-
- 
  {
  "gender":"M",
  "data":
@@ -1144,6 +1080,7 @@ let wdb=[
              {"name":"Scarf------------","g":5,"color":1,"sku":"101"},
              {"name":"Scarf------------","g":5,"color":1,"sku":"102"},
              {"name":"Scarf camo------------","g":5,"color":0,"sku":"103"},
+         
              ]
   
   },
@@ -1226,42 +1163,7 @@ let wdb=[
 
   {
   "layer":"hairs",
-  "clothes":[
-          {"sku":"0"},
-          {"sku":"1"},
-          {"sku":"2"},
-          {"sku":"3"},
-          {"sku":"4"},
-          {"sku":"5"},
-          {"sku":"7"},
-          {"sku":"8"},
-          {"sku":"9"},
-          {"sku":"10"},
-          {"sku":"11"},
-          {"sku":"12"},
-          {"sku":"13"},
-          {"sku":"14"},
-          {"sku":"15"},
-          {"sku":"16"},
-          {"sku":"17"},
-          {"sku":"18"},
-          {"sku":"19"},
-          {"sku":"20"},
-          {"sku":"21"},
-          {"sku":"22"},
-          {"sku":"23"},
-          {"sku":"24"},
-          {"sku":"25"},
-          {"sku":"26"},
-          {"sku":"27"},
-          {"sku":"28"},
-          {"sku":"29"},
-          {"sku":"30"},
-          {"sku":"31"},
-          {"sku":"32"},
-          {"sku":"33"},
-          {"sku":"34"},
-          ]
+  "clothes":[]
   
   },
 
@@ -1276,15 +1178,10 @@ let wdb=[
              {"sku":"75","name":"hankerchief","g":1,"color":0 , "hide":1},
              {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
              {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
-
-
              ]
   
   },
-  
-  
-  
-  
+
   {
   "layer":"G",
   "clothes":[
@@ -1334,26 +1231,19 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42"},
              {"name":"headband","g":1,"color":1,"sku":"46"},
              {"name":"headband","g":1,"color":1,"sku":"47"},
-             {"name":"crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-
-
-               {"name":"horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
-             {"name":"pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
-             {"name":"rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
-             {"name":"panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
-             {"name":"horse white head","g":1,"color":0,"sku":"62"},             
-             {"name":"daft","g":1,"color":0,"sku":"1002","rank":"peep"},
-             {"name":"laser","g":1,"color":0,"sku":"1000","rank":"peep"},
-
-
+             
+             {"name":"SP horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
+             {"name":"SP pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
+             {"name":"SP rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
+             {"name":"SP panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
+             {"name":"SP horse white head","g":1,"color":0,"sku":"62"},             
+             {"name":"SP daft","g":1,"color":0,"sku":"1002","rank":"peep"},
+             {"name":"SP laser","g":1,"color":0,"sku":"1000","rank":"peep"},
+             {"name":"SP crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
              ]
   
   },
 
-  
- 
-
-  
   ]
  },
 ];
