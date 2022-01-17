@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.5----");
+console.log("-----  Super Cool Peeps 2021 v0.5.6----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -58,7 +58,7 @@ const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
 
 const crazyHairStart=6;
 const crazySkinStart=5;
-const specialStart=[25,21] //woman and man's special items in head (layer=LGoodieEnd)
+const specialStart=[26,22] //woman and man's special items in head (layer=LGoodieEnd)
 
 
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
@@ -69,9 +69,20 @@ const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
 //const bgColorPal=[[153,61,97],[95,41,98],[66,33,98],[33,34,99],[23,58,113],
 //                  [38,79,128] /*,[77,126,62],[108,139,59],[161,106,48],[156,76,42]*/];
 
+/*
 const bgColorPal=[[74,47,75],[58,42,74],[40,40,74],[37,54,83],
-                  [50,71,96],[76,104,127],[69,93,66],/*[73,99,65],*/[90,107,65],
-                  [136,132,77],/*[121,92,63],[116,75,58],[114,64,56],*/ [118,70,89]
+                  [50,71,96],[76,104,127],[69,93,66],[90,107,65],
+                  [136,132,77],[118,70,89]
+                  ];
+
+const bgColorPal=[[93,65,94],[77,61,94],[59,60,93],[55,74,101],
+                  [68,89,114],[80,136,177],[86,110,83],[106,124,82],
+                  [151,145,91],[133,85,103]
+                  ];
+*/
+const bgColorPal=[[109,69,110],[77,61,94],[59,60,93],[55,74,101],
+                  [68,89,114],[76,137,181],[86,110,83],[109,134,75],
+                  [160,155,96],[157,108,147]
                   ];
 
 const zombieColor=[255,0,255];
@@ -298,12 +309,12 @@ function randomizePeep(){
   bgC=Math.floor(random(bgColorPal.length)); 
 
   //testing
-
-  
-  //itemSKUs[LGoodieStart]=1005;
-  //currTopID=myMaxTopID=LGoodieEnd;
-  
-  
+  /*
+  let layerID=LGoodieStart+2;
+  itemSKUs[layerID]=1007;
+  itemColors[layerID]=-1;
+  currTopID=myMaxTopID=LGoodieEnd;
+  */
   //end testing debug
 
   //console.log(itemSKUs);
@@ -804,6 +815,8 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
              {"name":"eye patch","g":1,"color":0,"sku":"62"},
+             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
+            
              
              ]
   
@@ -837,6 +850,7 @@ let wdb=[
              {"name":"rabbit","g":1,"color":0,"sku":"49"},
              {"name":"cat","g":1,"color":0,"sku":"50"},
              {"name":"rat","g":1,"color":0,"sku":"51"},
+             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
 
              {"name":"SP horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
              {"name":"SP pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
@@ -1011,7 +1025,7 @@ let wdb=[
              {"name":"Tight Jacket","g":2,"color":1,"sku":"66"},
              {"name":"Coat","g":2,"color":1,"sku":"67"},
              {"name":"Leather Jacket","g":3,"color":1,"sku":"68"},
-             {"name":"Two tone","g":2,"color":1,"sku":"69"},
+             {"name":"Two tone","g":2,"color":0,"sku":"69"},
              {"name":"Double","g":2,"color":1,"sku":"70"},
              {"name":"Sweater","g":1,"color":1,"sku":"71"},
              {"name":"Patterned Sweater","g":1,"color":1,"sku":"72"},
@@ -1201,7 +1215,8 @@ let wdb=[
              {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
              {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
              {"name":"eye patch","g":1,"color":0,"sku":"57"},
-             
+             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
+
              ]
   
   },
@@ -1231,6 +1246,7 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42"},
              {"name":"headband","g":1,"color":1,"sku":"46"},
              {"name":"headband","g":1,"color":1,"sku":"47"},
+             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
              
              {"name":"SP horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"SP pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
