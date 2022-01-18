@@ -432,6 +432,7 @@ function mousePressed(){
   let diff=currPressedTime-lastPressedTime;
   //console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
 
+  alert("test");
   if (diff>300) {
       lastPressedTime=currPressedTime;
       
