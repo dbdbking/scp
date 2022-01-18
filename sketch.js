@@ -7,6 +7,8 @@ let seed=document.URL.split('?s=')[1];
 if (!seed) { 
   if (!isDebug && !htmlMsg.length) document.getElementById("intro").style.display = "block";
   seed="intro";
+  //seed="109609623391740374088498902610575257344877981381652601288471797813119799813824";
+
 }
 
 console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
@@ -109,10 +111,12 @@ function setup() {
 
 }
 
-let isSlideshow=true;
+let isSlideshow=false;
 let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
+let waitTime=0;
+let waitTimeMax=10;
 
 
 function loadingImg(){
@@ -128,8 +132,7 @@ function loadingImg(){
   }
 }
 
-let waitTime=0;
-let waitTimeMax=10;
+
 
 function draw(){
     
@@ -314,11 +317,13 @@ function randomizePeep(){
 
   //testing
   /*
+  if (genderID==0) {
   
-  let layerID=LGoodieStart+2;
-  itemSKUs[layerID]=1008;
-  //itemColors[layerID]=2;
-  currTopID=myMaxTopID=LGoodieEnd;
+    let layerID=6;
+    itemSKUs[layerID]=1004;
+    itemColors[layerID]=-1;
+    currTopID=myMaxTopID=LGoodieEnd;
+  }
   */
 
   //end testing debug
@@ -429,7 +434,6 @@ function loadPeep(){
   }
 
 }
-
 
 
 function windowResized() {
@@ -679,6 +683,7 @@ let wdb=[
                  {"sku":"166","g":1,"color":0,"name":"DKNY Red Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"167","g":1,"color":0,"name":"DKNY Lace Top","rank":"brn_fw","scan":"brn_fw"},
                  {"sku":"163","g":2,"color":0,"name":"A|X TEXTURED JACKET WHITE","rank":"brn_fw","scan":"brn_fw"},
+                 {"sku":"1004","name":"skull tee","g":1,"color":0,"rank":"peep"},
                  ]
       },
       
@@ -878,6 +883,15 @@ let wdb=[
   ]
  },
 
+
+
+
+
+
+
+
+
+
  {
  "gender":"M",
  "data":
@@ -934,7 +948,7 @@ let wdb=[
 
 
   {
-  "layer":"M 3 underwear",
+  "layer":"M 3 underwear 0",
   "clothes":[
              {"sku":"0","g":1,"color":1,"name":"Tank Top"},
              {"sku":"1","g":1,"color":1,"name":"Inner Tee"},
@@ -976,7 +990,7 @@ let wdb=[
   },
   
   {
-  "layer":"M 5 shirts",
+  "layer":"M 5 shirts 2",
   "clothes":[
              {"name":"Shirt","g":2,"color":1,"sku":"27"},
              {"name":"Denim Shirt","g":2,"color":0,"sku":"28"},
@@ -1003,7 +1017,7 @@ let wdb=[
   },
   
   {
-  "layer":"6M",
+  "layer":"6M 3",
   "clothes":[
              {"name":"Dark jacket","g":2,"color":1,"sku":"44"},
              {"name":"Big Tee","g":1,"color":1,"sku":"45"},
@@ -1022,12 +1036,13 @@ let wdb=[
              {"name":"wide cardigan","g":2,"color":1,"sku":"58"},
              {"name":"MIT Sweatshirt","g":1,"color":0,"sku":"59"},
               {"sku":"132","g":2,"color":0,"name":"Comme Des Garcons PLAY Cardigan","rank":"brn_fw","scan":"brn_fw"},
+              {"name":"Skull Tee","g":1,"color":0,"sku":"1004"},
              ]
   
   },
   
   {
-  "layer":"7M",
+  "layer":"7M 4",
   "clothes":[
              {"name":"School Jacket","g":2,"color":1,"sku":"62"},
              {"name":"Long blazer","g":2,"color":1,"sku":"63"},
@@ -1047,7 +1062,7 @@ let wdb=[
   },
   
   {
-  "layer":"8M",
+  "layer":"8M 5",
   "clothes":[
              {"name":"Coat","g":2,"color":1,"sku":"74"},
              {"name":"Coat Camel","g":2,"color":0,"sku":"75"},
@@ -1064,7 +1079,7 @@ let wdb=[
   },
   
   {
-  "layer":"9M",
+  "layer":"9M 6",
   "clothes":[
              {"name":"Jumper","g":1,"color":1,"sku":"84"},
              {"name":"Stripes knit","g":1,"color":1,"sku":"85"},
@@ -1082,7 +1097,7 @@ let wdb=[
   
 
   {
-  "layer":"8",
+  "layer":"10M 7",
   "clothes":[
              {"name":"Down vest","g":3,"color":1,"sku":"93"},
              {"name":"Outdoor Jacket","g":3,"color":1,"sku":"94"},
@@ -1099,7 +1114,7 @@ let wdb=[
   
   
   {
-  "layer":"10 big scarf",
+  "layer":"11 M big scarf 8",
   "clothes":[
              {"name":"Scarf------------","g":5,"color":1,"sku":"100"},
              {"name":"Scarf------------","g":5,"color":1,"sku":"101"},
