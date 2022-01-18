@@ -111,7 +111,7 @@ function setup() {
 
 }
 
-let isSlideshow=false;
+let isSlideshow=true;
 let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
