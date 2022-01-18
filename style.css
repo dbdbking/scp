@@ -29,10 +29,12 @@ a:hover, a:active {
   position: absolute;
   width:80%;
   max-width:40rem;
+  /*
   -webkit-user-select: none;  
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
+  */
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
   font-style: italic;
   font-weight: 300;
