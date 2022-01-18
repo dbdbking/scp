@@ -91,7 +91,7 @@ function preload(){
 
 function setup() {   
 
-  this.canvas.addEventListener("click",handleStart,false);
+  this.canvas.addEventListener("click",handleClick,false);
 
   //randomSeed(int(seed)); //deterministic
   createCanvas(windowWidth, windowHeight);
@@ -114,6 +114,7 @@ let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
 
+
 function loadingImg(){
   
   imgLoaded++;
@@ -124,20 +125,30 @@ function loadingImg(){
     imgLoaded=0;
     isLoadingImg=false;
 
-
-    //////// keep loading...
-    
-    if (isSlideshow) { 
-      randomizePeep(); 
-      loadPeep(); 
-
-      if (isSaveFrame && saveID<=stopSaveID){
-        saveCanvas(saveID.toString(),'png'); 
-        saveID++;
-      }
-    }
-    
   }
+}
+
+let waitTime=0;
+let waitTimeMax=10;
+
+function draw(){
+    
+     if (isSlideshow) {
+
+        if (!isLoadingImg && waitTime<=0) {
+        waitTime=waitTimeMax;
+        randomizePeep(); 
+        loadPeep(); 
+
+        if (isSaveFrame && saveID<=stopSaveID){
+          saveCanvas(saveID.toString(),'png'); 
+          saveID++;
+        }
+
+    } else {
+        waitTime--;
+      }
+   }
 }
 
 
@@ -427,16 +438,15 @@ function windowResized() {
 }
 
 
-function handleStart(evt) {
+function handleClick(evt) {
 
   evt.preventDefault();
 
-  console.log("touch start!");
 
-  if (isSlideshow) isSlideshow=false;
-  else {
+  if (!isSlideshow || waitTime>waitTimeMax){
 
-      if (currTopID==LTopStart) { //underwear
+    ///take off clothes
+    if (currTopID==LTopStart) { //underwear
         if (itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //has underwear then reset  
       } 
       else if (currTopID<LTopStart) { //naked
@@ -450,9 +460,18 @@ function handleStart(evt) {
       }
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
       showPeep();
-  }
+
+
+
+  } 
+
+
+  waitTime=10*waitTimeMax;      
+
+
 
 }
+
 
 
 
