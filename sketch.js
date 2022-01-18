@@ -422,7 +422,7 @@ function windowResized() {
 
 let lastPressedTime=0;
 
-function mousePressed(){
+function touchStarted(){
 
   isShowcase=false;
   /// fix Chrome's double trigger bug for mobile
@@ -432,8 +432,9 @@ function mousePressed(){
   let diff=currPressedTime-lastPressedTime;
   //console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
 
-  alert("test");
-  if (diff>300) {
+ 
+  
+  //if (diff>300) {
       lastPressedTime=currPressedTime;
       
 
@@ -454,7 +455,7 @@ function mousePressed(){
 
       showPeep();
 
-  }
+ // }
 }
 
 
