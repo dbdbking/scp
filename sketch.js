@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.6----");
+console.log("-----  Super Cool Peeps 2021 v0.5.7----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -75,15 +75,19 @@ const bgColorPal=[[74,47,75],[58,42,74],[40,40,74],[37,54,83],
                   [136,132,77],[118,70,89]
                   ];
 
-const bgColorPal=[[93,65,94],[77,61,94],[59,60,93],[55,74,101],
-                  [68,89,114],[80,136,177],[86,110,83],[106,124,82],
-                  [151,145,91],[133,85,103]
-                  ];
-*/
+
 const bgColorPal=[[109,69,110],[77,61,94],[59,60,93],[55,74,101],
                   [68,89,114],[76,137,181],[86,110,83],[109,134,75],
                   [160,155,96],[157,108,147]
                   ];
+
+
+*/
+const bgColorPal=[[93,65,94],[77,61,94],[59,60,93],[55,74,101],
+                  [68,89,114],[80,136,177],[86,110,83],[106,124,82],
+                  [151,145,91],[133,85,103]
+                  ];
+
 
 const zombieColor=[255,0,255];
 const skullColor=[0,255,255];
@@ -308,14 +312,25 @@ function randomizePeep(){
 
   bgC=Math.floor(random(bgColorPal.length)); 
 
+  
+
+
   //testing
   /*
+  
   let layerID=LGoodieStart+2;
-  itemSKUs[layerID]=1007;
-  itemColors[layerID]=-1;
+  itemSKUs[layerID]=1008;
+  //itemColors[layerID]=2;
   currTopID=myMaxTopID=LGoodieEnd;
   */
+
   //end testing debug
+
+
+
+
+
+
 
   //console.log(itemSKUs);
 
@@ -1247,6 +1262,7 @@ let wdb=[
              {"name":"headband","g":1,"color":1,"sku":"46"},
              {"name":"headband","g":1,"color":1,"sku":"47"},
              {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
+             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
              
              {"name":"SP horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"SP pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
