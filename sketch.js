@@ -87,7 +87,13 @@ function preload(){
   transImg = loadImage("lib/scp_new/textureNumen/trans.png");
 }
 
+
+
 function setup() {   
+
+
+  //this.canvas.addEventListener("touchstart",handleStart,false);
+  this.canvas.addEventListener("click",handleStart,false);
 
 
   //randomSeed(int(seed)); //deterministic
@@ -419,10 +425,13 @@ function windowResized() {
    showPeep();
 }
 
-
 let lastPressedTime=0;
 
-function touchStarted(){
+function handleStart(evt) {
+
+  evt.preventDefault();
+
+  console.log("touch start!");
 
   isShowcase=false;
   /// fix Chrome's double trigger bug for mobile
