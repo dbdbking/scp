@@ -91,10 +91,7 @@ function preload(){
 
 function setup() {   
 
-
-  //this.canvas.addEventListener("touchstart",handleStart,false);
   this.canvas.addEventListener("click",handleStart,false);
-
 
   //randomSeed(int(seed)); //deterministic
   createCanvas(windowWidth, windowHeight);
@@ -112,9 +109,10 @@ function setup() {
 
 }
 
-let isShowcase=false;
-let showcaseID=0;
-let stopShowcaseID=499;
+let isSlideshow=true;
+let isSaveFrame=false;
+let saveID=0;
+let stopSaveID=499;
 
 function loadingImg(){
   
@@ -129,11 +127,14 @@ function loadingImg(){
 
     //////// keep loading...
     
-    if (isShowcase && showcaseID<=stopShowcaseID) { 
+    if (isSlideshow) { 
       randomizePeep(); 
       loadPeep(); 
-      saveCanvas(showcaseID.toString(),'png'); 
-      showcaseID++;
+
+      if (isSaveFrame && saveID<=stopSaveID){
+        saveCanvas(saveID.toString(),'png'); 
+        saveID++;
+      }
     }
     
   }
@@ -425,7 +426,6 @@ function windowResized() {
    showPeep();
 }
 
-let lastPressedTime=0;
 
 function handleStart(evt) {
 
@@ -433,19 +433,8 @@ function handleStart(evt) {
 
   console.log("touch start!");
 
-  isShowcase=false;
-  /// fix Chrome's double trigger bug for mobile
-  
-  let date = new Date();
-  let currPressedTime=date.getTime();
-  let diff=currPressedTime-lastPressedTime;
-  //console.log("mousePressed---------------------- "+random(1)+" diff:"+diff);
-
- 
-  
-  //if (diff>300) {
-      lastPressedTime=currPressedTime;
-      
+  if (isSlideshow) isSlideshow=false;
+  else {
 
       if (currTopID==LTopStart) { //underwear
         if (itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //has underwear then reset  
@@ -459,12 +448,10 @@ function handleStart(evt) {
             currTopID--;
           } while (itemSKUs[currTopID]<0 && currTopID>=LTopStart);
       }
-
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
-
       showPeep();
+  }
 
- // }
 }
 
 
