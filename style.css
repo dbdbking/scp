@@ -27,7 +27,7 @@ a:hover, a:active {
   color:black;
   z-index:10;
   position: absolute;
-  width:80%;
+  width:280px;
   max-width:40rem;
   /*
   -webkit-user-select: none;  
@@ -39,7 +39,7 @@ a:hover, a:active {
   font-style: italic;
   font-weight: 300;
   font-size:2rem;
-  line-height: 3rem;
+  line-height: 2rem;
 }
 
 .center {
@@ -51,7 +51,7 @@ a:hover, a:active {
   transform: translate(-50%, -50%);
 }
 
-.center2 {
+.centerTop {
   margin: 0;
   position: absolute;
   top: 8rem;
@@ -62,10 +62,12 @@ a:hover, a:active {
 
 .name {
   font-size:1.3rem;
+  font-style: normal;
 }
 .soon {
-  font-size:1rem;
-  margin-bottom: 5.0em;
+  font-size:1.0rem;
+  margin-bottom: 4.0em;
+  font-style: italic;
 
 }
 
@@ -121,25 +123,25 @@ a:hover, a:active {
 
 .logo {
   display: inline-block;
-  width: 3rem;
-  height: 3rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
-  margin: 0rem 1.2rem;
+  margin: 0rem 0.5rem;
 }
 
 .opensea {
   background: url(./graphics/opensea.svg);
-  background-size: 3rem 3rem;
+  background-size: 2rem 2rem;
 } 
 
 .twitter {
   background: url(./graphics/twitter.svg);
-  background-size: 3rem 3rem;
+  background-size: 2rem 2rem;
 }
 
 .email {
   background: url(./graphics/email.svg);
-  background-size: 3rem 3rem;
+  background-size: 2rem 2rem;
 }
 
 .check {
