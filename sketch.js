@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.7----");
+console.log("-----  Super Cool Peeps 2021 v0.5.8----");
 let isDebug=1;
 
 let seed=document.URL.split('?s=')[1];
@@ -111,7 +111,7 @@ function setup() {
 
 }
 
-let isSlideshow=true;
+let isSlideshow=false;
 let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
@@ -317,13 +317,13 @@ function randomizePeep(){
 
   //testing
   /*
-  if (genderID==0) {
+  //if (genderID==1) {
   
-    let layerID=6;
-    itemSKUs[layerID]=1004;
-    itemColors[layerID]=-1;
+    let layerID=LHair;
+    itemSKUs[layerID]=itemSKUs[LHairS]=35;
+    //itemColors[layerID]=-1;
     currTopID=myMaxTopID=LGoodieEnd;
-  }
+  //}
   */
 
   //end testing debug
@@ -789,6 +789,7 @@ let wdb=[
           {"sku":"32"},
           {"sku":"33"},
           {"sku":"34"},
+          {"sku":"35"},
         ]
   
   },
@@ -1197,6 +1198,7 @@ let wdb=[
           {"sku":"32"},
           {"sku":"33"},
           {"sku":"34"},
+          {"sku":"35"},
           ]
   
   },
