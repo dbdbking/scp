@@ -65,7 +65,7 @@ let itemColors= new Array(totalLayers);
 let imgLoaded=0;
 let isLoadingImg=false;
 
-const oW=80, oH=142;
+
 
 const skinColor=[[250,245,239],[255,224,189],[234,192,134],[131,108,79],[85,70,52],
                  [134,166,212],[99,132,54]];
@@ -93,6 +93,7 @@ const apeColor=[0,255,0];
 
 let bgC;
 let currTopID,myMaxTopID;
+let currGoodieID,myMaxGoodieID;
 
 let butPlay,butPause;
 function preload(){
@@ -210,6 +211,7 @@ function randomizePeep(){
   let validTop=maxTopLayers;
   let validGoodie=maxGoodieLayers;
   currTopID=LTopStart-1;
+  currGoodieID=LGoodieStart-1;
 
   for (let i=0; i<totalLayers; i++) {
 
@@ -266,16 +268,16 @@ function randomizePeep(){
 
             let itemR=random();
             let specialTot=objTotal- specialStart[genderID]; 
-            console.log("special total:"+specialTot+" special R:"+itemR);
+            //console.log("special total:"+specialTot+" special R:"+itemR);
             if (itemR<chanceSpecial) {
 
               objID=specialStart[genderID]+Math.floor(random(specialTot)); //only special total
 
-              console.log("Got Special item ID:"+objID);
+              //console.log("Got Special item ID:"+objID);
             } else {
 
               objID=Math.floor(random(specialStart[genderID])); //exclude special item
-              console.log("Normal item ID:"+objID);
+              //console.log("Normal item ID:"+objID);
             }
 
 
@@ -287,11 +289,14 @@ function randomizePeep(){
           }
 
           if (isTop(i)) currTopID=i;
+          else if (isGoodie(i)) currGoodieID=i;
+          
           if (objSKU<0) objSKU=wdb[genderID].data[i].clothes[objID].sku;
         }
 
         itemSKUs[i]=objSKU;
         myMaxTopID=currTopID;
+        myMaxGoodieID=currGoodieID;
 
 
         /////////// color /////////////////////////////////////////////////////////////////////
@@ -358,41 +363,36 @@ function randomizePeep(){
 
   //end testing debug
 
-
-
-
-
-
-
-  //console.log(itemSKUs);
-
-  console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
+  //console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
 }
 
 
-
+let manScale=1;
 function showPeep(){
   if (itemSKUs[LBody]==SKUZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
   else if (itemSKUs[LBody]==SKUSkull) background(skullColor[0],skullColor[1],skullColor[2]);
   else if (itemSKUs[LBody]==SKUApe) background(apeColor[0],apeColor[1],apeColor[2]);
   else background(bgColorPal[bgC][0], bgColorPal[bgC][1], bgColorPal[bgC][2]);
 
-  let pScale=2.0; 
+  let pScale=2.0;
+  let maxScale=7.0; 
+  const ow=80, oh=142;
   let shortSide = width<height?width:height;
   let manWidth=int(pScale*shortSide);
 
-  if (manWidth>560) manWidth=560;  /// ow=80 
+  if (manWidth>maxScale*ow) manWidth=maxScale*ow;  /// ow=80 
 
-  let manScale=manWidth/oW;
+  manScale=manWidth/ow;
 
-  
-  console.log("showing layer: ------------------------");
+  //console.log("showing layer: ------------------------");
 
   for (let i=0; i<totalLayers; i++) {
 
     
     if (isTop(i) && i>currTopID){ 
       // skip item tops if not showing
+    } else if (isGoodie(i) && i>currGoodieID){ 
+      // skip item goodies if not showing
     } else 
 
     if (itemSKUs[i]>=0) {
@@ -412,10 +412,10 @@ function showPeep(){
       else 
         noTint();
 
-      scp[i].pixelate(int(manWidth),int(manWidth*oH/oW));
+      scp[i].pixelate(int(manWidth),int(manWidth*oh/ow));
       image(scp[i],int(width/2-1*manScale),int(height+(5+3*(genderID))*manScale));
 
-      console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
+      //console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
     }
   }
 }
@@ -459,7 +459,7 @@ function loadPeep(){
       scp.push(loadImage(imgName,loadingImg));
     }
     
-    console.log(i+" : "+imgName);
+    //console.log(i+" : "+imgName);
     
   }
 
@@ -472,23 +472,38 @@ function windowResized() {
 }
 
 
-function undress(){
-///take off clothes
-    if (currTopID==LTopStart) { //underwear
-        if (itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //has underwear then reset  
-      } 
-      else if (currTopID<LTopStart) { //naked
-        currTopID=myMaxTopID; // reset  
-      } 
+function undress(region){
 
-      else {
-          do {
-            currTopID--;
-          } while (itemSKUs[currTopID]<0 && currTopID>=LTopStart);
+      console.log("take off region: "+region);
+
+      if (region==1) { //top
+        if (currTopID==LTopStart && itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //at underwear and has underwear then reset
+        else if (currTopID<LTopStart) currTopID=myMaxTopID; //naked then reset
+        else do { currTopID--; } while (itemSKUs[currTopID]<0 && currTopID>=LTopStart);
       }
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
+      else if (region==2) { //goodie
+        if (currGoodieID<LGoodieStart) currGoodieID=myMaxGoodieID; //naked then reset
+        else do { currGoodieID--; } while (itemSKUs[currGoodieID]<0 && currGoodieID>=LGoodieStart);
+      }
+
+
+      
+     // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
       showPeep();
 
+}
+
+
+
+function checkRegion(x,y){
+
+    if (x>width/2-manScale*20 && x<width/2+manScale*20 ){
+
+      if (y>height-manScale*14) return(1);
+      else if (y>height-manScale*40) return(2);
+    }
+      
+    return(0);
 }
 
 
@@ -497,16 +512,14 @@ function handleClick(evt) {
 
   evt.preventDefault();
 
-  
+              let region=checkRegion(mouseX,mouseY);
 
               if (isDemo){
 
                       showPeep(); //otherwise the pause but won't go away
                       if (isSlideshow) {
                         isSlideshow=false;
-                        
-
-
+ 
                       }
                       else {
                         ///wwhen not playing slideshow
@@ -517,7 +530,7 @@ function handleClick(evt) {
                           waitTime=0;      
                         } else {
                           //clicked elsewhere
-                           undress();
+                          if (region==1 || region==2) undress(region);
                         }
                         
                        
@@ -526,7 +539,7 @@ function handleClick(evt) {
               } else if (!isLoadingImg){
 
                   //not in demo mode (loading seed)
-                  undress();
+                   if (region==1 || region==2) undress(region);
               }
   
 
