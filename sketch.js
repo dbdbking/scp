@@ -497,40 +497,40 @@ function handleClick(evt) {
 
   evt.preventDefault();
 
-  if (!isLoadingImg){
+  
 
               if (isDemo){
 
-                showPeep(); //otherwise the pause but won't go away
-                if (isSlideshow) {
-                  isSlideshow=false;
-                  
+                      showPeep(); //otherwise the pause but won't go away
+                      if (isSlideshow) {
+                        isSlideshow=false;
+                        
 
 
-                }
-                else {
-                  ///wwhen not playing slideshow
+                      }
+                      else {
+                        ///wwhen not playing slideshow
 
-                  if (mouseX<50 && mouseY<50) {
-                    //clicked play button
-                    isSlideshow=true;
-                    waitTime=0;      
-                  } else {
-                    //clicked elsewhere
-                     undress();
-                  }
-                  
-                 
-                }
+                        if (mouseX<50 && mouseY<50) {
+                          //clicked play button
+                          isSlideshow=true;
+                          waitTime=0;      
+                        } else {
+                          //clicked elsewhere
+                           undress();
+                        }
+                        
+                       
+                      }
 
-              } else {
+              } else if (!isLoadingImg){
 
                   //not in demo mode (loading seed)
                   undress();
               }
   
 
-  }
+  
 }
 
 
