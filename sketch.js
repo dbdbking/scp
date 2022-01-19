@@ -1,10 +1,24 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.8----");
+console.log("-----  Super Cool Peeps 2021 v0.5.9----");
 let isDebug=1;
+let isDemo=false;
+let isSlideshow=false;
+let isSaveFrame=false;
+let saveID=0;
+let stopSaveID=499;
+let waitTime=0;
+let waitTimeMax=20;
+
+
 
 let seed=document.URL.split('?s=')[1];
 if (!seed) { 
+
+  isDemo=isSlideshow=true;
+
+
+
   if (!isDebug && !htmlMsg.length) document.getElementById("intro").style.display = "block";
   seed="intro";
   //seed="109609623391740374088498902610575257344877981381652601288471797813119799813824";
@@ -80,10 +94,12 @@ const apeColor=[0,255,0];
 let bgC;
 let currTopID,myMaxTopID;
 
+let butPlay,butPause;
 function preload(){
 
   //preloadFrames();
-  fsBut = loadImage("lib/fs.png");
+  butPause = loadImage("lib/pause.png");
+  butPlay = loadImage("lib/play.png");
 
   ///preloading all wardrobe
   transImg = loadImage("lib/scp_new/textureNumen/trans.png");
@@ -96,6 +112,9 @@ function setup() {
   this.canvas.addEventListener("click",handleClick,false);
 
   //randomSeed(int(seed)); //deterministic
+
+
+
   createCanvas(windowWidth, windowHeight);
 
   pixelDensity(displayDensity());
@@ -111,12 +130,7 @@ function setup() {
 
 }
 
-let isSlideshow=false;
-let isSaveFrame=false;
-let saveID=0;
-let stopSaveID=499;
-let waitTime=0;
-let waitTimeMax=10;
+
 
 
 function loadingImg(){
@@ -128,6 +142,7 @@ function loadingImg(){
      showPeep();
     imgLoaded=0;
     isLoadingImg=false;
+    waitTime=waitTimeMax;
 
   }
 }
@@ -135,23 +150,43 @@ function loadingImg(){
 
 
 function draw(){
-    
-     if (isSlideshow) {
 
-        if (!isLoadingImg && waitTime<=0) {
-        waitTime=waitTimeMax;
-        randomizePeep(); 
-        loadPeep(); 
+   if (isDemo){ 
 
-        if (isSaveFrame && saveID<=stopSaveID){
-          saveCanvas(saveID.toString(),'png'); 
-          saveID++;
-        }
+           
 
-    } else {
-        waitTime--;
-      }
-   }
+             
+
+             if (isSlideshow) {
+                    
+                    if (!isLoadingImg && waitTime<=0) {
+                    
+                      randomizePeep(); 
+                      loadPeep(); 
+
+                      if (isSaveFrame && saveID<=stopSaveID){
+                        saveCanvas(saveID.toString(),'png'); 
+                        saveID++;
+                      }
+
+                    } else if (!isLoadingImg) waitTime--;
+
+                    noTint();
+                    image(butPause,25, 25); 
+            }
+
+
+
+            else {
+                
+                noTint();
+                image(butPlay,25, 25);
+            }
+
+
+
+
+  }
 }
 
 
@@ -442,14 +477,8 @@ function windowResized() {
 }
 
 
-function handleClick(evt) {
-
-  evt.preventDefault();
-
-
-  if (!isSlideshow || waitTime>waitTimeMax){
-
-    ///take off clothes
+function undress(){
+///take off clothes
     if (currTopID==LTopStart) { //underwear
         if (itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //has underwear then reset  
       } 
@@ -465,12 +494,47 @@ function handleClick(evt) {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>curr Top ID:"+currTopID);
       showPeep();
 
+}
 
 
-  } 
+
+function handleClick(evt) {
+
+  evt.preventDefault();
 
 
-  waitTime=10*waitTimeMax;      
+  if (isDemo){
+
+    if (isSlideshow) {
+      isSlideshow=false;
+      showPeep(); //otherwise the pause but won't go away
+
+
+    }
+    else {
+      ///wwhen not playing slideshow
+
+      if (mouseX<50 && mouseY<50) {
+        //clicked play button
+        isSlideshow=true;
+        waitTime=0;      
+      } else {
+        //clicked elsewhere
+         undress();
+      }
+      
+     
+    }
+
+  } else {
+
+      //not in demo mode (loading seed)
+      undress();
+  }
+  
+
+
+
 
 
 
