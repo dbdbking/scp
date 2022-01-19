@@ -153,10 +153,6 @@ function draw(){
 
    if (isDemo){ 
 
-           
-
-             
-
              if (isSlideshow) {
                     
                     if (!isLoadingImg && waitTime<=0) {
@@ -171,13 +167,12 @@ function draw(){
 
                     } else if (!isLoadingImg) waitTime--;
 
-                    noTint();
-                    image(butPause,25, 25); 
+                    if (!isLoadingImg) {
+                        noTint();
+                        image(butPause,25, 25); 
+                    }
             }
-
-
-
-            else {
+            else if (!isLoadingImg) {
                 
                 noTint();
                 image(butPlay,25, 25);
@@ -502,42 +497,40 @@ function handleClick(evt) {
 
   evt.preventDefault();
 
+  if (!isLoadingImg){
 
-  if (isDemo){
+              if (isDemo){
 
-    if (isSlideshow) {
-      isSlideshow=false;
-      showPeep(); //otherwise the pause but won't go away
+                showPeep(); //otherwise the pause but won't go away
+                if (isSlideshow) {
+                  isSlideshow=false;
+                  
 
 
-    }
-    else {
-      ///wwhen not playing slideshow
+                }
+                else {
+                  ///wwhen not playing slideshow
 
-      if (mouseX<50 && mouseY<50) {
-        //clicked play button
-        isSlideshow=true;
-        waitTime=0;      
-      } else {
-        //clicked elsewhere
-         undress();
-      }
-      
-     
-    }
+                  if (mouseX<50 && mouseY<50) {
+                    //clicked play button
+                    isSlideshow=true;
+                    waitTime=0;      
+                  } else {
+                    //clicked elsewhere
+                     undress();
+                  }
+                  
+                 
+                }
 
-  } else {
+              } else {
 
-      //not in demo mode (loading seed)
-      undress();
-  }
+                  //not in demo mode (loading seed)
+                  undress();
+              }
   
 
-
-
-
-
-
+  }
 }
 
 
