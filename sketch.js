@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.5.9----");
+console.log("-----  Super Cool Peeps 2021 v0.6.0----");
 let isDebug=1;
 let isDemo=false;
 let isSlideshow=false;
@@ -30,11 +30,13 @@ console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
 ///scp init///
 let genderID=0;
 
-let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=17;
+let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=18;
+//let LGoodieSpecial=16; //face/head
+
 const showChance=[1,1,1, //body,head,face
                   0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops
                   1,1,1, //beard, hair
-                  0.2,0.4,0.4, //mouth, eye, hat/face
+                  0.2,0.4,0.4,0.08, //mouth, hat, eye, face
                   ];
 
 const normalTotals=[[],[]];
@@ -44,7 +46,7 @@ const rareChance=[[],[]];
 let totalLayers=showChance.length;
 let chanceCrazySkin=0.1;
 let chanceCrazyHair=0.2;
-let chanceSpecial=0.15;
+//let chanceSpecial=0.15; //not using
 
 let chanceSkull=0.02;   // =0.02 chance
 let chanceZombie=0.06; // = 0.04 chance
@@ -74,7 +76,7 @@ const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
 
 const crazyHairStart=6;
 const crazySkinStart=5;
-const specialStart=[26,22] //woman and man's special items in head (layer=LGoodieEnd)
+//const specialStart=[26,23] //woman and man's special items in head (layer=LGoodieSpecial)
 
 
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
@@ -151,7 +153,6 @@ function loadingImg(){
 
 
 function draw(){
-
    if (isDemo){ 
 
              if (isSlideshow) {
@@ -265,7 +266,8 @@ function randomizePeep(){
           else if (i==LHead) {
             objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
           } 
-          else if (i==LGoodieEnd) { //// Goodie Head with special items
+          /*
+          else if (i==LGoodieSpecial) { //// Goodie Head with special items
 
             let itemR=random();
             let specialTot=objTotal- specialStart[genderID]; 
@@ -282,7 +284,7 @@ function randomizePeep(){
             }
 
 
-          }
+          } */
 
           else {
             //equally distributed
@@ -364,7 +366,7 @@ function randomizePeep(){
 
   //end testing debug
 
-  //console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
+  console.log("^^^^^^^^^^^^^^^^^^ valid top:"+validTop+" valid Goodie:"+validGoodie+" currTopID:"+currTopID);
 }
 
 
@@ -475,7 +477,7 @@ function windowResized() {
 
 function undress(region){
 
-      console.log("take off region: "+region);
+      //console.log("take off region: "+region);
 
       if (region==1) { //top
         if (currTopID==LTopStart && itemSKUs[LTopStart]>=0) currTopID=myMaxTopID; //at underwear and has underwear then reset
@@ -873,7 +875,7 @@ let wdb=[
   },
 
     {
-  "layer":"G 15",
+  "layer":"G 15 mouth",
   "clothes":[
              {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
              {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
@@ -884,34 +886,10 @@ let wdb=[
   
   },
   
-   {
-  "layer":"G 17",
-  "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
-             {"name":"eye patch","g":1,"color":0,"sku":"62"},
-             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
-            
-             
-             ]
   
-  },
   
   {
-  "layer":"G 16",
+  "layer":"G 16 hat",
   "clothes":[
              {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
              {"name":"Headdband","g":1,"color":1,"sku":"1"},
@@ -940,6 +918,41 @@ let wdb=[
              {"name":"rat","g":1,"color":0,"sku":"51"},
              {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
 
+             
+
+             ]
+  
+  },
+
+   {
+  "layer":"G 17 eye",
+  "clothes":[
+             {"name":"3D","g":1,"color":0,"sku":"12"},
+             {"name":"Glasses","g":1,"color":1,"sku":"13"},
+             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
+             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
+             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
+             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
+             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
+             {"name":"eye patch","g":1,"color":0,"sku":"62"},
+             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
+             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
+             ]
+  
+  },
+
+
+  {
+  "layer":"G 18 face/special",
+  "clothes":[
              {"name":"SP horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
              {"name":"SP pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
              {"name":"SP rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
@@ -948,10 +961,12 @@ let wdb=[
              {"name":"SP daft","g":1,"color":0,"sku":"1002","rank":"peep"},
              {"name":"SP laser","g":1,"color":0,"sku":"1000","rank":"peep"},
              {"name":"SP crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
-
              ]
   
   },
+
+
+
   ]
  },
 
@@ -1295,34 +1310,9 @@ let wdb=[
   
   },
 
+ 
   {
-  "layer":"G",
-  "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
-             {"name":"eye patch","g":1,"color":0,"sku":"57"},
-             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
-
-             ]
-  
-  },
-
-
-  {
-  "layer":"G",
+  "layer":"G 16 M hat",
   "clothes":[
              {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
              {"name":"FL Cap","g":1,"color":1,"sku":"1"},
@@ -1346,8 +1336,43 @@ let wdb=[
              {"name":"headband","g":1,"color":1,"sku":"46"},
              {"name":"headband","g":1,"color":1,"sku":"47"},
              {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
-             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
              
+             
+             
+             ]
+  
+  },
+
+
+   {
+  "layer":"G eyes M 17",
+  "clothes":[
+             {"name":"3D","g":1,"color":0,"sku":"12"},
+             {"name":"Glasses","g":1,"color":1,"sku":"13"},
+             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
+             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
+             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
+             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
+             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"22"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
+             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
+             {"name":"eye patch","g":1,"color":0,"sku":"57"},
+             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
+             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
+
+             ]
+  
+  },
+
+    {
+  "layer":"G face 18",
+  "clothes":[
              {"name":"SP horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
              {"name":"SP pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
              {"name":"SP rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
