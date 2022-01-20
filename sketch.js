@@ -7,8 +7,8 @@ let isSlideshow=false;
 let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
+let waitTimeMax=5; //20
 let waitTime=0;
-let waitTimeMax=20;
 
 
 
@@ -36,7 +36,7 @@ let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LH
 const showChance=[1,1,1, //body,head,face
                   0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops
                   1,1,1, //beard, hair
-                  0.2,0.4,0.4,0.08, //mouth, hat, eye, face
+                  0.2,0.4,0.4,0.05, //mouth, hat, eye, special
                   ];
 
 const normalTotals=[[],[]];
@@ -147,6 +147,12 @@ function loadingImg(){
     isLoadingImg=false;
     waitTime=waitTimeMax;
 
+
+    if (isSaveFrame && saveID<=stopSaveID){
+      saveCanvas(saveID.toString(),'png'); 
+      saveID++;
+    }
+
   }
 }
 
@@ -162,10 +168,6 @@ function draw(){
                       randomizePeep(); 
                       loadPeep(); 
 
-                      if (isSaveFrame && saveID<=stopSaveID){
-                        saveCanvas(saveID.toString(),'png'); 
-                        saveID++;
-                      }
 
                     } else if (!isLoadingImg) waitTime--;
 
@@ -916,7 +918,7 @@ let wdb=[
              {"name":"rabbit","g":1,"color":0,"sku":"49"},
              {"name":"cat","g":1,"color":0,"sku":"50"},
              {"name":"rat","g":1,"color":0,"sku":"51"},
-             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
+             
 
              
 
@@ -945,6 +947,7 @@ let wdb=[
              {"name":"eye patch","g":1,"color":0,"sku":"62"},
              {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
              {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
+             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
              ]
   
   },
@@ -1335,7 +1338,7 @@ let wdb=[
              {"name":"bike cap","g":1,"color":1,"sku":"42"},
              {"name":"headband","g":1,"color":1,"sku":"46"},
              {"name":"headband","g":1,"color":1,"sku":"47"},
-             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
+             
              
              
              
@@ -1365,6 +1368,7 @@ let wdb=[
              {"name":"eye patch","g":1,"color":0,"sku":"57"},
              {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
              {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
+             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
 
              ]
   
