@@ -1,59 +1,40 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.6.0----");
+console.log("-----  Super Cool Peeps 2021 v0.7.1----");
 let isDebug=1;
 let isDemo=false;
+let isSaveFrame=false; 
 let isSlideshow=false;
-let isSaveFrame=false;
 let saveID=0;
 let stopSaveID=499;
 let waitTimeMax=5; //20
 let waitTime=0;
 
 
-
 let seed=document.URL.split('?s=')[1];
 if (!seed) { 
-
   isDemo=isSlideshow=true;
-
-
-
   if (!isDebug && !htmlMsg.length) document.getElementById("intro").style.display = "block";
-  seed="intro";
-  //seed="109609623391740374088498902610575257344877981381652601288471797813119799813824";
-
 }
 
-console.log("seed:"+seed+" length:"+seed.length+" htmlMsg:"+htmlMsg);
+//isDemo=false;//debug
+
 
 ///scp init///
 let genderID=0;
 
 let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=18;
 //let LGoodieSpecial=16; //face/head
-
-const showChance=[1,1,1, //body,head,face
-                  0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops
-                  1,1,1, //beard, hair
-                  0.2,0.4,0.4,0.05, //mouth, hat, eye, special
+/*
+const showChance=[1,1,1, //body,head,face (3)
+                  0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops (9)
+                  1,1,1, //beard, hair, hairS (3)
+                  0.2,0.4,0.4,0.05, //mouth, hat, eye, special (4)
                   ];
+*/
+let totalLayers=LGoodieEnd+1; 
 
-const normalTotals=[[],[]];
-const specialTotals=[[],[]];
-const rareChance=[[],[]];
 
-let totalLayers=showChance.length;
-let chanceCrazySkin=0.1;
-let chanceCrazyHair=0.2;
-//let chanceSpecial=0.15; //not using
-
-let chanceSkull=0.02;   // =0.02 chance
-let chanceZombie=0.06; // = 0.04 chance
-let chanceApe=0.14;   // = 0.08 chance
-let chanceTatoo=0.34; //= 0.20 chance
-let chanceSexy=0.64; //= 0.30 chance  
-                    //normal: 0.36 chacne
 
 
 let SKUZombie=3, SKUSkull=4, SKUApe=7; //sku
@@ -74,15 +55,14 @@ const skinColor=[[250,245,239],[255,224,189],[234,192,134],[131,108,79],[85,70,5
 const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139],[255,255,255]];
 
-const crazyHairStart=6;
-const crazySkinStart=5;
-//const specialStart=[26,23] //woman and man's special items in head (layer=LGoodieSpecial)
 
 
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
                 [153,197,85],[255,243,95],[230,152,72],[223,110,64],[219,83,60],
                 [134,101,64],[51,51,51],[255,255,255]];
+
+
 
 const bgColorPal=[[93,65,94],[77,61,94],[59,60,93],[55,74,101],
                   [68,89,114],[80,136,177],[86,110,83],[106,124,82],
@@ -204,12 +184,110 @@ function isGoodie(i){
    return(false);
 }
 
+
+function getRanFromSeed(s,startID,len,isP){
+  let p=1;
+  if (isP) for (let i=0; i<len; i++) p*=10;
+  return( int(s.substr(startID,len)) / p );
+}
+
+function getResultFromChance(r,chance){
+  for (let j=0; j<chance.length; j++) if (r<chance[j]) return(j)
+  return(0);
+}
+
+const chanceBody=[0.36,0.66,0.86,0.94,0.98,1]; //normal (36%), skinny(30%), tatoo(20%), ape(8%),zombie(4%), skull(2%)
+const chanceSkin=[0.18,0.36,0.54,0.72,0.9,0.95,1]; //normal color x5 (18%), blue (5%), green (5%)
+const chanceHair=[0.12,0.25,0.37,0.50,0.62,0.76,0.80,0.84,0.88,0.92,0.96,1]; //total 12 (~13%), 6 normal (4%)
+const chanceShowTop=[0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1]; //tops (9) //individually tested
+const chanceShowGoodie=[0.2,0.4,0.4,0.05]; //mouth, hat, eye, special (4) //individually tested
+const allItemTotal=[[6,8,12,12,39,22,35,4,6,5,5,3,1,36,0,5,25,19,8],
+                    [6,8,12,8,18,20,18,12,10,9,9,4,26,35,0,6,21,19,8]]; //remember to update for all wardrobe changes
+
+//let chanceCrazyHair=0.2;
+//const crazyHairStart=6;
+
+
+function getTopSeed(i){ return(seed.substr(8+i*4,4)); }
+
+function getGoodieSeed(i){ return(seed.substr(44+i*4,4)); }
+
+function r_topID(i){ return(getRanFromSeed(getTopSeed(i),0,2,false)); }
+
+function r_showTop(i){ return(getRanFromSeed(getTopSeed(i),1,2,true)); }
+
+function r_topColor(i){ return(getRanFromSeed(getTopSeed(i),2,2,false)); }
+
+function r_goodieID(i){ return(getRanFromSeed(getGoodieSeed(i),0,2,false)); }
+
+function r_showGoodie(i){ return(getRanFromSeed(getGoodieSeed(i),1,2,true)); }
+
+function r_goodieColor(i){ return(getRanFromSeed(getGoodieSeed(i),2,2,false)); }
+
+
+
 function randomizePeep(){
 
-  genderID = Math.floor(random(2));
+ ///get allItemTotal for solidity sync //
+ /*
+ let output="";
+ for (let j=0; j<2; j++){
+  output+="[";
+  for (let i=0; i<totalLayers; i++) {
 
- 
+        let objTotal = wdb[j].data[i].clothes.length;
+        output+=objTotal+",";
+    }
+  output+="]";
+ }
+ console.log(output);
+ */
+ //seed="109609623391740374088498902610575257344877981381652601288471797813119799813824";
+
+  seed="";
+  for (let i=0; i<78; i++) seed+= (Math.floor(random(10)) % 10).toString();
+
+  console.log("gen seed:"+seed+" length:"+seed.length);
+
+
+   /// seed ----------------------------------///0 - check code
+  genderID = int(seed.substr(1,1)) % 2;        //1
+
+  let r_bodyID=getRanFromSeed(seed,2,2,true); //2-3
+  let r_skin=getRanFromSeed(seed,4,2,true);   //4-5
+  let r_hair=getRanFromSeed(seed,6,2,true);   //6-7
+
+
+  /*
+  let r_showTop=[]; // 8-17
+  r_showTop.push(getRanFromSeed(seed,8,2,true)); //8-9 undies
+
+  for (let j=1; j<maxTopLayers; j++){ 
+    r_showTop.push(getRanFromSeed(seed,10+j,1,true)); //10-17
+  }
+
+  let r_showGoodie=[]; 
+  for (let j=0; j<maxGoodieLayers; j++){
+    r_showGoodie.push(getRanFromSeed(seed,18+j*2,2,true)); //18 - 25
+  }
+
+  let r_topID=[]; 
+  for (let j=0; j<maxTopLayers; j++){
+    r_topID.push(getRanFromSeed(seed,26+j*2,2,false)); //26 -43
+  }
+
+  let r_goodieID=[]; 
+  for (let j=0; j<maxGoodieLayers; j++){
+    r_goodieID.push(getRanFromSeed(seed,44+j*2,2,false)); //44 - 51
+  }
+  */
+
+
+  console.log("r_bodyID:"+r_bodyID);
+  console.log("r_skin:"+r_skin);
+  console.log("r_hair:"+r_hair);
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+maxTopLayers);
+
 
 
   let validTop=maxTopLayers;
@@ -219,17 +297,18 @@ function randomizePeep(){
 
   for (let i=0; i<totalLayers; i++) {
 
-        let objTotal = wdb[genderID].data[i].clothes.length;
+        //let objTotal = wdb[genderID].data[i].clothes.length;
+        let objTotal = allItemTotal[genderID][i];
         let objSKU=-1;
-        let objID;
+        let objID; //index of the item
 
-        let r=random();
-        let ch=showChance[i];
+       // let r=random();
+       // let showChanceNow=showChance[i];
 
-        if (isGoodie(i) || isTop(i))
-          console.log("Layer "+ i+" - "+wdb[genderID].data[i].layer+" random: "+r + " chance:"+ch+ (r>ch?" XXXXXX ":""));
-
-
+        if (isTop(i))
+          console.log("Top Layer "+ i+"         random: "+r_showTop(i-LTopStart) + " chance:"+chanceShowTop[i-LTopStart]+ " r Top ID:" +r_topID(i-LTopStart)+" % "+objTotal+ (r_showTop(i-LTopStart)>=chanceShowTop[i-LTopStart]?"":"******** SHOW"));
+        else if (isGoodie(i))
+          console.log("----- Goodie Layer "+ i+"        random: "+r_showGoodie(i-LGoodieStart) + " chance:"+chanceShowGoodie[i-LGoodieStart]+ " r Goodie ID:" +r_goodieID(i-LGoodieStart)+" % "+objTotal+  (r_showGoodie(i-LGoodieStart)>=chanceShowGoodie[i-LGoodieStart]?"":"******** SHOW"));
         ///////////////////
 
         if (i==LHead && (itemSKUs[LBody]==SKUZombie||itemSKUs[LBody]==SKUSkull||itemSKUs[LBody]==SKUApe)) { //// head follow skill/zombie/ape
@@ -242,61 +321,36 @@ function randomizePeep(){
         else if (i==LHairS) { // hairSSSSS
           objSKU=itemSKUs[LHair]; ///follow hair SKU
         }
-        else if ( isTop(i) && (r>ch)){ //tops
+        else if ( isTop(i) && ( r_showTop(i-LTopStart) >= chanceShowTop[i-LTopStart])){ //tops
            /// no item
            //console.log("no tops!");
            validTop--;
         }
-        else if ( isGoodie(i) && (r>ch) ) { //goodie
+        else if ( isGoodie(i) && ( r_showGoodie(i-LGoodieStart) >= chanceShowGoodie[i-LGoodieStart])){ //goodie
            //// no item
            //console.log("   no goodie!");
            validGoodie--;
         }
         else 
         { 
-          ///// assign SKU ///////
+          ///// showing this layer + assign Obj ID ///////
 
-          if (i==LBody){
-            
-            if (r<chanceSkull) objSKU=SKUSkull; //skull
-            else if (r<chanceZombie) objSKU=SKUZombie; //zombie
-            else if (r<chanceApe) objSKU=SKUApe; //Ape
-            else if (r<chanceTatoo) objSKU=2; //tatoo
-            else if (r<chanceSexy) objSKU=1; //sexy
-            else objSKU=0; //normal
+          if (i==LBody) objID=getResultFromChance(r_bodyID,chanceBody);
+          else if (i==LHead) objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
+          else if (isTop(i)){
+              currTopID=i;
+              objID = r_topID(i-LTopStart) % objTotal;
           }
-          else if (i==LHead) {
-            objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
-          } 
-          /*
-          else if (i==LGoodieSpecial) { //// Goodie Head with special items
-
-            let itemR=random();
-            let specialTot=objTotal- specialStart[genderID]; 
-            //console.log("special total:"+specialTot+" special R:"+itemR);
-            if (itemR<chanceSpecial) {
-
-              objID=specialStart[genderID]+Math.floor(random(specialTot)); //only special total
-
-              //console.log("Got Special item ID:"+objID);
-            } else {
-
-              objID=Math.floor(random(specialStart[genderID])); //exclude special item
-              //console.log("Normal item ID:"+objID);
-            }
-
-
-          } */
-
+          else if (isGoodie(i)){
+              currGoodieID=i;
+              objID = r_goodieID(i-LGoodieStart) % objTotal;
+          }
           else {
             //equally distributed
             objID=Math.floor(random(objTotal));
           }
 
-          if (isTop(i)) currTopID=i;
-          else if (isGoodie(i)) currGoodieID=i;
-          
-          if (objSKU<0) objSKU=wdb[genderID].data[i].clothes[objID].sku;
+          if (objSKU<0) objSKU=wdb[genderID].data[i].clothes[objID].sku; //assign SKU if not set
         }
 
         itemSKUs[i]=objSKU;
@@ -307,24 +361,19 @@ function randomizePeep(){
         /////////// color /////////////////////////////////////////////////////////////////////
         let canColor=-1;
 
-        r=random(); ///for hair & skin color 
+        let r=random(); ///for hair & skin color 
 
         if (i==LBody) {
 
-          if (r<chanceCrazySkin)
-               itemColors[i]=crazySkinStart+Math.floor(random(skinColor.length-crazySkinStart)); //crazy 
-            else 
-               itemColors[i]=Math.floor(random(crazySkinStart)); //normal
-          
-            
+           itemColors[i]=getResultFromChance(r_skin,chanceSkin);
+
         }
         else if (i==LHead) itemColors[i]=itemColors[LBody]; //head follows body
         else if (i==LBeard) {
 
-            if (r<chanceCrazyHair)
-               itemColors[i]=crazyHairStart+Math.floor(random(hairColor.length-crazyHairStart)); // crazy
-            else 
-               itemColors[i]=Math.floor(random(crazyHairStart)); // normal
+          itemColors[i]=getResultFromChance(r_hair,chanceHair);
+
+
         }
         else if (i==LHair) itemColors[i]=itemColors[LBeard];// hair follows beard
         else if (isTop(i)) { //tops
@@ -333,7 +382,7 @@ function randomizePeep(){
 
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
-            if (canColor=="1") itemColors[i]=Math.floor(random(topColor.length)); 
+            if (canColor=="1") itemColors[i]=r_topColor(i-LTopStart) % topColor.length;
           }
       
         }
@@ -341,7 +390,7 @@ function randomizePeep(){
           itemColors[i]=-1; //no tint
           if (objID>=0) { 
             canColor=wdb[genderID].data[i].clothes[objID].color;
-            if (canColor=="1") itemColors[i]=Math.floor(random(topColor.length)); 
+            if (canColor=="1") itemColors[i]=r_goodieColor(i-LGoodieStart) % topColor.length; 
           }
          
         }
@@ -434,7 +483,7 @@ function loadPeep(){
 
   isLoadingImg=true;
 
-  ////////////////// refresh scp
+  ////////////////// empty scp
   let temp=scp.length;
   for (let i=0; i<temp; i++) scp.pop();
 
@@ -448,8 +497,6 @@ function loadPeep(){
 
     if (objSKU==undefined || objSKU<0) { 
       imgName="transImg";
-
-
       scp.push(transImg);
       imgLoaded++;
     }
@@ -459,12 +506,12 @@ function loadPeep(){
       else if (isGoodie(i)) imgName+="G_"+genderName+"_"+objSKU+".png"; //goodie
       else if (isTop(i)) imgName+="T_"+genderName+"_"+objSKU+".png"; //top
       else imgName+=layerName+genderName+objSKU+".png"; //body
-
-
       scp.push(loadImage(imgName,loadingImg));
+
+      console.log(i+" : "+imgName);
     }
     
-    //console.log(i+" : "+imgName);
+    
     
   }
 
@@ -579,11 +626,11 @@ let wdb=[
   "layer":"body",
   "clothes":[
           {"sku":"0","s":0,"name":"normal"},
-          {"sku":"1","s":0,"name":"sexy"},
+          {"sku":"1","s":0,"name":"skinny"},
           {"sku":"2","s":0,"name":"tattoo"},
+          {"sku":"7","s":0,"name":"ape"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
-          {"sku":"7","s":0,"name":"ape"},
          ]
   
   },
@@ -990,12 +1037,11 @@ let wdb=[
   "layer":"body",
   "clothes":[
           {"sku":"0","s":0,"name":"normal"},
-          {"sku":"1","s":0,"name":"sexy"},
+          {"sku":"1","s":0,"name":"skinny"},
           {"sku":"2","s":0,"name":"tattoo"},
+          {"sku":"7","s":0,"name":"ape"},
           {"sku":"3","s":0,"name":"zombie"},
           {"sku":"4","s":0,"name":"skeleton"},
-          {"sku":"7","s":0,"name":"ape"},
-          
           ]
   
   },
