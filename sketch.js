@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2021 v0.7.1----");
+console.log("-----  Super Cool Peeps 2022 v0.7.3----");
 let isDebug=1;
 let isDemo=false;
 let isSaveFrame=false; 
@@ -17,14 +17,14 @@ if (!seed) {
   if (!isDebug && !htmlMsg.length) document.getElementById("intro").style.display = "block";
 }
 
-//isDemo=false;//debug
+isDemo=false;//debug
 
 
 ///scp init///
 let genderID=0;
 
-let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieEnd=18;
-//let LGoodieSpecial=16; //face/head
+let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  LHair=13, LHairS=14, LGoodieStart=15, LGoodieHat=16, LGoodieSpecial=LGoodieEnd=18;
+
 /*
 const showChance=[1,1,1, //body,head,face (3)
                   0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1, //tops (9)
@@ -56,22 +56,25 @@ const hairColor=[[112,112,112],[145,102,40],[88,51,34],[247,206,96],[0,0,0],
                   [161,138,104],[219,83,60],[218,90,139],[56,114,192],[111,180,89],[136,61,139],[255,255,255]];
 
 
-
 const topColor=[[219,86,95],[219,90,139],[136,62,139],[96,51,140],[46,48,140],
                 [36,84,161],[57,113,182],[97,175,235],[102,166,93],[111,179,88],
                 [153,197,85],[255,243,95],[230,152,72],[223,110,64],[219,83,60],
                 [134,101,64],[51,51,51],[255,255,255]];
 
 
-
+/*
 const bgColorPal=[[93,65,94],[77,61,94],[59,60,93],[55,74,101],
                   [68,89,114],[80,136,177],[86,110,83],[106,124,82],
                   [151,145,91],[151,110,126]
                   ];
+*/
 
-const zombieColor=[255,0,255];
-const skullColor=[0,255,255];
+const bgColorPal=[[220,220,220]];
+
 const apeColor=[0,255,0];
+const zombieColor=[255,0,255];
+const skullColor=[0,0,0];
+
 
 let bgC;
 let currTopID,myMaxTopID;
@@ -85,7 +88,7 @@ function preload(){
   butPlay = loadImage("lib/play.png");
 
   ///preloading all wardrobe
-  transImg = loadImage("lib/scp_new/textureNumen/trans.png");
+  transImg = loadImage("lib/c/trans.png");
 }
 
 
@@ -106,9 +109,14 @@ function setup() {
   noStroke();  
   noSmooth(); 
   fill(0);
+  //seed="11111111111111111111111111111111111111111111111111111111111111111111";
+  let intSeed=int(seed);
+  console.log("seed:"+seed+" intSeed:"+intSeed); //total seed need: 68
   
-
-  randomizePeep();
+  
+  if (!seed || isNaN(seed) || intSeed<0 || seed.length<68) randomizePeep();
+  else generatePeepFromSeed(); 
+  
   loadPeep();
 
 }
@@ -161,10 +169,6 @@ function draw(){
                 noTint();
                 image(butPlay,25, 25);
             }
-
-
-
-
   }
 
 }
@@ -196,39 +200,43 @@ function getResultFromChance(r,chance){
   return(0);
 }
 
-const chanceBody=[0.36,0.66,0.86,0.94,0.98,1]; //normal (36%), skinny(30%), tatoo(20%), ape(8%),zombie(4%), skull(2%)
+const chanceBody=[0.36,0.66,0.86,0.94,0.98,1]; //normal (36%), skinny(30%), tattoo(20%), ape(8%),zombie(4%), skull(2%)
 const chanceSkin=[0.18,0.36,0.54,0.72,0.9,0.95,1]; //normal color x5 (18%), blue (5%), green (5%)
 const chanceHair=[0.12,0.25,0.37,0.50,0.62,0.76,0.80,0.84,0.88,0.92,0.96,1]; //total 12 (~13%), 6 normal (4%)
 const chanceShowTop=[0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1]; //tops (9) //individually tested
-const chanceShowGoodie=[0.2,0.4,0.4,0.05]; //mouth, hat, eye, special (4) //individually tested
-const allItemTotal=[[6,8,12,12,39,22,35,4,6,5,5,3,1,36,0,5,25,19,8],
-                    [6,8,12,8,18,20,18,12,10,9,9,4,26,35,0,6,21,19,8]]; //remember to update for all wardrobe changes
+const chanceShowGoodie=[0.1,0.4,0.4,0.04]; //mouth, hat, eye, special (4) //individually tested
+const allItemTotal=[[6,8,12,12,39,22,35,4, 6, 5,5,3,1, 36,0,5,25,19,8],
+                    [6,8,12, 8,18,20,18,12,10,9,9,4,26,35,0,6,21,19,8]]; //remember to update for all wardrobe changes
+
+//let LBody=0, LHead=1, LFace=2, LTopStart=3, LTopEnd=11, LBeard=12,  
+//LHair=13, LHairS=14, LGoodieStart=15, LGoodieHat=16, LGoodieSpecial=LGoodieEnd=18;
+
 
 //let chanceCrazyHair=0.2;
 //const crazyHairStart=6;
 
-
-function getTopSeed(i){ return(seed.substr(8+i*4,4)); }
-
-function getGoodieSeed(i){ return(seed.substr(44+i*4,4)); }
-
-function r_topID(i){ return(getRanFromSeed(getTopSeed(i),0,2,false)); }
-
-function r_showTop(i){ return(getRanFromSeed(getTopSeed(i),1,2,true)); }
-
-function r_topColor(i){ return(getRanFromSeed(getTopSeed(i),2,2,false)); }
-
-function r_goodieID(i){ return(getRanFromSeed(getGoodieSeed(i),0,2,false)); }
-
-function r_showGoodie(i){ return(getRanFromSeed(getGoodieSeed(i),1,2,true)); }
-
-function r_goodieColor(i){ return(getRanFromSeed(getGoodieSeed(i),2,2,false)); }
-
+function getTopSeed(i){ return(seed.substr(8+i*4,4)); }                           //8-43 4digit for 9 layers
+function getGoodieSeed(i){ return(seed.substr(44+i*4,4)); }                       //44-59 4digit for 4 layers
+function r_topID(i){ return(getRanFromSeed(getTopSeed(i),0,2,false)); }           //0,1 > ID
+function r_showTop(i){ return(getRanFromSeed(getTopSeed(i),2,2,true)); }          //2,3 > show
+function r_topColor(i){ return(getRanFromSeed(getTopSeed(i),1,2,false)); }        //1,2 > color
+function r_goodieID(i){ return(getRanFromSeed(getGoodieSeed(i),0,2,false)); }     
+function r_showGoodie(i){ return(getRanFromSeed(getGoodieSeed(i),2,2,true)); }    
+function r_goodieColor(i){ return(getRanFromSeed(getGoodieSeed(i),1,2,false)); }  
 
 
 function randomizePeep(){
+  seed="";
+  for (let i=0; i<78; i++) seed+= (Math.floor(random(10)) % 10).toString();
+  console.log("gen seed:"+seed+" length:"+seed.length);
+  generatePeepFromSeed();
+}
+
+function generatePeepFromSeed(){
+
 
  ///get allItemTotal for solidity sync //
+ 
  /*
  let output="";
  for (let j=0; j<2; j++){
@@ -242,52 +250,35 @@ function randomizePeep(){
  }
  console.log(output);
  */
- //seed="109609623391740374088498902610575257344877981381652601288471797813119799813824";
-
-  seed="";
-  for (let i=0; i<78; i++) seed+= (Math.floor(random(10)) % 10).toString();
-
-  console.log("gen seed:"+seed+" length:"+seed.length);
 
 
-   /// seed ----------------------------------///0 - check code
+
+
+ console.log("generate from seed:"+seed+" length:"+seed.length);
+   /// seed -------total seed used:68 ---------///0 - check code
   genderID = int(seed.substr(1,1)) % 2;        //1
 
   let r_bodyID=getRanFromSeed(seed,2,2,true); //2-3
-  let r_skin=getRanFromSeed(seed,4,2,true);   //4-5
-  let r_hair=getRanFromSeed(seed,6,2,true);   //6-7
-
-
-  /*
-  let r_showTop=[]; // 8-17
-  r_showTop.push(getRanFromSeed(seed,8,2,true)); //8-9 undies
-
-  for (let j=1; j<maxTopLayers; j++){ 
-    r_showTop.push(getRanFromSeed(seed,10+j,1,true)); //10-17
-  }
-
-  let r_showGoodie=[]; 
-  for (let j=0; j<maxGoodieLayers; j++){
-    r_showGoodie.push(getRanFromSeed(seed,18+j*2,2,true)); //18 - 25
-  }
-
-  let r_topID=[]; 
-  for (let j=0; j<maxTopLayers; j++){
-    r_topID.push(getRanFromSeed(seed,26+j*2,2,false)); //26 -43
-  }
-
-  let r_goodieID=[]; 
-  for (let j=0; j<maxGoodieLayers; j++){
-    r_goodieID.push(getRanFromSeed(seed,44+j*2,2,false)); //44 - 51
-  }
-  */
-
-
-  console.log("r_bodyID:"+r_bodyID);
-  console.log("r_skin:"+r_skin);
-  console.log("r_hair:"+r_hair);
+  let r_skin=getRanFromSeed(seed,4,2,true);   //4-5 skin color
+  let r_hair=getRanFromSeed(seed,6,2,true);   //6-7 hear color
+                                    // tops.  //8-43  4digit for 9 layers
+                                    // goodies//44-59 4digit for 4 layers
+  let r_hairID=getRanFromSeed(seed,60,2,false); //60-61
+  let r_beardID=getRanFromSeed(seed,62,2,false); //62-63
+  let r_faceID=getRanFromSeed(seed,64,2,false); //64-65
+  let r_headID=getRanFromSeed(seed,66,1,false); //66
+  let r_bgID=getRanFromSeed(seed,67,1,false); //67
+  
   console.log("Random total Layers:"+totalLayers+ " gender:"+genderID + " total Top:"+maxTopLayers);
+  console.log("r_bodyID:"+r_bodyID+" r_skin:"+r_skin+" r_hair:"+r_hair+" r_hairID:"+r_hairID+ " r_beardID:"+r_beardID);
+  console.log(" r_faceID:"+r_faceID+ " r_headID:"+r_headID+ " r_bgID:"+r_bgID);
 
+
+  const totalHair=allItemTotal[genderID][LHair];
+  const totalBeard=allItemTotal[genderID][LBeard];
+  const totalFace=allItemTotal[genderID][LFace];
+  const totalHead=allItemTotal[genderID][LHead];
+  const totalBg=bgColorPal.length;
 
 
   let validTop=maxTopLayers;
@@ -306,9 +297,15 @@ function randomizePeep(){
        // let showChanceNow=showChance[i];
 
         if (isTop(i))
-          console.log("Top Layer "+ i+"         random: "+r_showTop(i-LTopStart) + " chance:"+chanceShowTop[i-LTopStart]+ " r Top ID:" +r_topID(i-LTopStart)+" % "+objTotal+ (r_showTop(i-LTopStart)>=chanceShowTop[i-LTopStart]?"":"******** SHOW"));
+          console.log("Top Layer "+ i+"         random: "+r_showTop(i-LTopStart) + " chance:"+chanceShowTop[i-LTopStart]+ 
+            " r Top ID:" +r_topID(i-LTopStart)+" % "+objTotal+ 
+            " r Top Color:" +r_topColor(i-LTopStart)+" % "+topColor.length+ 
+            (r_showTop(i-LTopStart)>=chanceShowTop[i-LTopStart]?"":"**** SHOW"));
         else if (isGoodie(i))
-          console.log("----- Goodie Layer "+ i+"        random: "+r_showGoodie(i-LGoodieStart) + " chance:"+chanceShowGoodie[i-LGoodieStart]+ " r Goodie ID:" +r_goodieID(i-LGoodieStart)+" % "+objTotal+  (r_showGoodie(i-LGoodieStart)>=chanceShowGoodie[i-LGoodieStart]?"":"******** SHOW"));
+          console.log("----- Goodie Layer "+ i+"        random: "+r_showGoodie(i-LGoodieStart) + " chance:"+chanceShowGoodie[i-LGoodieStart]+ 
+            " r Goodie ID:" +r_goodieID(i-LGoodieStart)+" % "+objTotal+  
+            " r Goodie Color:" +r_goodieColor(i-LGoodieStart)+" % "+topColor.length+   
+            (r_showGoodie(i-LGoodieStart)>=chanceShowGoodie[i-LGoodieStart]?"":"**** SHOW"));
         ///////////////////
 
         if (i==LHead && (itemSKUs[LBody]==SKUZombie||itemSKUs[LBody]==SKUSkull||itemSKUs[LBody]==SKUApe)) { //// head follow skill/zombie/ape
@@ -336,7 +333,6 @@ function randomizePeep(){
           ///// showing this layer + assign Obj ID ///////
 
           if (i==LBody) objID=getResultFromChance(r_bodyID,chanceBody);
-          else if (i==LHead) objID=Math.floor(random(objTotal-3)); //exclude zombie/skull/ape
           else if (isTop(i)){
               currTopID=i;
               objID = r_topID(i-LTopStart) % objTotal;
@@ -345,12 +341,17 @@ function randomizePeep(){
               currGoodieID=i;
               objID = r_goodieID(i-LGoodieStart) % objTotal;
           }
-          else {
-            //equally distributed
-            objID=Math.floor(random(objTotal));
-          }
+          else if (i==LHair) objID=r_hairID % totalHair;
+          else if (i==LBeard) objID=r_beardID % totalBeard;
+          else if (i==LFace) objID=r_faceID % totalFace;
+          else if (i==LHead) objID=r_headID % (totalHead-3); //exclude zombie /skull /ape
+
 
           if (objSKU<0) objSKU=wdb[genderID].data[i].clothes[objID].sku; //assign SKU if not set
+
+          console.log("layer: "+i+ " OBJ ID:"+objID);
+
+          
         }
 
         itemSKUs[i]=objSKU;
@@ -361,7 +362,7 @@ function randomizePeep(){
         /////////// color /////////////////////////////////////////////////////////////////////
         let canColor=-1;
 
-        let r=random(); ///for hair & skin color 
+     
 
         if (i==LBody) {
 
@@ -399,21 +400,25 @@ function randomizePeep(){
 
   }
 
-  bgC=Math.floor(random(bgColorPal.length)); 
-
-  
-
+  bgC=r_bgID % totalBg;
 
   //testing
-  /*
+  
   //if (genderID==1) {
   
-    let layerID=LHair;
-    itemSKUs[layerID]=itemSKUs[LHairS]=35;
-    //itemColors[layerID]=-1;
-    currTopID=myMaxTopID=LGoodieEnd;
+  /*
+    let layerID=LGoodieEnd;
+    itemSKUs[layerID]=37; //king
+    itemColors[layerID]=-1;
+     
+    itemSKUs[LGoodieEnd-2]=10;//hat
+    itemColors[LGoodieEnd-2]=-1;
+
+    currTopID=myMaxTopID=LTopEnd;
+    currGoodieID=myMaxGoodieID=LGoodieEnd;
+    */
   //}
-  */
+  
 
   //end testing debug
 
@@ -447,9 +452,12 @@ function showPeep(){
       // skip item tops if not showing
     } else if (isGoodie(i) && i>currGoodieID){ 
       // skip item goodies if not showing
-    } else 
+    } else if (i==LGoodieHat && itemSKUs[LGoodieSpecial]>=0 && itemSKUs[LGoodieSpecial]!=1000){ 
+      // skip hat if has special (but not laser)
+    } 
+    else 
 
-    if (itemSKUs[i]>=0) {
+    if (itemSKUs[i]>=0) { ///has stuff
 
       let cid=itemColors[i];
 
@@ -469,7 +477,7 @@ function showPeep(){
       scp[i].pixelate(int(manWidth),int(manWidth*oh/ow));
       image(scp[i],int(width/2-1*manScale),int(height+(5+3*(genderID))*manScale));
 
-      //console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
+      console.log("showing layer: "+i+" item sku:"+itemSKUs[i]+" color:"+cid);
     }
   }
 }
@@ -493,7 +501,7 @@ function loadPeep(){
     let genderName = wdb[genderID].gender;
     let layerName = wdb[genderID].data[i].layer;
     let objSKU=itemSKUs[i];
-    let imgName="lib/scp_new/textureNumen/";
+    let imgName="lib/c/";
 
     if (objSKU==undefined || objSKU<0) { 
       imgName="transImg";
@@ -564,35 +572,34 @@ function handleClick(evt) {
 
   evt.preventDefault();
 
-              let region=checkRegion(mouseX,mouseY);
+  let region=checkRegion(mouseX,mouseY);
 
-              if (isDemo){
+  if (isDemo){
 
-                      showPeep(); //otherwise the pause but won't go away
-                      if (isSlideshow) {
-                        isSlideshow=false;
- 
-                      }
-                      else {
-                        ///wwhen not playing slideshow
+          showPeep(); //otherwise the pause but won't go away
+          if (isSlideshow) {
+            isSlideshow=false;
 
-                        if (mouseX<50 && mouseY<50) {
-                          //clicked play button
-                          isSlideshow=true;
-                          waitTime=0;      
-                        } else {
-                          //clicked elsewhere
-                          if (region==1 || region==2) undress(region);
-                        }
-                        
-                       
-                      }
+          }
+          else {
+            ///wwhen not playing slideshow
 
-              } else if (!isLoadingImg){
+            if (mouseX<50 && mouseY<50) {
+              //clicked play button
+              isSlideshow=true;
+              waitTime=0;      
+            } else {
+              //clicked elsewhere
+              if (region==1 || region==2) undress(region);
+            }
+           
+          }
 
-                  //not in demo mode (loading seed)
-                   if (region==1 || region==2) undress(region);
-              }
+  } else if (!isLoadingImg){
+
+      //not in demo mode (loading seed)
+       if (region==1 || region==2) undress(region);
+  }
   
 
   
@@ -625,12 +632,12 @@ let wdb=[
   {
   "layer":"body",
   "clothes":[
-          {"sku":"0","s":0,"name":"normal"},
-          {"sku":"1","s":0,"name":"skinny"},
-          {"sku":"2","s":0,"name":"tattoo"},
-          {"sku":"7","s":0,"name":"ape"},
-          {"sku":"3","s":0,"name":"zombie"},
-          {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"7"},
+          {"sku":"3"},
+          {"sku":"4"},
          ]
   
   },
@@ -638,14 +645,14 @@ let wdb=[
   {
   "layer":"head",
   "clothes":[
-          {"sku":"2","s":0,"name":"S"},
-          {"sku":"0","s":0,"name":"M"},
-          {"sku":"1","s":0,"name":"L"},
-          {"sku":"5","s":0,"name":"XL"},
-          {"sku":"6","s":0,"name":"XS"},
-          {"sku":"3","s":0,"name":"zombie"},
-          {"sku":"4","s":0,"name":"skeleton"},
-          {"sku":"7","s":0,"name":"ape"},
+          {"sku":"2"},
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"7"},
           
           ]
   },
@@ -673,18 +680,18 @@ let wdb=[
   {
       "layer":"3 bra F",
       "clothes":[
-                 {"sku":"0","g":1,"color":1,"name":"Bra"},
-                 {"sku":"1","g":1,"color":1,"name":"Bra"},
-                 {"sku":"2","g":1,"color":1,"name":"Bra"},
-                 {"sku":"3","g":1,"color":1,"name":"Bra"},
-                 {"sku":"4","g":1,"color":1,"name":"Bra"},
-                 {"sku":"5","g":1,"color":1,"name":"Bra"},
-                 {"sku":"6","g":1,"color":1,"name":"Bra"},
-                 {"sku":"7","g":1,"color":1,"name":"Bra"},
-                 {"sku":"8","g":1,"color":1,"name":"Bra"},
-                 {"sku":"9","g":1,"color":1,"name":"Bra"},
-                 {"sku":"10","g":1,"color":1,"name":"Bra","party":"basic"},
-                 {"sku":"63","g":1,"color":0,"name":"Bra"},
+                 {"sku":"0","color":1 },
+                 {"sku":"1","color":1 },
+                 {"sku":"2","color":1 },
+                 {"sku":"3","color":1 },
+                 {"sku":"4","color":1 },
+                 {"sku":"5","color":1 },
+                 {"sku":"6","color":1 },
+                 {"sku":"7","color":1 },
+                 {"sku":"8","color":1 },
+                 {"sku":"9","color":1 },
+                 {"sku":"10","color":1},
+                 {"sku":"63","color":0 },
                  ]
   },
 
@@ -692,45 +699,45 @@ let wdb=[
       "layer":"4 innerwear F",
       "clothes":[
 
-                 {"sku":"12","g":1,"color":1,"name":"tee"},
-                 {"sku":"13","g":1,"color":1,"name":"tee"},
-                 {"sku":"14","g":1,"color":1,"name":"tee"},
-                 {"sku":"15","g":1,"color":1,"name":"tee"},
-                 {"sku":"16","g":1,"color":1,"name":"tee"},
-                 {"sku":"17","g":1,"color":1,"name":"tee"},
-                 {"sku":"18","g":1,"color":1,"name":"tee"},
-                 {"sku":"19","g":1,"color":1,"name":"tee"},
-                 {"sku":"20","g":1,"color":1,"name":"tee"},
-                 {"sku":"21","g":1,"color":1,"name":"tee"},
-                 {"sku":"22","g":1,"color":1,"name":"tee"},
-                 {"sku":"23","g":1,"color":1,"name":"tee"},
-                 {"sku":"24","g":1,"color":1,"name":"tee"},
-                 {"sku":"25","g":1,"color":1,"name":"tee"},
-                 {"sku":"26","g":1,"color":1,"name":"tee"},
-                 {"sku":"27","g":2,"color":1,"name":"shirt"},
-                 {"sku":"28","g":1,"color":1,"name":"tee"},
-                 {"sku":"29","g":1,"color":1,"name":"tee"},
-                 {"sku":"30","g":1,"color":1,"name":"tee"},
-                 {"sku":"31","g":2,"color":1,"name":"shirt"},
-                 {"sku":"32","g":2,"color":1,"name":"shirt"},
-                 {"sku":"34","g":1,"color":1,"name":"tee"},
-                 {"sku":"35","g":1,"color":1,"name":"tee"},
-                 {"sku":"36","g":1,"color":1,"name":"tee"},
-                 {"sku":"37","g":1,"color":1,"name":"tee"},
-                 {"sku":"38","g":1,"color":1,"name":"tee"},
-                 {"sku":"40","g":1,"color":1,"name":"tee"},
-                 {"sku":"41","g":1,"color":1,"name":"tee"},
-                 {"sku":"43","g":1,"color":1,"name":"tee"},
-                 {"sku":"45","g":1,"color":0,"name":"tee"},
-                 {"sku":"64","g":1,"color":1,"name":"tee"},
-                 {"sku":"49","g":1,"color":1,"name":"tee"},
-                 {"sku":"133","g":1,"color":1,"name":"flash tee" ,"scan":"QR_supercoolstyle"},
-                 {"sku":"135","name":"Jourden Navy Paws Bralette","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"136","name":"Jourden Black Bralette With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"137","name":"Jourden Red Bralette With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"150","g":1,"color":0,"name":"adidas Originals","rank":"brn_adidas"},
-                 {"sku":"179","g":1,"color":0,"name":"Kate Spade New York Metallic Top","rank":"brn_fw","scan":"brn_fw"},                 
-                 {"sku":"165","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
+                 {"sku":"12","color":1},
+                 {"sku":"13","color":1},
+                 {"sku":"14","color":1},
+                 {"sku":"15","color":1},
+                 {"sku":"16","color":1},
+                 {"sku":"17","color":1},
+                 {"sku":"18","color":1},
+                 {"sku":"19","color":1},
+                 {"sku":"20","color":1},
+                 {"sku":"21","color":1},
+                 {"sku":"22","color":1},
+                 {"sku":"23","color":1},
+                 {"sku":"24","color":1},
+                 {"sku":"25","color":1},
+                 {"sku":"26","color":1},
+                 {"sku":"27","color":1},
+                 {"sku":"28","color":1},
+                 {"sku":"29","color":1},
+                 {"sku":"30","color":1},
+                 {"sku":"31","color":1},
+                 {"sku":"32","color":1},
+                 {"sku":"34","color":1},
+                 {"sku":"35","color":1},
+                 {"sku":"36","color":1},
+                 {"sku":"37","color":1},
+                 {"sku":"38","color":1},
+                 {"sku":"40","color":1},
+                 {"sku":"41","color":1},
+                 {"sku":"43","color":1},
+                 {"sku":"45","color":0},
+                 {"sku":"64","color":1},
+                 {"sku":"49","color":1},
+                 {"sku":"133","color":1},
+                 {"sku":"135","color":0},
+                 {"sku":"136","color":0},
+                 {"sku":"137","color":0},
+                 {"sku":"150","color":0},
+                 {"sku":"179","color":0},                 
+                 {"sku":"165","color":0},
                  
                 
 
@@ -742,28 +749,28 @@ let wdb=[
       {
       "layer":"F 5 shirt",
       "clothes":[
-                 {"sku":"47","g":2,"color":1,"name":"tee"},
-                 {"sku":"51","g":3,"color":1,"name":"tee"},
-                 {"sku":"52","g":2,"color":1,"name":"tee"},
-                 {"sku":"53","g":2,"color":1,"name":"tee"},
-                 {"sku":"54","g":2,"color":1,"name":"tee"},
-                 {"sku":"55","g":2,"color":1,"name":"tee"},
-                 {"sku":"56","g":2,"color":1,"name":"tee"},
-                 {"sku":"57","g":2,"color":1,"name":"tee"},
-                 {"sku":"58","g":1,"color":1,"name":"tee"},
-                 {"sku":"59","g":1,"color":1,"name":"tee"},
-                 {"sku":"60","g":2,"color":1,"name":"tee"},
-                 {"sku":"61","g":2,"color":1,"name":"tee"},
-                 {"sku":"62","g":2,"color":1,"name":"tee"},
-                 {"sku":"107","g":2,"color":1,"name":"shirt"},    
-                 {"sku":"142","name":"Jourden Emerald Striped Ribbed Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"143","name":"Jourden Yellow Sheer Tunic","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"144","name":"Jourden Black Gathered Dress With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"145","name":"Jourden Red Gathered Dress With Robin Egg Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"146","name":"Jourden Navy Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"147","name":"Jourden White Paws Bateau Midi Dress","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"162","g":3,"color":0,"name":"adidas Originals","rank":"brn_adidas"},               
-                 {"sku":"177","g":1,"color":0,"name":"Kate Spade New York Multi KiteBow Dress","rank":"brn_fw","scan":"brn_fw"},
+                 {"sku":"47","color":1},
+                 {"sku":"51","color":1},
+                 {"sku":"52","color":1},
+                 {"sku":"53","color":1},
+                 {"sku":"54","color":1},
+                 {"sku":"55","color":1},
+                 {"sku":"56","color":1},
+                 {"sku":"57","color":1},
+                 {"sku":"58","color":1},
+                 {"sku":"59","color":1},
+                 {"sku":"60","color":1},
+                 {"sku":"61","color":1},
+                 {"sku":"62","color":1},
+                 {"sku":"107","color":1},    
+                 {"sku":"142","color":0},
+                 {"sku":"143","color":0},
+                 {"sku":"144","color":0},
+                 {"sku":"145","color":0},
+                 {"sku":"146","color":0},
+                 {"sku":"147","color":0},
+                 {"sku":"162","color":0},               
+                 {"sku":"177","color":0},
                  
                  ]
       },
@@ -771,73 +778,73 @@ let wdb=[
       {
       "layer":"F 6 jacket",
       "clothes":[
-                 {"sku":"65","g":3,"color":1,"name":"tee"},
-                 {"sku":"66","g":2,"color":1,"name":"tee"},
-                 {"sku":"67","g":3,"color":1,"name":"tee"},
-                 {"sku":"68","g":1,"color":1,"name":"tee"},
-                 {"sku":"69","g":1,"color":1,"name":"tee"},
-                 {"sku":"70","g":2,"color":1,"name":"tee"},
-                 {"sku":"71","g":2,"color":1,"name":"tee"},
-                 {"sku":"72","g":2,"color":1,"name":"tee"},
-                 {"sku":"73","g":3,"color":0,"name":"tee"},
-                 {"sku":"74","g":2,"color":1,"name":"tee"},
-                 {"sku":"75","g":1,"color":1,"name":"tee"},
-                 {"sku":"76","g":3,"color":1,"name":"tee"},
-                 {"sku":"77","g":2,"color":1,"name":"tee"},
-                 {"sku":"78","g":2,"color":1,"name":"tee"},
-                 {"sku":"108","g":1,"color":1,"name":"tee"},
-                 {"sku":"109","g":1,"color":1,"name":"tee"},
-                 {"sku":"110","g":1,"color":1,"name":"tee"},
-                 {"sku":"111","g":1,"color":1,"name":"tee"},
-                 {"sku":"112","g":2,"color":1,"name":"tee"},
-                 {"sku":"113","g":1,"color":1,"name":"tee"},
-                 {"sku":"114","g":1,"color":1,"name":"tee"},
-                 {"sku":"115","g":2,"color":1,"name":"tee"},
-                 {"sku":"132","g":1,"color":0,"name":"leopard tee"},
-                 {"sku":"140","name":"Jourden Yellow Tee With Black Ring","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"141","name":"Jourden Black Tee With Bubble Gum Eyelets","g":1,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"148","name":"Jourden Black Hunter Jacket With Bubble Gum Eyelets","g":2,"color":0,"rank":"brn_jourden","party":"jourden","scan":"brn_jourden"},
-                 {"sku":"178","g":1,"color":0,"name":"Kate Spade New York Virginia Lace Dress","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"175","g":1,"color":0,"name":"Hysteric Glamour","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"172","g":1,"color":0,"name":"H&M Ladies Top","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"173","g":1,"color":0,"name":"H&M Ladies Dress","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"170","g":1,"color":0,"name":"FRAPBOIS","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"166","g":1,"color":0,"name":"DKNY Red Top","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"167","g":1,"color":0,"name":"DKNY Lace Top","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"163","g":2,"color":0,"name":"A|X TEXTURED JACKET WHITE","rank":"brn_fw","scan":"brn_fw"},
-                 {"sku":"1004","name":"skull tee","g":1,"color":0,"rank":"peep"},
+                 {"sku":"65","color":1},
+                 {"sku":"66","color":1},
+                 {"sku":"67","color":1},
+                 {"sku":"68","color":1},
+                 {"sku":"69","color":1},
+                 {"sku":"70","color":1},
+                 {"sku":"71","color":1},
+                 {"sku":"72","color":1},
+                 {"sku":"73","color":0},
+                 {"sku":"74","color":1},
+                 {"sku":"75","color":1},
+                 {"sku":"76","color":1},
+                 {"sku":"77","color":1},
+                 {"sku":"78","color":1},
+                 {"sku":"108","color":1},
+                 {"sku":"109","color":1},
+                 {"sku":"110","color":1},
+                 {"sku":"111","color":1},
+                 {"sku":"112","color":1},
+                 {"sku":"113","color":1},
+                 {"sku":"114","color":1},
+                 {"sku":"115","color":1},
+                 {"sku":"132","color":0},
+                 {"sku":"140","color":0},
+                 {"sku":"141","color":0},
+                 {"sku":"148","color":0},
+                 {"sku":"178","color":0},
+                 {"sku":"175","color":0},
+                 {"sku":"172","color":0},
+                 {"sku":"173","color":0},
+                 {"sku":"170","color":0},
+                 {"sku":"166","color":0},
+                 {"sku":"167","color":0},
+                 {"sku":"163","color":0},
+                 {"sku":"1004","color":0},
                  ]
       },
       
       {
       "layer":"F 7",
       "clothes":[
-                 {"sku":"79","g":2,"color":1,"name":"tee"},
-                 {"sku":"80","g":2,"color":1,"name":"tee"},
-                 {"sku":"81","g":2,"color":1,"name":"tee"},
-                 {"sku":"82","g":3,"color":1,"name":"tee"},
+                 {"sku":"79","color":1},
+                 {"sku":"80","color":1},
+                 {"sku":"81","color":1},
+                 {"sku":"82","color":1},
                  ]
       },
       
       {
       "layer":"F 8",
       "clothes":[
-                 {"sku":"83","g":2,"color":1,"name":"tee"},
-                 {"sku":"84","g":2,"color":1,"name":"tee"},
-                 {"sku":"85","g":2,"color":1,"name":"tee"},
-                 {"sku":"86","g":2,"color":1,"name":"tee"},
-                 {"sku":"87","g":3,"color":1,"name":"tee"},
-                 {"sku":"131","g":3,"color":0,"name":"leopard jacket"},
+                 {"sku":"83","color":1},
+                 {"sku":"84","color":1},
+                 {"sku":"85","color":1},
+                 {"sku":"86","color":1},
+                 {"sku":"87","color":1},
+                 {"sku":"131","color":0},
                  ]
       },
       {
       "layer":"F 9",
       "clothes":[
-                 {"sku":"93","g":2,"color":1,"name":"tee"},
-                 {"sku":"95","g":2,"color":1,"name":"tee"},
-                  {"sku":"130","g":2,"color":1,"name":"necklace"},
-                  {"sku":"129","g":2,"color":0,"name":"necklace"},
-                  {"sku":"128","g":2,"color":0,"name":"necklace"},
+                 {"sku":"93","color":1},
+                 {"sku":"95","color":1},
+                  {"sku":"130","color":1},
+                  {"sku":"129","color":0},
+                  {"sku":"128","color":0},
                  
                  ]
       },
@@ -846,11 +853,11 @@ let wdb=[
       "layer":"F 10",
       "clothes":[
                  
-                 {"sku":"98","g":2,"color":1,"name":"tee"},
-                 {"sku":"99","g":2,"color":1,"name":"tee"},
-                 {"sku":"100","g":2,"color":1,"name":"tee"},
-                 {"sku":"1078","name":"necklace short","g":1,"color":0,"rank":"peep"},
-                 {"sku":"1079","name":"necklace long","g":1,"color":0,"rank":"peep"},
+                 {"sku":"98","color":1},
+                 {"sku":"99","color":1},
+                 {"sku":"100","color":1},
+                 {"sku":"1078","color":0},
+                 {"sku":"1079","color":0},
                  
                  ]
       },
@@ -859,9 +866,9 @@ let wdb=[
       {
       "layer":"F 11 big scarf",
       "clothes":[
-                 {"sku":"102","g":5,"color":1,"name":"tee"},
-                 {"sku":"103","g":5,"color":1,"name":"tee"},
-                 {"sku":"117","g":5,"color":1,"name":"tee"},
+                 {"sku":"102","g":5,"color":1},
+                 {"sku":"103","g":5,"color":1},
+                 {"sku":"117","g":5,"color":1},
                  ]
       },
 
@@ -926,11 +933,11 @@ let wdb=[
     {
   "layer":"G 15 mouth",
   "clothes":[
-             {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
-             {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
-             {"sku":"80","name":"hankerchief","g":1,"color":0 , "hide":1},
-             {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
-             {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
+             {"color":1,"sku":"1005"},
+             {"color":1,"sku":"1004"},
+             {"color":0,"sku":"80"},
+             {"color":0,"sku":"1001"},
+             {"color":0,"sku":"1003"},
              ]
   
   },
@@ -940,31 +947,31 @@ let wdb=[
   {
   "layer":"G 16 hat",
   "clothes":[
-             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
-             {"name":"Headdband","g":1,"color":1,"sku":"1"},
-             {"name":"Fedora","g":1,"color":1,"sku":"2"},
-             {"name":"Beanie","g":1,"color":1,"sku":"3"},
-             {"name":"Beanie","g":1,"color":1,"sku":"4"},
-             {"name":"Beanie","g":1,"color":1,"sku":"5"},
-             {"name":"Beanie","g":1,"color":1,"sku":"6"},
-             {"name":"Beanie","g":1,"color":1,"sku":"7"},
-             {"name":"Beanie","g":1,"color":1,"sku":"8"},
-             {"name":"Beanie","g":1,"color":1,"sku":"9"},
-             {"name":"Beanie","g":1,"color":1,"sku":"10"},
-             {"name":"Beanie","g":1,"color":1,"sku":"11"},
-             {"name":"Beanie","g":1,"color":1,"sku":"26"},
-             {"name":"Beanie","g":1,"color":1,"sku":"27"},
-             {"name":"Beanie","g":1,"color":1,"sku":"28"},
-             {"name":"Beanie","g":1,"color":1,"sku":"29"},
-             {"name":"Beanie","g":1,"color":1,"sku":"30"},
-             {"name":"panda","g":1,"color":0,"sku":"34"},
-             {"name":"headphones","g":1,"color":1,"sku":"36"},
-             {"name":"bike cap","g":1,"color":1,"sku":"42"},
-             {"name":"headband thin","g":1,"color":1,"sku":"47"},
-             {"name":"headband","g":1,"color":1,"sku":"48"},
-             {"name":"rabbit","g":1,"color":0,"sku":"49"},
-             {"name":"cat","g":1,"color":0,"sku":"50"},
-             {"name":"rat","g":1,"color":0,"sku":"51"},
+             {"color":1,"sku":"0"},
+             {"color":1,"sku":"1"},
+             {"color":1,"sku":"2"},
+             {"color":1,"sku":"3"},
+             {"color":1,"sku":"4"},
+             {"color":1,"sku":"5"},
+             {"color":1,"sku":"6"},
+             {"color":1,"sku":"7"},
+             {"color":1,"sku":"8"},
+             {"color":1,"sku":"9"},
+             {"color":1,"sku":"10"},
+             {"color":1,"sku":"11"},
+             {"color":1,"sku":"26"},
+             {"color":1,"sku":"27"},
+             {"color":1,"sku":"28"},
+             {"color":1,"sku":"29"},
+             {"color":1,"sku":"30"},
+             {"color":0,"sku":"34"},
+             {"color":1,"sku":"36"},
+             {"color":1,"sku":"42"},
+             {"color":1,"sku":"47"},
+             {"color":1,"sku":"48"},
+             {"color":0,"sku":"49"},
+             {"color":0,"sku":"50"},
+             {"color":0,"sku":"51"},
              
 
              
@@ -976,25 +983,25 @@ let wdb=[
    {
   "layer":"G 17 eye",
   "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22"}, 
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
-             {"name":"eye patch","g":1,"color":0,"sku":"62"},
-             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
-             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
-             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
+             {"color":0,"sku":"12"},
+             {"color":1,"sku":"13"},
+             {"color":1,"sku":"14"},
+             {"color":1,"sku":"15"},
+             {"color":1,"sku":"16"},
+             {"color":1,"sku":"33"},
+             {"color":1,"sku":"17"},
+             {"color":1,"sku":"31"},
+             {"color":1,"sku":"18"},
+             {"color":1,"sku":"19"},
+             {"color":1,"sku":"20"},
+             {"color":1,"sku":"21"},
+             {"color":1,"sku":"22"}, 
+             {"color":1,"sku":"23"},
+             {"color":1,"sku":"32"},
+             {"color":0,"sku":"62"},
+             {"color":0,"sku":"1006"},
+             {"color":1,"sku":"1008"},
+             {"color":0,"sku":"1007"},
              ]
   
   },
@@ -1003,14 +1010,14 @@ let wdb=[
   {
   "layer":"G 18 face/special",
   "clothes":[
-             {"name":"SP horse head","g":1,"color":0,"sku":"63","rank":"prm_animalmaskpack"},
-             {"name":"SP pigeon head","g":1,"color":0,"sku":"64","rank":"prm_animalmaskpack"},
-             {"name":"SP rabbit head","g":1,"color":0,"sku":"65","rank":"prm_animalmaskpack"},
-             {"name":"SP panda head","g":1,"color":0,"sku":"66","rank":"prm_animalmaskpack"},
-             {"name":"SP horse white head","g":1,"color":0,"sku":"67"},
-             {"name":"SP daft","g":1,"color":0,"sku":"1002","rank":"peep"},
-             {"name":"SP laser","g":1,"color":0,"sku":"1000","rank":"peep"},
-             {"name":"SP crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
+             {"color":0,"sku":"63"},
+             {"color":0,"sku":"64"},
+             {"color":0,"sku":"65"},
+             {"color":0,"sku":"66"},
+             {"color":0,"sku":"67"},
+             {"color":0,"sku":"1002"},
+             {"color":0,"sku":"1000"},
+             {"color":0,"sku":"37"},
              ]
   
   },
@@ -1036,12 +1043,12 @@ let wdb=[
   {
   "layer":"body",
   "clothes":[
-          {"sku":"0","s":0,"name":"normal"},
-          {"sku":"1","s":0,"name":"skinny"},
-          {"sku":"2","s":0,"name":"tattoo"},
-          {"sku":"7","s":0,"name":"ape"},
-          {"sku":"3","s":0,"name":"zombie"},
-          {"sku":"4","s":0,"name":"skeleton"},
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"2"},
+          {"sku":"7"},
+          {"sku":"3"},
+          {"sku":"4"},
           ]
   
   },
@@ -1050,14 +1057,14 @@ let wdb=[
   "layer":"head",
   "clothes":[
           
-          {"sku":"2","s":0,"name":"S"},
-          {"sku":"0","s":0,"name":"M"},
-          {"sku":"1","s":0,"name":"L"},
-          {"sku":"5","s":0,"name":"XL"},
-          {"sku":"6","s":0,"name":"XS"},
-          {"sku":"3","s":0,"name":"zombie"},
-          {"sku":"4","s":0,"name":"skeleton"},
-          {"sku":"7","s":0,"name":"ape"},
+          {"sku":"2"},
+          {"sku":"0"},
+          {"sku":"1"},
+          {"sku":"5"},
+          {"sku":"6"},
+          {"sku":"3"},
+          {"sku":"4"},
+          {"sku":"7"},
           
           ]
   },
@@ -1086,14 +1093,14 @@ let wdb=[
   {
   "layer":"M 3 underwear 0",
   "clothes":[
-             {"sku":"0","g":1,"color":1,"name":"Tank Top"},
-             {"sku":"1","g":1,"color":1,"name":"Inner Tee"},
-             {"sku":"2","g":1,"color":1,"name":"Long tank top"},
-             {"sku":"4","g":1,"color":1,"name":"short shoulder"},
-             {"sku":"6","g":1,"color":1,"name":"Stripes Tank"},
-             {"sku":"7","g":1,"color":1,"name":"Dots Tank"},
-             {"sku":"9","g":1,"color":1,"name":"Dots Tee"},
-             {"sku":"11","g":1,"color":1,"name":"Sports Tank"}, 
+             {"sku":"0","color":1},
+             {"sku":"1","color":1},
+             {"sku":"2","color":1},
+             {"sku":"4","color":1},
+             {"sku":"6","color":1},
+             {"sku":"7","color":1},
+             {"sku":"9","color":1},
+             {"sku":"11","color":1}, 
             
              ]
   
@@ -1102,24 +1109,24 @@ let wdb=[
   {
   "layer":"M 4",
   "clothes":[
-             {"sku":"5","g":1,"color":1,"name":"Mid length"},
-             {"sku":"8","g":1,"color":1,"name":"Stripes long"},
-             {"sku":"10","g":1,"color":1,"name":"Turtle neck"}, 
-             {"name":"Tee","g":1,"color":1,"sku":"12"},
-             {"name":"V-neck Tee","g":1,"color":1,"sku":"13"},
-             {"name":"Pocket Tee","g":1,"color":1,"sku":"14"},
-             {"name":"Stripes Tee","g":1,"color":1,"sku":"15"},
-             {"name":"Vest","g":2,"color":1,"sku":"16"},
-             {"name":"Long Tee","g":1,"color":1,"sku":"17"},
-             {"name":"Polo","g":1,"color":1,"sku":"18"},
-             {"name":"Ash Polo","g":1,"color":1,"sku":"19"},
-             {"name":"Fred Perry","g":1,"color":1,"sku":"20"},
-             {"name":"Two tone tee","g":1,"color":1,"sku":"21"},
-             {"name":"Thick stripes","g":1,"color":1,"sku":"22"},
-             {"name":"Circle Tee","g":1,"color":1,"sku":"23"},
-             {"name":"Three color Polo","g":1,"color":0,"sku":"24"},
-             {"name":"db-db Tee","g":1,"color":1,"sku":"25"},
-             {"name":"flash tee","g":1,"color":1,"sku":"118" , "scan":"QR_supercoolstyle"},
+             {"sku":"5","color":1,"name":"Mid length"},
+             {"sku":"8","color":1,"name":"Stripes long"},
+             {"sku":"10","color":1,"name":"Turtle neck"}, 
+             {"name":"Tee","color":1,"sku":"12"},
+             {"name":"V-neck Tee","color":1,"sku":"13"},
+             {"name":"Pocket Tee","color":1,"sku":"14"},
+             {"name":"Stripes Tee","color":1,"sku":"15"},
+             {"name":"Vest","color":1,"sku":"16"},
+             {"name":"Long Tee","color":1,"sku":"17"},
+             {"name":"Polo","color":1,"sku":"18"},
+             {"name":"Ash Polo","color":1,"sku":"19"},
+             {"name":"Fred Perry","color":1,"sku":"20"},
+             {"name":"Two tone tee","color":1,"sku":"21"},
+             {"name":"Thick stripes","color":1,"sku":"22"},
+             {"name":"Circle Tee","color":1,"sku":"23"},
+             {"name":"Three color Polo","color":0,"sku":"24"},
+             {"name":"db-db Tee","color":1,"sku":"25"},
+             {"name":"flash tee","color":1,"sku":"118" , "scan":"QR_supercoolstyle"},
              
              ]
   
@@ -1128,26 +1135,26 @@ let wdb=[
   {
   "layer":"M 5 shirts 2",
   "clothes":[
-             {"name":"Shirt","g":2,"color":1,"sku":"27"},
-             {"name":"Denim Shirt","g":2,"color":0,"sku":"28"},
-             {"name":"Cardigan","g":2,"color":1,"sku":"29"},
-             {"name":"Long Sleeved Tee","g":1,"color":1,"sku":"30"},
-             {"name":"Shirt","g":2,"color":0,"sku":"31"},
-             {"name":"Oxford shirt","g":2,"color":1,"sku":"32"},
-             {"name":"Denim shirt special","g":2,"color":0,"sku":"33"},
-             {"name":"checkered shirt","g":2,"color":1,"sku":"34"},
-             {"name":"checkered shirt two","g":2,"color":1,"sku":"35"},
-             {"name":"Stripes shirt","g":2,"color":1,"sku":"36"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"37"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"38"},
-             {"name":"Two tone shirt","g":2,"color":1,"sku":"39"},
-             {"name":"Open shirt","g":2,"color":1,"sku":"40"},
-             {"name":"Short sleeved shirt","g":2,"color":1,"sku":"41"},
-             {"name":"Stripes long sleeved tee","g":1,"color":0,"sku":"42"},
-             {"name":"Cardigan ","g":2,"color":1,"sku":"43"},
-             {"sku":"131","g":1,"color":0,"name":"Comme Des Garcons PLAY Emblem Pastel Stripes","rank":"brn_fw","scan":"brn_fw"},
-             {"name":"black tie","g":2,"color":0,"sku":"1000","rank":"peep"},
-             {"name":"black bowtie","g":2,"color":0,"sku":"1001","rank":"peep"},
+             {"color":1,"sku":"27"},
+             {"color":0,"sku":"28"},
+             {"color":1,"sku":"29"},
+             {"color":1,"sku":"30"},
+             {"color":0,"sku":"31"},
+             {"color":1,"sku":"32"},
+             {"color":0,"sku":"33"},
+             {"color":1,"sku":"34"},
+             {"color":1,"sku":"35"},
+             {"color":1,"sku":"36"},
+             {"color":1,"sku":"37"},
+             {"color":1,"sku":"38"},
+             {"color":1,"sku":"39"},
+             {"color":1,"sku":"40"},
+             {"color":1,"sku":"41"},
+             {"color":0,"sku":"42"},
+             {"color":1,"sku":"43"},
+             {"sku":"131","color":0},
+             {"color":0,"sku":"1000"},
+             {"color":0,"sku":"1001"},
              ]
   
   },
@@ -1155,24 +1162,24 @@ let wdb=[
   {
   "layer":"6M 3",
   "clothes":[
-             {"name":"Dark jacket","g":2,"color":1,"sku":"44"},
-             {"name":"Big Tee","g":1,"color":1,"sku":"45"},
-             {"name":"Mid Tee","g":1,"color":1,"sku":"46"},
-             {"name":"Sweatshirt","g":1,"color":0,"sku":"47"},
-             {"name":"Hoodie","g":3,"color":1,"sku":"48"},
-             {"name":"Open Hoodie","g":3,"color":1,"sku":"49"},
-             {"name":"Blazer","g":2,"color":1,"sku":"50"},
-             {"name":"Sports sweatshirt","g":1,"color":0,"sku":"51"},
-             {"name":"Knitted vest","g":1,"color":1,"sku":"52"},
-             {"name":"Large vest","g":2,"color":1,"sku":"53"},
-             {"name":"Hood shirt","g":1,"color":1,"sku":"54"},
-             {"name":"Vneck sweater","g":1,"color":0,"sku":"55"},
-             {"name":"cardigan long","g":2,"color":1,"sku":"56"},
-             {"name":"thick cardigan","g":2,"color":1,"sku":"57"},
-             {"name":"wide cardigan","g":2,"color":1,"sku":"58"},
-             {"name":"MIT Sweatshirt","g":1,"color":0,"sku":"59"},
-              {"sku":"132","g":2,"color":0,"name":"Comme Des Garcons PLAY Cardigan","rank":"brn_fw","scan":"brn_fw"},
-              {"name":"Skull Tee","g":1,"color":0,"sku":"1004"},
+             {"color":1,"sku":"44"},
+             {"color":1,"sku":"45"},
+             {"color":1,"sku":"46"},
+             {"color":0,"sku":"47"},
+             {"color":1,"sku":"48"},
+             {"color":1,"sku":"49"},
+             {"color":1,"sku":"50"},
+             {"color":0,"sku":"51"},
+             {"color":1,"sku":"52"},
+             {"color":1,"sku":"53"},
+             {"color":1,"sku":"54"},
+             {"color":0,"sku":"55"},
+             {"color":1,"sku":"56"},
+             {"color":1,"sku":"57"},
+             {"color":1,"sku":"58"},
+             {"color":0,"sku":"59"},
+             {"sku":"132","color":0},
+             {"color":0,"sku":"1004"},
              ]
   
   },
@@ -1180,18 +1187,18 @@ let wdb=[
   {
   "layer":"7M 4",
   "clothes":[
-             {"name":"School Jacket","g":2,"color":1,"sku":"62"},
-             {"name":"Long blazer","g":2,"color":1,"sku":"63"},
-             {"name":"Long camo","g":2,"color":0,"sku":"64"},
-             {"name":"Denim Jacket","g":2,"color":0,"sku":"65"},
-             {"name":"Tight Jacket","g":2,"color":1,"sku":"66"},
-             {"name":"Coat","g":2,"color":1,"sku":"67"},
-             {"name":"Leather Jacket","g":3,"color":1,"sku":"68"},
-             {"name":"Two tone","g":2,"color":0,"sku":"69"},
-             {"name":"Double","g":2,"color":1,"sku":"70"},
-             {"name":"Sweater","g":1,"color":1,"sku":"71"},
-             {"name":"Patterned Sweater","g":1,"color":1,"sku":"72"},
-             {"name":"Pocket Sweater","g":1,"color":1,"sku":"73"},
+             {"color":1,"sku":"62"},
+             {"color":1,"sku":"63"},
+             {"color":0,"sku":"64"},
+             {"color":0,"sku":"65"},
+             {"color":1,"sku":"66"},
+             {"color":1,"sku":"67"},
+             {"color":1,"sku":"68"},
+             {"color":0,"sku":"69"},
+             {"color":1,"sku":"70"},
+             {"color":1,"sku":"71"},
+             {"color":1,"sku":"72"},
+             {"color":1,"sku":"73"},
              
              ]
   
@@ -1200,16 +1207,16 @@ let wdb=[
   {
   "layer":"8M 5",
   "clothes":[
-             {"name":"Coat","g":2,"color":1,"sku":"74"},
-             {"name":"Coat Camel","g":2,"color":0,"sku":"75"},
-             {"name":"Big Coat","g":2,"color":1,"sku":"76"},
-             {"name":"Trench Coat","g":2,"color":1,"sku":"77"},
-             {"name":"Big F Sweater","g":1,"color":1,"sku":"78"},
-             {"name":"Checkered Jacket","g":3,"color":1,"sku":"79"},
-             {"name":"Baseball Jacket","g":2,"color":1,"sku":"80"},
-             {"name":"Military Jacket","g":2,"color":1,"sku":"81"},
-             {"name":"Pattern sweater","g":1,"color":1,"sku":"82"},
-             {"name":"Dots sweater","g":1,"color":1,"sku":"83"},
+             {"color":1,"sku":"74"},
+             {"color":0,"sku":"75"},
+             {"color":1,"sku":"76"},
+             {"color":1,"sku":"77"},
+             {"color":1,"sku":"78"},
+             {"color":1,"sku":"79"},
+             {"color":1,"sku":"80"},
+             {"color":1,"sku":"81"},
+             {"color":1,"sku":"82"},
+             {"color":1,"sku":"83"},
              ]
   
   },
@@ -1217,15 +1224,15 @@ let wdb=[
   {
   "layer":"9M 6",
   "clothes":[
-             {"name":"Jumper","g":1,"color":1,"sku":"84"},
-             {"name":"Stripes knit","g":1,"color":1,"sku":"85"},
-             {"name":"Camo Jumper","g":1,"color":0,"sku":"86"},
-             {"name":"Flash Jumper","g":1,"color":1,"sku":"87"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"88"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"89"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"90"},
-             {"sku":"117","g":2,"color":0,"name":"necklace"},
-             {"sku":"116","g":2,"color":0,"name":"necklace"},
+             {"color":1,"sku":"84"},
+             {"color":1,"sku":"85"},
+             {"color":0,"sku":"86"},
+             {"color":1,"sku":"87"},
+             {"color":1,"sku":"88"},
+             {"color":1,"sku":"89"},
+             {"color":1,"sku":"90"},
+             {"sku":"117","color":0},
+             {"sku":"116","color":0},
 
              ]
   
@@ -1235,15 +1242,15 @@ let wdb=[
   {
   "layer":"10M 7",
   "clothes":[
-             {"name":"Down vest","g":3,"color":1,"sku":"93"},
-             {"name":"Outdoor Jacket","g":3,"color":1,"sku":"94"},
-             {"name":"Outdoor Jacket","g":3,"color":0,"sku":"95"},
-             {"name":"Outdoor Jacket Camo","g":3,"color":0,"sku":"96"},
-             {"name":"Down Jacket","g":3,"color":1,"sku":"97"},
-             {"name":"Down Jacket Golden","g":3,"color":0,"sku":"98"},
-             {"name":"Big coat","g":2,"color":1,"sku":"99"},
-             {"sku":"1073","name":"necklace short","g":1,"color":0,"rank":"peep"},
-             {"sku":"1074","name":"necklace long","g":1,"color":0,"rank":"peep"},
+             {"color":1,"sku":"93"},
+             {"color":1,"sku":"94"},
+             {"color":0,"sku":"95"},
+             {"color":0,"sku":"96"},
+             {"color":1,"sku":"97"},
+             {"color":0,"sku":"98"},
+             {"color":1,"sku":"99"},
+             {"sku":"1073","color":0},
+             {"sku":"1074","color":0},
              ]
   
   },
@@ -1252,10 +1259,10 @@ let wdb=[
   {
   "layer":"11 M big scarf 8",
   "clothes":[
-             {"name":"Scarf------------","g":5,"color":1,"sku":"100"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"101"},
-             {"name":"Scarf------------","g":5,"color":1,"sku":"102"},
-             {"name":"Scarf camo------------","g":5,"color":0,"sku":"103"},
+             {"color":1,"sku":"100"},
+             {"color":1,"sku":"101"},
+             {"color":1,"sku":"102"},
+             {"color":0,"sku":"103"},
          
              ]
   
@@ -1349,12 +1356,12 @@ let wdb=[
   "layer":"G",
   "clothes":[
 
-             {"name":"mask","g":1,"color":1,"sku":"1005","rank":"peep"},
-             {"name":"cloth","g":1,"color":1,"sku":"1004","rank":"peep"},
-             {"sku":"64","name":"gas mask","g":1,"color":0},
-             {"sku":"75","name":"hankerchief","g":1,"color":0 , "hide":1},
-             {"name":"cig","g":1,"color":0,"sku":"1001","rank":"peep"},
-             {"name":"rainbow","g":1,"color":0,"sku":"1003","rank":"peep"},
+             {"color":1,"sku":"1005"},
+             {"color":1,"sku":"1004"},
+             {"sku":"64","color":0},
+             {"sku":"75","color":0},
+             {"color":0,"sku":"1001"},
+             {"color":0,"sku":"1003"},
              ]
   
   },
@@ -1363,27 +1370,27 @@ let wdb=[
   {
   "layer":"G 16 M hat",
   "clothes":[
-             {"name":"Trucker Cap","g":1,"color":1,"sku":"0"},
-             {"name":"FL Cap","g":1,"color":1,"sku":"1"},
-             {"name":"Fedora","g":1,"color":1,"sku":"2"},
-             {"name":"Beanie","g":1,"color":1,"sku":"3"},
-             {"name":"Beanie","g":1,"color":1,"sku":"4"},
-             {"name":"Beanie","g":1,"color":1,"sku":"5"},
-             {"name":"Beanie","g":1,"color":1,"sku":"6"},
-             {"name":"Beanie","g":1,"color":1,"sku":"7"},
-             {"name":"Beanie","g":1,"color":1,"sku":"8"},
-             {"name":"Beanie","g":1,"color":1,"sku":"9"},
-             {"name":"Beanie","g":1,"color":1,"sku":"10"},
-             {"name":"Beanie","g":1,"color":1,"sku":"11"},
-             {"name":"Beanie","g":1,"color":1,"sku":"26"},
-             {"name":"Beanie","g":1,"color":1,"sku":"27"},
-             {"name":"Beanie","g":1,"color":1,"sku":"28"},
-             {"name":"Beanie","g":1,"color":1,"sku":"29"},
-             {"name":"Beanie","g":1,"color":1,"sku":"30"},
-             {"name":"headphones","g":1,"color":1,"sku":"36"},
-             {"name":"bike cap","g":1,"color":1,"sku":"42"},
-             {"name":"headband","g":1,"color":1,"sku":"46"},
-             {"name":"headband","g":1,"color":1,"sku":"47"},
+             {"color":1,"sku":"0"},
+             {"color":1,"sku":"1"},
+             {"color":1,"sku":"2"},
+             {"color":1,"sku":"3"},
+             {"color":1,"sku":"4"},
+             {"color":1,"sku":"5"},
+             {"color":1,"sku":"6"},
+             {"color":1,"sku":"7"},
+             {"color":1,"sku":"8"},
+             {"color":1,"sku":"9"},
+             {"color":1,"sku":"10"},
+             {"color":1,"sku":"11"},
+             {"color":1,"sku":"26"},
+             {"color":1,"sku":"27"},
+             {"color":1,"sku":"28"},
+             {"color":1,"sku":"29"},
+             {"color":1,"sku":"30"},
+             {"color":1,"sku":"36"},
+             {"color":1,"sku":"42"},
+             {"color":1,"sku":"46"},
+             {"color":1,"sku":"47"},
              
              
              
@@ -1396,25 +1403,25 @@ let wdb=[
    {
   "layer":"G eyes M 17",
   "clothes":[
-             {"name":"3D","g":1,"color":0,"sku":"12"},
-             {"name":"Glasses","g":1,"color":1,"sku":"13"},
-             {"name":"Sun-Glasses","g":1,"color":1,"sku":"14"},
-             {"name":"Rounded Frames","g":1,"color":1,"sku":"15"},
-             {"name":"Retro Frames","g":1,"color":1,"sku":"16"},
-             {"name":"Retro Frames color lens","g":1,"color":1,"sku":"33"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"17"},
-             {"name":"Rounded Shades","g":1,"color":1,"sku":"31"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"18"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"19"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"20"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"21"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"22"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"23"},
-             {"name":"Cool Shades","g":1,"color":1,"sku":"32"},
-             {"name":"eye patch","g":1,"color":0,"sku":"57"},
-             {"name":"laser blue","g":1,"color":0,"sku":"1006","rank":"peep"},
-             {"name":"sb","g":1,"color":1,"sku":"1008","rank":"peep"},
-             {"name":"vr","g":1,"color":0,"sku":"1007","rank":"peep"},
+             {"color":0,"sku":"12"},
+             {"color":1,"sku":"13"},
+             {"color":1,"sku":"14"},
+             {"color":1,"sku":"15"},
+             {"color":1,"sku":"16"},
+             {"color":1,"sku":"33"},
+             {"color":1,"sku":"17"},
+             {"color":1,"sku":"31"},
+             {"color":1,"sku":"18"},
+             {"color":1,"sku":"19"},
+             {"color":1,"sku":"20"},
+             {"color":1,"sku":"21"},
+             {"color":1,"sku":"22"},
+             {"color":1,"sku":"23"},
+             {"color":1,"sku":"32"},
+             {"color":0,"sku":"57"},
+             {"color":0,"sku":"1006"},
+             {"color":1,"sku":"1008"},
+             {"color":0,"sku":"1007"},
 
              ]
   
@@ -1423,14 +1430,14 @@ let wdb=[
     {
   "layer":"G face 18",
   "clothes":[
-             {"name":"SP horse head","g":1,"color":0,"sku":"58","rank":"prm_animalmaskpack"},
-             {"name":"SP pigeon head","g":1,"color":0,"sku":"59","rank":"prm_animalmaskpack"},
-             {"name":"SP rabbit head","g":1,"color":0,"sku":"60","rank":"prm_animalmaskpack"},
-             {"name":"SP panda head","g":1,"color":0,"sku":"61","rank":"prm_animalmaskpack"},
-             {"name":"SP horse white head","g":1,"color":0,"sku":"62"},             
-             {"name":"SP daft","g":1,"color":0,"sku":"1002","rank":"peep"},
-             {"name":"SP laser","g":1,"color":0,"sku":"1000","rank":"peep"},
-             {"name":"SP crown","g":1,"color":0,"sku":"37","rank":"prm_kingqueenpack"},
+             {"color":0,"sku":"58"},
+             {"color":0,"sku":"59"},
+             {"color":0,"sku":"60"},
+             {"color":0,"sku":"61"},
+             {"color":0,"sku":"62"},             
+             {"color":0,"sku":"1002"},
+             {"color":0,"sku":"1000"},
+             {"color":0,"sku":"37"},
              ]
   
   },
