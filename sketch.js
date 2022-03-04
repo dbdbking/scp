@@ -396,8 +396,6 @@ function generatePeepFromSeed(){
          
         }
 
-
-
   }
 
   bgC=r_bgID % totalBg;
@@ -428,14 +426,15 @@ function generatePeepFromSeed(){
 
 
 let manScale=1;
+
 function showPeep(){
   if (itemSKUs[LBody]==SKUZombie) background(zombieColor[0],zombieColor[1],zombieColor[2]);
   else if (itemSKUs[LBody]==SKUSkull) background(skullColor[0],skullColor[1],skullColor[2]);
   else if (itemSKUs[LBody]==SKUApe) background(apeColor[0],apeColor[1],apeColor[2]);
   else background(bgColorPal[bgC][0], bgColorPal[bgC][1], bgColorPal[bgC][2]);
 
-  let pScale=2.0;
-  let maxScale=7.0; 
+  let pScale=2.0; //don't touch this
+  let maxScale=28.0; //e.g maxScale=7, max width = 80*7/2=280px
   const ow=80, oh=142;
   let shortSide = width<height?width:height;
   let manWidth=int(pScale*shortSide);
