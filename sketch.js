@@ -407,6 +407,7 @@ function generatePeepFromSeed(){
   //if (genderID==1) {
   
   /*
+  
     let layerID=LGoodieEnd;
     itemSKUs[layerID]=37; //king
     itemColors[layerID]=-1;
@@ -452,8 +453,8 @@ function showPeep(){
       // skip item tops if not showing
     } else if (isGoodie(i) && i>currGoodieID){ 
       // skip item goodies if not showing
-    } else if (i==LGoodieHat && itemSKUs[LGoodieSpecial]>=0 && itemSKUs[LGoodieSpecial]!=1000){ 
-      // skip hat if has special (but not laser)
+    } else if (i==LGoodieHat && itemSKUs[LGoodieSpecial]>=0 && itemSKUs[LGoodieSpecial]!=1000 && currGoodieID==LGoodieSpecial){ 
+      // when curr=special layer: skip hat if has special (but not laser)
     } 
     else 
 
