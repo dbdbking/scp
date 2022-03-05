@@ -1,6 +1,6 @@
 ////////// Super Cool Peeps 2021
 ////////// By db-db
-console.log("-----  Super Cool Peeps 2022 v0.7.3----");
+console.log("-----  Super Cool Peeps 2022 v0.8.3----");
 let isDebug=1;
 let isDemo=false;
 let isSaveFrame=false; 
@@ -17,7 +17,7 @@ if (!seed) {
   if (!isDebug && !htmlMsg.length) document.getElementById("intro").style.display = "block";
 }
 
-isDemo=false;//debug
+//isDemo=false;//debug
 
 
 ///scp init///
@@ -200,7 +200,7 @@ function getResultFromChance(r,chance){
   return(0);
 }
 
-const chanceBody=[0.36,0.66,0.86,0.94,0.98,1]; //normal (36%), skinny(30%), tattoo(20%), ape(8%),zombie(4%), skull(2%)
+const chanceBody=[0.40,0.72,0.92,0.97,0.99,1]; //normal (40%), skinny(32%), tattoo(20%), ape(5%),zombie(2%), skull(1%)
 const chanceSkin=[0.18,0.36,0.54,0.72,0.9,0.95,1]; //normal color x5 (18%), blue (5%), green (5%)
 const chanceHair=[0.12,0.25,0.37,0.50,0.62,0.76,0.80,0.84,0.88,0.92,0.96,1]; //total 12 (~13%), 6 normal (4%)
 const chanceShowTop=[0.99,0.5,0.3,0.3,0.2,0.2,0.2,0.1,0.1]; //tops (9) //individually tested

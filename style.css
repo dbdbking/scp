@@ -36,10 +36,10 @@ a:hover, a:active {
   user-select: none;
   */
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
-  font-style: italic;
+  /* font-style: italic; */
   font-weight: 300;
-  font-size:2rem;
-  line-height: 2rem;
+  font-size:1.5rem;
+  line-height: 1.8rem;
 }
 
 .center {
@@ -56,6 +56,7 @@ a:hover, a:active {
   position: absolute;
   top: 5rem;
   left: 50%;
+  -ms-transform: translate(-50%, 0%);
   transform: translate(-50%, 0%);
 
 }
@@ -67,7 +68,7 @@ a:hover, a:active {
 .soon {
   font-size:0.95rem;
   margin-bottom: 4.0em;
-  font-style: italic;
+  /* font-style: italic; */
 
 }
 
