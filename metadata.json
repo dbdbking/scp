@@ -1,0 +1,8 @@
+{
+  "name": "SUPER COOL PEEPS",
+  "description": "The SUPER COOL PEEPS is a collection of pixelicious avatars living on the Ethereum blockchain.",
+  "image": "https://supercoolpeeps.com/graphics/placeholder350x350.png",
+  "external_link": "https://supercoolpeeps.com",
+  "seller_fee_basis_points": 500,
+  "fee_recipient": "0x324e64073f3D056272BFE7e03ebfac87169Ea261"
+}
