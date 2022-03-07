@@ -22,6 +22,12 @@ a:hover, a:active {
   text-decoration:none;
 }
 
+#presale{
+  display:none;
+  margin-left: 1rem;
+ font-size:0.9rem;
+}
+
 .overlay{
   display:block;
   color:black;
@@ -61,7 +67,7 @@ a:hover, a:active {
 }
 .soon {
   font-size:0.9rem;
-  margin-bottom: 4.0em;
+ /* margin-bottom: 4.0em; */
 
   /* font-style: italic; */
 
@@ -78,7 +84,7 @@ a:hover, a:active {
 
 .footer {
   font-size:0.8rem;
-  line-height: 0.8rem;
+  line-height: 1.5rem;
 }
 
 
@@ -102,13 +108,13 @@ a:hover, a:active {
   border: none;
   margin: none;
   color: white;
-  width:95%;
-  padding: 1.0rem;
+  width:90%;
+  padding: 0.2rem;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 0.8rem;
-  border-radius: 12px;
+  font-size: 0.5rem;
+  border-radius: 10px;
   text-overflow: ellipsis;
   overflow: hidden;
   font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
@@ -142,12 +148,12 @@ a:hover, a:active {
 
 .check {
     display: inline-block;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.0rem;
+  height: 1.0rem;
   border-radius: 50%;
-  margin: 0rem 0.5rem;
+  margin: 0rem 0.2rem;
   background: url(./graphics/check.svg);
-  background-size: 1.2rem 1.2rem;
+  background-size: 1.0rem 1.0rem;
 }
 
 
