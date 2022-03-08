@@ -24,7 +24,8 @@ a:hover, a:active {
 
 #presale{
   display:none;
-  margin-left: 1rem;
+  //margin-left: 1rem;
+  padding: 1rem;
  font-size:0.9rem;
 }
 
