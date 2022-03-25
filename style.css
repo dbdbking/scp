@@ -22,7 +22,7 @@ a:hover, a:active {
   text-decoration:none;
 }
 
-#sale{
+#sale,#presale{
   display:none;
 
  font-size:0.9rem;
