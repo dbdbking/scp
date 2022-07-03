@@ -14,22 +14,27 @@
 
     <div id="intro" class="overlay centerTop"><center><img src="lib/logo2x.png" width="280px" height="24px"></center><br>
 
-      <center><iframe id="app" src="app.html" title="Super Cool Peep App" width="280px" height="280px" style="border:none; margin:none;"></iframe>
+      <center><iframe src="app.html" title="Super Cool Peep App" width="280px" height="280px" style="border:none; margin:none;"></iframe>
         </center>
 
       <p style="margin-top:-1rem;"><center  class="footer">(Click to uncover all layers)</center></p>
         
 
-      <p id="txt" class="soon"><i>SUPER COOL PEEPS</i> is a collection of 10,000 super pixelicious avatars living on the Ethereum network. The Metadata of each PEEP is 100% randomly generated on-chain at mint.<br><br>
+      <p class="soon"><i>SUPER COOL PEEPS</i> is a collection of 10,000 super pixelicious avatars living on the Ethereum network. The Metadata of each PEEP is 100% randomly generated on-chain at mint.<br><br>
 
       These PEEPS are not just static images. They are interactive, you can click on their body and head to uncover all layers. Each NFT will be revealed instantly after mint. Owners hold commerical rights.<br><br>
 
       Unique traits: 600+<br>
       Total Supply: 10,000<br>
-      <b>Sold out.</b><br><br>
-
-      <i>SUPER COOL PEEPS</i> is a project by SuperCoolStyle - a team of 8-bit fanatics who push pixels all day long. 
       </p>
+
+
+      <div class="soon"><b>Sold out.</b><br><br></div>
+
+      
+      
+      <div class="soon"><i>SUPER COOL PEEPS</i> is a project by SuperCoolStyle - a team of 8-bit fanatics who push pixels all day long. <br><br></div>
+      
      
       <p class="soon" style="margin-top:-1rem;"><center class="soon"><a href="https://opensea.io/collection/supercoolpeeps" target="_blank" class="logo opensea"></a> <a href="https://twitter.com/supercoolpeeps" target="_blank" class="logo twitter"></a> <a href="mailto:supercoolpartyapp@gmail.com" target="_blank" class="logo email"></a></center></p>
 
@@ -37,12 +42,15 @@
       </div>
 
       <script>
-         let seed=document.URL.split('?s=')[1];
-         if (seed.length>0) {
-            const app = document.getElementById("app");
-            app.src = "app.html?s="+seed;
-            document.getElementById("txt").style.display="none";
-          }
+        function ps(){
+           document.getElementById("sale").style.display = "block";
+           document.getElementById("presale").style.display = "none";
+        }
+        function pps(){
+           document.getElementById("presale").style.display = "block";
+           document.getElementById("sale").style.display = "none";
+        }
+          
       </script>
         
 
