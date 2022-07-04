@@ -1,0 +1,31 @@
+<!DOCTYPE html><html lang="en"><head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta property="og:title" content="- SUPER COOL PEEPS -">
+    <meta property="og:description" content="The Super Cool Peeps is a collection of pixelicious avatars living on the Ethereum blockchain.">
+    <meta property="og:image" content="https://supercoolpeeps.com/graphics/banner1200x630.png">
+    <meta property="og:url" content="https://supercoolpeeps.com">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>- SUPER COOL PEEPS -</title>
+  </head>
+  <body style="font-size:15px;">  
+
+    <div id="intro" class="center"><center><img src="lib/logo2x.png" width="280px" height="24px"></center><br>
+
+      <center><iframe id="app" src="app.html" title="Super Cool Peep App" width="560px" height="560px" style="border:none; margin:none;"></iframe>
+      </center>
+
+    </div>
+
+    <script>
+      let seed=document.URL.split('?s=')[1];
+      const app = document.getElementById("app");
+      app.src = "app.html?s="+seed;
+
+    </script>
+        
+
+
+</body></html>
