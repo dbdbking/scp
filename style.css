@@ -33,13 +33,21 @@ a:hover, a:active {
   color:black;
   z-index:10;
   position: absolute;
-  width:280px;
+  width:560px;
   max-width:40rem;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif; 
   font-weight: 300;
   line-height: 1.8rem;
   font-size:1.5rem;
 }
+
+#app {
+  width: 560px;
+  height: 560px;
+  border:none; 
+  margin:none;
+}
+
 
 .center {
   margin: 0;
@@ -66,7 +74,8 @@ a:hover, a:active {
 
 }
 .soon {
-  font-size:0.9rem;
+  font-size:1.1rem;
+  line-height: 2.0rem;
  /* margin-bottom: 4.0em; */
 
   /* font-style: italic; */
@@ -154,6 +163,18 @@ a:hover, a:active {
   margin: 0rem 0.2rem;
   background: url(./graphics/check.svg);
   background-size: 1.0rem 1.0rem;
+}
+
+@media (max-width: 580px) {
+  #app {
+    width: 280px;
+    height: 280px;
+  }
+
+  .overlay{
+
+    width:280px;
+  }
 }
 
 
