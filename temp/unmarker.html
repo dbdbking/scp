@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Unmarker Local — Single File</title>
+<style>
+:root{--bg:#0b0f14;--card:#101720;--muted:#8ea0b5;--text:#eaf0f8;--line:#223044;--accent:#8bffd7;--warn:#ffd36a;--bad:#ff8b8b;--good:#9cffb7}*{box-sizing:border-box}body{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;background:radial-gradient(circle at 20% 0%,#17304a 0,#0b0f14 42%);color:var(--text);min-height:100vh}main{width:min(1120px,92vw);margin:0 auto;padding:48px 0}.hero{display:grid;gap:14px;margin-bottom:28px}.eyebrow{color:var(--accent);letter-spacing:.16em;text-transform:uppercase;font-size:12px}h1{font-size:clamp(34px,7vw,78px);line-height:.9;margin:0}.sub{color:var(--muted);font-size:18px;max-width:720px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:900px){.grid{grid-template-columns:1fr}}.card{background:rgba(16,23,32,.86);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 20px 80px rgba(0,0,0,.28);backdrop-filter:blur(10px)}.drop{border:1.5px dashed #46617f;border-radius:22px;padding:28px;text-align:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.02)}.drop.drag{border-color:var(--accent);background:rgba(139,255,215,.08)}button,.button{border:1px solid #3a506b;background:#eaf0f8;color:#09111a;border-radius:999px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer}button.secondary{background:transparent;color:var(--text)}button:disabled{opacity:.45;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}@media(max-width:700px){.facts{grid-template-columns:1fr}}.fact{border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.03)}.fact b{display:block;font-size:19px}.muted{color:var(--muted)}.status{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted)}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent)}.progress{height:10px;background:#071019;border-radius:99px;overflow:hidden;border:1px solid var(--line);margin-top:14px}.bar{height:100%;width:0;background:linear-gradient(90deg,#8bffd7,#8bbcff);transition:.25s}.list{display:grid;gap:10px;margin-top:14px}.step{display:flex;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.025)}.pill{border:1px solid var(--line);border-radius:999px;padding:2px 8px;color:var(--muted);font-size:12px}.pill.good{color:var(--good)}.pill.warn{color:var(--warn)}.pill.bad{color:var(--bad)}img{max-width:100%;border-radius:18px;border:1px solid var(--line);background:#fff}.previewGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.previewGrid{grid-template-columns:1fr}}.tiny{font-size:12px;color:var(--muted)}label{display:grid;gap:6px;color:var(--muted);font-size:13px}input[type=range]{width:210px}.panelTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}code{white-space:pre-wrap;word-break:break-word;color:#c8d8ea}footer{margin-top:28px;color:var(--muted);font-size:12px}.hidden{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">single-file local version</div>
+    <h1>Unmarker Local</h1>
+    <p class="sub">Analyze image metadata locally, apply shake/stir/crush canvas perturbation, then export a JPEG. No uploads, no external scripts, no server needed.</p>
+    <div class="facts"><div class="fact"><b>100% local</b><span class="muted">Runs from file://</span></div><div class="fact"><b>Single HTML</b><span class="muted">CSS + JS embedded</span></div><div class="fact"><b>JPEG output</b><span class="muted">Metadata stripped by canvas</span></div></div>
+  </section>
+  <section class="grid">
+    <div class="card">
+      <div class="panelTitle"><h2>Workflow</h2><span class="status"><span class="dot"></span><span id="state">Ready</span></span></div>
+      <div id="drop" class="drop"><h3>Drag an image</h3><p class="muted">Drop it here or choose a browser-readable image.</p><input id="file" type="file" accept="image/*" class="hidden"><button id="choose">Choose Image</button><p class="tiny">Max suggested size: 40 MPixels / 25 MB. Large files may be slow.</p></div>
+      <div class="row">
+        <button id="process" disabled>Process Image</button>
+        <button id="download" class="secondary" disabled>Download JPEG</button>
+        <button id="reset" class="secondary" disabled>Reset</button>
+      </div>
+      <div class="row">
+        <label>JPEG quality <input id="quality" type="range" min="50" max="98" value="85"><span id="qv">0.85</span></label>
+        <label>Noise amplitude <input id="noise" type="range" min="0" max="12" value="5"><span id="nv">5</span></label>
+      </div>
+      <div class="progress"><div id="bar" class="bar"></div></div>
+      <div class="list" id="steps"></div>
+    </div>
+    <div class="card">
+      <div class="panelTitle"><h2>Audit</h2><span class="pill" id="score">No image</span></div>
+      <div id="audit" class="muted">Upload an image to start local analysis.</div>
+    </div>
+  </section>
+  <section class="card" style="margin-top:18px">
+    <h2>Preview</h2>
+    <div class="previewGrid"><div><p class="tiny">Original</p><img id="before" alt="Original preview" class="hidden"></div><div><p class="tiny">Processed JPEG</p><img id="after" alt="Processed preview" class="hidden"></div></div>
+  </section>
+  <footer>This is a standalone local implementation inspired by the public Unmarker.it workflow. It does not include the original React UI or OpenCV Gemini-specific detector.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);let currentFile=null,originalURL=null,outputBlob=null,outputURL=null;
+const steps=[['preflight','Preflight audit'],['decode','Decode image'],['shake','Shake: tiny affine transform'],['stir','Stir: Gaussian pixel noise'],['crush','Crush: JPEG recompression'],['postflight','Postflight audit']];
+function setState(s){$('state').textContent=s}function prog(n){$('bar').style.width=n+'%'}function paintSteps(active=-1,done=-1){$('steps').innerHTML=steps.map((x,i)=>`<div class="step"><span>${x[1]}</span><span class="pill ${i<=done?'good':i===active?'warn':''}">${i<=done?'done':i===active?'running':'idle'}</span></div>`).join('')}
+paintSteps();$('choose').onclick=()=>$('file').click();$('file').onchange=e=>loadFile(e.target.files[0]);['dragenter','dragover'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.add('drag')}));['dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.remove('drag')}));$('drop').addEventListener('drop',e=>loadFile(e.dataTransfer.files[0]));$('quality').oninput=()=>{$('qv').textContent=($('quality').value/100).toFixed(2)};$('noise').oninput=()=>{$('nv').textContent=$('noise').value};$('reset').onclick=reset;$('process').onclick=processImage;$('download').onclick=()=>{if(!outputBlob)return;const a=document.createElement('a');a.href=URL.createObjectURL(outputBlob);a.download=(currentFile.name.replace(/\.[^.]+$/,'')||'image')+'-local-unmarked.jpg';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+async function loadFile(f){if(!f)return;reset(false);currentFile=f;originalURL=URL.createObjectURL(f);$('before').src=originalURL;$('before').classList.remove('hidden');$('process').disabled=false;$('reset').disabled=false;setState('Image loaded');prog(8);paintSteps(0,-1);const scan=await scanMetadata(f);renderAudit(scan,null);paintSteps(-1,0);prog(16)}
+function reset(clearInput=true){currentFile=null;outputBlob=null;if(originalURL)URL.revokeObjectURL(originalURL);if(outputURL)URL.revokeObjectURL(outputURL);originalURL=outputURL=null;$('before').classList.add('hidden');$('after').classList.add('hidden');$('before').src='';$('after').src='';$('process').disabled=true;$('download').disabled=true;$('reset').disabled=true;$('audit').textContent='Upload an image to start local analysis.';$('score').textContent='No image';setState('Ready');prog(0);paintSteps();if(clearInput)$('file').value=''}
+async function scanMetadata(file){const head=await file.slice(0,Math.min(file.size,262144)).arrayBuffer();let text='';try{text=new TextDecoder('latin1').decode(head)}catch{}const needles=['C2PA','Content Credentials','Adobe','Photoshop','XMP','exif','Exif','Midjourney','DALL-E','Stable Diffusion','ComfyUI','Automatic1111','Gemini','Imagen','OpenAI','Firefly','AI generated'];const found=[...new Set(needles.filter(n=>text.toLowerCase().includes(n.toLowerCase())))];return{fileName:file.name,type:file.type||'unknown',size:file.size,signals:found,warnings:file.size>25*1024*1024?['File is larger than 25 MB.']:[]}}
+function renderAudit(pre,post){const score=pre.signals.length?Math.min(95,35+pre.signals.length*12):12;$('score').textContent=post?'Processed':`AI signal score: ${score}/100`;$('audit').innerHTML=`<div class="list"><div class="step"><span>File</span><code>${esc(pre.fileName)}</code></div><div class="step"><span>Type</span><code>${esc(pre.type)}</code></div><div class="step"><span>Size</span><code>${(pre.size/1024/1024).toFixed(2)} MB</code></div><div class="step"><span>Metadata signals</span><span class="pill ${pre.signals.length?'warn':'good'}">${pre.signals.length?pre.signals.map(esc).join(', '):'none found'}</span></div><div class="step"><span>Hidden watermark risk</span><span class="pill warn">possible / heuristic only</span></div>${post?`<div class="step"><span>Output</span><span class="pill good">JPEG canvas export; metadata stripped by re-encoding</span></div>`:''}</div>`}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function sleep(){return new Promise(r=>setTimeout(r,0))}
+function loadImage(url){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>res(img);img.onerror=rej;img.src=url})}
+function gaussian(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+async function processImage(){if(!currentFile)return;setState('Processing');$('process').disabled=true;$('download').disabled=true;outputBlob=null;paintSteps(1,0);prog(28);const img=await loadImage(originalURL);const pixels=img.naturalWidth*img.naturalHeight;if(pixels>40_000_000&&!confirm('This image is over 40 MPixels and may be slow. Continue?')){setState('Cancelled');$('process').disabled=false;return}const canvas=document.createElement('canvas');canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;const ctx=canvas.getContext('2d',{willReadFrequently:true});ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);paintSteps(2,1);prog(42);const angle=(Math.random()*2-1)*0.5*Math.PI/180,scale=1.01+Math.random()*0.01,cx=canvas.width/2,cy=canvas.height/2,cos=Math.cos(angle),sin=Math.sin(angle);ctx.setTransform(scale*cos,scale*sin,-scale*sin,scale*cos,cx-cx*scale*cos+cy*scale*sin,cy-cx*scale*sin-cy*scale*cos);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(img,0,0,canvas.width,canvas.height);ctx.setTransform(1,0,0,1,0,0);await sleep();paintSteps(3,2);prog(60);const amp=Number($('noise').value),std=amp/3,data=ctx.getImageData(0,0,canvas.width,canvas.height);for(let i=0;i<data.data.length;i+=4){data.data[i]=clamp(data.data[i]+gaussian()*std);data.data[i+1]=clamp(data.data[i+1]+gaussian()*std);data.data[i+2]=clamp(data.data[i+2]+gaussian()*std);if(i%1048576===0)await sleep()}ctx.putImageData(data,0,0);paintSteps(4,3);prog(78);outputBlob=await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(new Error('JPEG encode failed')),'image/jpeg',Number($('quality').value)/100));if(outputURL)URL.revokeObjectURL(outputURL);outputURL=URL.createObjectURL(outputBlob);$('after').src=outputURL;$('after').classList.remove('hidden');paintSteps(5,4);prog(92);const post={...await scanMetadata(new File([outputBlob],'output.jpg',{type:'image/jpeg'})),signals:[]};renderAudit(await scanMetadata(currentFile),post);paintSteps(-1,5);prog(100);setState('Done');$('download').disabled=false;$('process').disabled=false}
+function clamp(v){return Math.max(0,Math.min(255,v))}
+</script>
+</body>
+</html>
